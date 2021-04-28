@@ -30,6 +30,9 @@ require('./pricing'); // Route: '/pricing'
 require('./adminDashboard'); // Route: '/admin'
 require('./landing'); // Route: '/'
 
+/* Routes for localhost management */
+require('./local');
+
 /* Routes for all */
 require('./login'); // Route: '/login'
 require('./legal'); // Route: '/legal'

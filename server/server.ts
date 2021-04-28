@@ -11,6 +11,7 @@ import path from 'path';
 
 import { setEnvironment, setAppCommit, isProd, getAppCommit } from 'utils/environment';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
+import { getLocalCommunity } from 'server/utils/localhost';
 
 import { sequelize, User } from './models';
 import './hooks';
@@ -121,14 +122,10 @@ app.use((req, res, next) => {
 	if (req.headers.communityhostname) {
 		req.headers.host = req.headers.communityhostname;
 	}
-	if (process.env.PUBPUB_LOCAL_COMMUNITY || req.hostname.indexOf('localhost') > -1) {
+	const localCommunity = getLocalCommunity(req);
+	if (localCommunity) {
+		req.headers.host = localCommunity;
 		req.headers.localhost = req.headers.host;
-		if (process.env.PUBPUB_LOCAL_COMMUNITY) {
-			const subdomain = process.env.PUBPUB_LOCAL_COMMUNITY;
-			req.headers.host = `${subdomain}.duqduq.org`;
-		} else {
-			req.headers.host = 'demo.pubpub.org';
-		}
 	}
 	if (req.hostname.indexOf('duqduq.org') > -1) {
 		req.headers.host = req.hostname.replace('duqduq.org', 'pubpub.org');

@@ -3,8 +3,6 @@ import { Op } from 'sequelize';
 import * as types from 'types';
 import {
 	ActivityAssociations,
-	ActivityAssociationType,
-	activityAssociationTypes,
 	ActivityAssociationIds,
 	ActivityItemsFetchResult,
 	WithId,
@@ -27,6 +25,7 @@ import {
 	User,
 } from 'server/models';
 import { indexById } from 'utils/arrays';
+import { createActivityAssociationArrays } from '../../utils/activity';
 
 type PromiseRecord<T extends { [k: string]: any }> = {
 	[K in keyof T]: Promise<T[K]>;
@@ -36,14 +35,6 @@ type FetchActivityItemsOptions = {
 	scope: Scope;
 	limit?: number;
 	offset?: number;
-};
-
-const createAssociationsArrays = (): Record<ActivityAssociationType, string[]> => {
-	const associations = {};
-	activityAssociationTypes.forEach((type) => {
-		associations[type] = [] as string[];
-	});
-	return associations as Record<ActivityAssociationType, string[]>;
 };
 
 const getWhereQueryForChildScopes = async (scope: Scope) => {
@@ -89,7 +80,7 @@ const getActivityItemAssociationIds = (
 	items: types.ActivityItem[],
 	scope: Scope,
 ): ActivityAssociationIds => {
-	const associationIds = createAssociationsArrays();
+	const associationIds = createActivityAssociationArrays();
 	const {
 		collectionPub,
 		collection,

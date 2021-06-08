@@ -41,3 +41,5 @@ export type ActivityItemsFetchResult = {
 export type ActivityItemsRenderContext = ActivityItemsFetchResult & {
 	scope: Scope;
 };
+
+export { ActivityFilter } from './filters';

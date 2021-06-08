@@ -6,6 +6,7 @@ import { getUserFromContext } from './util';
 const getUserTitleFromUserIdAndContext = (
 	userId: null | string,
 	context: ActivityRenderContext,
+	fallback: string,
 ): Title => {
 	if (userId) {
 		if (userId === context.userId) {
@@ -20,14 +21,14 @@ const getUserTitleFromUserIdAndContext = (
 		}
 	}
 	return {
-		title: 'unknown user',
+		title: fallback,
 	};
 };
 
 export const titleActor: TitleRenderer<InsertableActivityItem> = (item, context) => {
-	return getUserTitleFromUserIdAndContext(item.actorId, context);
+	return getUserTitleFromUserIdAndContext(item.actorId, context, 'someone');
 };
 
 export const titleMember: TitleRenderer<MemberActivityItem> = (item, context) => {
-	return getUserTitleFromUserIdAndContext(item.payload.userId, context);
+	return getUserTitleFromUserIdAndContext(item.payload.userId, context, 'unknown user');
 };

@@ -1,0 +1,29 @@
+$border: 1px solid #ddd;
+
+.activity-item-row-component {
+    display: grid;
+    grid-template-areas: 'timestamp icon message';
+    grid-template-columns: 200px 50px 1fr;
+    padding: 20px 0;
+    border-top: $border;
+
+    &:last-child {
+        border-bottom: $border;
+    }
+
+    > .timestamp {
+        font-weight: 300;
+        font-style: italic;
+        grid-area: timestamp;
+        text-align: center;
+    }
+
+    > .icon {
+        color: #aaa;
+        grid-area: icon;
+    }
+
+    > .message {
+        grid-area: message;
+    }
+}

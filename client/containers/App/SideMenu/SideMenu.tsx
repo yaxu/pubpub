@@ -28,6 +28,12 @@ const SideMenu = () => {
 			href: getDashUrl({ collectionSlug, pubSlug }),
 		},
 		{
+			title: 'Activity',
+			icon: 'notifications' as const,
+			href: getDashUrl({ collectionSlug, pubSlug, mode: 'activity' }),
+			manageRequired: true,
+		},
+		{
 			title: 'Pages',
 			icon: 'page-layout' as const,
 			href: getDashUrl({

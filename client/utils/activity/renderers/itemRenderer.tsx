@@ -34,7 +34,7 @@ const renderTitles = <Item extends InsertableActivityItem, Titles extends string
 	context: ActivityRenderContext,
 ): Record<Titles | 'actor', React.ReactNode> => {
 	const renderedTitles = {
-		actor: titleActor(item, context),
+		actor: renderTitleToReact(titleActor(item, context)),
 	};
 	Object.keys(titleRenderers).forEach((key) => {
 		const renderer = titleRenderers[key as Titles];
@@ -51,10 +51,12 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 	return (item: Item, context: ActivityRenderContext) => {
 		const { communityId, collectionId, pubId } = item;
 		const titles = renderTitles(item, titleRenderers, context);
+		const { id, timestamp } = (item as unknown) as ActivityItem;
 		return {
+			id,
 			icon,
 			context,
-			timestamp: new Date(((item as unknown) as ActivityItem).timestamp).valueOf(),
+			timestamp: new Date(timestamp).valueOf(),
 			message: message({ item, titles, context }),
 			excerpt: excerpt?.({ item, context }),
 			scope: {

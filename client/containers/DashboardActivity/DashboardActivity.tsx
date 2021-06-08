@@ -1,5 +1,10 @@
 import React from 'react';
+
 import { usePageContext } from 'utils/hooks';
+import { DashboardFrame } from 'client/components';
+
+import { useActivityItems } from './useActivityItems';
+import ActivityItemRow from './ActivityItemRow';
 
 require('./dashboardActivity.scss');
 
@@ -9,17 +14,24 @@ type Props = {
 
 const DashboardActivity = (props: Props) => {
 	const { activityData } = props;
-	const { scopeData } = usePageContext();
+	const {
+		scopeData: { scope },
+		loginData: { id: userId },
+	} = usePageContext();
 
-	void activityData;
-	void scopeData;
+	const { items } = useActivityItems({
+		initialActivityData: activityData,
+		scope,
+		userId,
+		filters: [],
+	});
 
 	return (
-		<div className="dashboard-activity-container">
-			<div className="dashboard-content-header">
-				<div className="name">Activity</div>
-			</div>
-		</div>
+		<DashboardFrame className="dashboard-activity-container" title="Activity">
+			{items.map((item) => (
+				<ActivityItemRow item={item} key={item.id} />
+			))}
+		</DashboardFrame>
 	);
 };
 export default DashboardActivity;

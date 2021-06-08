@@ -13,7 +13,7 @@ type Props = {
 
 const ActivityItemRow = (props: Props) => {
 	const {
-		item: { message, timestamp, icon },
+		item: { message, excerpt, timestamp, icon },
 	} = props;
 	return (
 		<div className="activity-item-row-component">
@@ -24,6 +24,7 @@ const ActivityItemRow = (props: Props) => {
 				<Icon icon={icon} />
 			</div>
 			<div className="message">{message}</div>
+			{excerpt && <div className="excerpt">{excerpt}</div>}
 		</div>
 	);
 };

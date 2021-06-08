@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import {
 	ActivityAssociations,
@@ -10,6 +10,7 @@ import {
 } from 'types';
 import { ActivityRenderContext, RenderedActivityItem } from 'client/utils/activity/types';
 import { renderActivityItem } from 'client/utils/activity';
+import { apiFetch } from 'client/utils/apiFetch';
 import { createActivityAssociations } from '../../../utils/activity';
 
 type PartialActivityRenderContext = Omit<ActivityRenderContext, 'associations'>;
@@ -23,7 +24,7 @@ type Query = {
 type QueryState = {
 	itemIds: string[];
 	offset: number;
-	loading: false;
+	isLoading: boolean;
 };
 
 type State = {
@@ -39,6 +40,8 @@ type Options = PartialActivityRenderContext & {
 
 type ReturnValues = {
 	items: RenderedActivityItem[];
+	loadMoreItems: () => unknown;
+	isLoading: boolean;
 };
 
 const initialState: State = {
@@ -48,7 +51,7 @@ const initialState: State = {
 };
 
 const initialQueryState: QueryState = {
-	loading: false,
+	isLoading: false,
 	offset: 0,
 	itemIds: [],
 };
@@ -58,13 +61,13 @@ const serializeQuery = (query: Query) => {
 	return JSON.stringify({ filters: sortedFilters });
 };
 
-const updateQueryState = (
+const updateQueryStateWithFetchResult = (
 	previousQueryState: Maybe<QueryState>,
 	result: ActivityItemsFetchResult,
 ): QueryState => {
-	const { itemIds, offset, loading } = previousQueryState || initialQueryState;
+	const { itemIds, offset, isLoading } = previousQueryState || initialQueryState;
 	return {
-		loading,
+		isLoading,
 		itemIds: [...itemIds, ...result.activityItems.map((item) => item.id)],
 		offset: offset + itemIds.length,
 	};
@@ -108,12 +111,29 @@ const updateStateWithFetchResult = (
 		associations,
 		queries: {
 			...state.queries,
-			[serializedQuery]: updateQueryState(state.queries[serializedQuery], result),
+			[serializedQuery]: updateQueryStateWithFetchResult(
+				state.queries[serializedQuery],
+				result,
+			),
 		},
 		itemsById: renderNewActivityItems(state.itemsById, result.activityItems, {
 			...context,
 			associations,
 		}),
+	};
+};
+
+const updateStateToisLoading = (state: State, query: Query): State => {
+	const serializedQuery = serializeQuery(query);
+	return {
+		...state,
+		queries: {
+			...state.queries,
+			[serializedQuery]: {
+				...state.queries[serializedQuery],
+				isLoading: true,
+			},
+		},
 	};
 };
 
@@ -123,7 +143,8 @@ export const useActivityItems = (options: Options): ReturnValues => {
 		return updateStateWithFetchResult(initialState, { filters }, initialActivityData, context);
 	});
 
-	const serializedQuery = useMemo(() => serializeQuery({ filters }), [filters]);
+	const query: Query = { filters };
+	const serializedQuery = serializeQuery({ filters });
 	const queryState = state.queries[serializedQuery] || initialQueryState;
 
 	const items = useMemo(() => {
@@ -134,5 +155,18 @@ export const useActivityItems = (options: Options): ReturnValues => {
 			.filter((item): item is RenderedActivityItem => !!item);
 	}, [queryState, state]);
 
-	return { items };
+	const loadMoreItems = () => {
+		setState(updateStateToisLoading(state, query));
+		apiFetch
+			.post('/api/activityItems', {
+				offset: queryState.offset,
+				scope: context.scope,
+			})
+			.then((results) => {
+				const nextState = updateStateWithFetchResult(state, query, results, context);
+				setState(nextState);
+			});
+	};
+
+	return { items, loadMoreItems, isLoading: queryState.isLoading };
 };

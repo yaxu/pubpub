@@ -5,7 +5,7 @@ $border: 1px solid #ddd;
     grid-template-areas:
         'timestamp icon message'
         '. . excerpt';
-    grid-template-columns: 200px 50px 1fr;
+    grid-template-columns: 160px 80px 1fr;
     padding: 20px 0;
     border-top: $border;
 
@@ -17,13 +17,14 @@ $border: 1px solid #ddd;
         font-weight: 300;
         font-style: italic;
         grid-area: timestamp;
-        text-align: center;
+        text-align: right;
     }
 
     > .icon {
         color: #999;
         grid-area: icon;
         display: flex;
+        justify-content: center;
     }
 
     > .message {

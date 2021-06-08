@@ -36,6 +36,7 @@ export {
 export type ActivityItemsFetchResult = {
 	activityItems: ActivityItem[];
 	associations: ActivityAssociations;
+	fetchedAllItems: boolean;
 };
 
 export type ActivityItemsRenderContext = ActivityItemsFetchResult & {

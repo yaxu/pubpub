@@ -1,24 +1,26 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 import { getScope } from 'server/utils/queryHelpers';
-import { Scope } from 'types';
+import { ActivityFilter, Scope } from 'types';
 
 import { fetchActivityItems } from './fetch';
 
 const unwrapRequest = (req) => {
 	const { body, user } = req;
-	const { scope, offset } = body;
+	const { scope, offset, filters, limit } = body;
 	return {
+		filters: filters as ActivityFilter[],
 		scope: scope as Scope,
 		userId: user?.id ?? null,
 		offset: parseInt(offset, 10),
+		limit: parseInt(limit, 10),
 	};
 };
 
 app.post(
 	'/api/activityItems',
 	wrap(async (req, res) => {
-		const { scope, offset, userId } = unwrapRequest(req);
+		const { scope, offset, limit, userId, filters } = unwrapRequest(req);
 		const {
 			activePermissions: { canView },
 		} = await getScope({ loginId: userId, ...scope });
@@ -27,7 +29,7 @@ app.post(
 			throw new ForbiddenError();
 		}
 
-		const result = await fetchActivityItems({ offset, scope });
+		const result = await fetchActivityItems({ limit, offset, scope, filters });
 		res.status(200).json(result);
 	}),
 );

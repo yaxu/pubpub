@@ -123,7 +123,7 @@ export const renderCollectionPubCreated = itemRenderer<
 	CollectionPubCreatedActivityItem,
 	CollectionPubTitles
 >({
-	icon: 'pubDoc',
+	icon: ({ context }) => ('collectionId' in context.scope ? 'pubDoc' : 'collection'),
 	titles: {
 		collection: titleCollection,
 		pub: titlePub,
@@ -142,7 +142,7 @@ export const renderCollectionPubRemoved = itemRenderer<
 	CollectionPubRemovedActivityItem,
 	CollectionPubTitles
 >({
-	icon: 'pubDoc',
+	icon: ({ context }) => ('collectionId' in context.scope ? 'pubDoc' : 'collection'),
 	titles: {
 		collection: titleCollection,
 		pub: titlePub,

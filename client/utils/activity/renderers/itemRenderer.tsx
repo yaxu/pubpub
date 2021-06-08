@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ActivityItem, InsertableActivityItem } from 'types';
+import { isExternalUrl } from 'utils/urls';
 
 import { titleActor } from '../titles';
 import {
@@ -14,7 +15,7 @@ import {
 const renderTitleToReact = (title: Title) => {
 	const { title: titleString, href, prefix } = title;
 	const inner = href ? (
-		<a href={href} target="_blank" rel="noreferrer">
+		<a href={href} target={isExternalUrl(href) ? '_blank' : undefined} rel="noreferrer">
 			{titleString}
 		</a>
 	) : (
@@ -23,7 +24,7 @@ const renderTitleToReact = (title: Title) => {
 	return (
 		<>
 			{prefix ? `${prefix} ` : null}
-			<b>{inner}</b>
+			<strong>{inner}</strong>
 		</>
 	);
 };
@@ -54,9 +55,9 @@ export const itemRenderer = <Item extends InsertableActivityItem, Titles extends
 		const { id, timestamp } = (item as unknown) as ActivityItem;
 		return {
 			id,
-			icon,
+			icon: typeof icon === 'function' ? icon({ context }) : icon,
 			context,
-			timestamp: new Date(timestamp).valueOf(),
+			timestamp: new Date(timestamp),
 			message: message({ item, titles, context }),
 			excerpt: excerpt?.({ item, context }),
 			scope: {

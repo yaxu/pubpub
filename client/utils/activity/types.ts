@@ -40,7 +40,7 @@ export type RenderedActivityItem = {
 	// comment in a Thread.
 	excerpt: React.ReactNode;
 	// The time associated with this item.
-	timestamp: number;
+	timestamp: Date;
 	// The Scope associated with this item, which can be used for filtering.
 	scope: Scope;
 };
@@ -52,7 +52,7 @@ export type ActivityItemRenderOptions<
 	Item extends InsertableActivityItem,
 	Titles extends string
 > = {
-	icon: IconName;
+	icon: IconName | ((options: { context: ActivityRenderContext }) => IconName);
 	titles: Record<Titles, TitleRenderer<Item>>;
 	message: (options: {
 		item: Item;

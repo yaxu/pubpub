@@ -29,7 +29,7 @@ const SideMenu = () => {
 		},
 		{
 			title: 'Activity',
-			icon: 'notifications' as const,
+			icon: 'pulse' as const,
 			href: getDashUrl({ collectionSlug, pubSlug, mode: 'activity' }),
 			manageRequired: true,
 		},

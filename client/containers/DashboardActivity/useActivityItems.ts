@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
 	ActivityAssociations,
@@ -25,6 +25,7 @@ type QueryState = {
 	itemIds: string[];
 	offset: number;
 	isLoading: boolean;
+	loadedAllItems: boolean;
 };
 
 type State = {
@@ -36,11 +37,13 @@ type State = {
 type Options = PartialActivityRenderContext & {
 	filters: ActivityFilter[];
 	initialActivityData: ActivityItemsFetchResult;
+	batchSize?: number;
 };
 
 type ReturnValues = {
 	items: RenderedActivityItem[];
 	loadMoreItems: () => unknown;
+	loadedAllItems: boolean;
 	isLoading: boolean;
 };
 
@@ -52,6 +55,7 @@ const initialState: State = {
 
 const initialQueryState: QueryState = {
 	isLoading: false,
+	loadedAllItems: false,
 	offset: 0,
 	itemIds: [],
 };
@@ -65,11 +69,14 @@ const updateQueryStateWithFetchResult = (
 	previousQueryState: Maybe<QueryState>,
 	result: ActivityItemsFetchResult,
 ): QueryState => {
-	const { itemIds, offset, isLoading } = previousQueryState || initialQueryState;
+	const { activityItems, fetchedAllItems } = result;
+	const { itemIds, offset } = previousQueryState || initialQueryState;
+	const newItemIds = activityItems.map((item) => item.id);
 	return {
-		isLoading,
-		itemIds: [...itemIds, ...result.activityItems.map((item) => item.id)],
-		offset: offset + itemIds.length,
+		loadedAllItems: fetchedAllItems,
+		isLoading: false,
+		itemIds: [...itemIds, ...newItemIds],
+		offset: offset + newItemIds.length,
 	};
 };
 
@@ -130,6 +137,7 @@ const updateStateToisLoading = (state: State, query: Query): State => {
 		queries: {
 			...state.queries,
 			[serializedQuery]: {
+				...initialQueryState,
 				...state.queries[serializedQuery],
 				isLoading: true,
 			},
@@ -138,7 +146,7 @@ const updateStateToisLoading = (state: State, query: Query): State => {
 };
 
 export const useActivityItems = (options: Options): ReturnValues => {
-	const { filters = [], initialActivityData, ...context } = options;
+	const { filters = [], initialActivityData, batchSize = 50, ...context } = options;
 	const [state, setState] = useState<State>(() => {
 		return updateStateWithFetchResult(initialState, { filters }, initialActivityData, context);
 	});
@@ -156,17 +164,25 @@ export const useActivityItems = (options: Options): ReturnValues => {
 	}, [queryState, state]);
 
 	const loadMoreItems = () => {
-		setState(updateStateToisLoading(state, query));
+		setState((currentState) => updateStateToisLoading(currentState, query));
 		apiFetch
 			.post('/api/activityItems', {
 				offset: queryState.offset,
 				scope: context.scope,
+				filters: query.filters,
+				limit: batchSize,
 			})
 			.then((results) => {
-				const nextState = updateStateWithFetchResult(state, query, results, context);
-				setState(nextState);
+				setState((currentState) =>
+					updateStateWithFetchResult(currentState, query, results, context),
+				);
 			});
 	};
 
-	return { items, loadMoreItems, isLoading: queryState.isLoading };
+	return {
+		items,
+		loadMoreItems,
+		isLoading: queryState.isLoading,
+		loadedAllItems: queryState.loadedAllItems,
+	};
 };

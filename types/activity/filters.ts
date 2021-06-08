@@ -1,1 +1,8 @@
-export type ActivityFilter = 'community' | 'collection' | 'pub' | 'review' | 'discussion';
+export type ActivityFilter =
+	| 'community'
+	| 'collection'
+	| 'pub'
+	| 'member'
+	| 'review'
+	| 'discussion'
+	| 'pubEdge';

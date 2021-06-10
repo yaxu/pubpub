@@ -7,8 +7,10 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require(path.join(process.cwd(), 'config.js'));
 }
 
-const useSSL = process.env.DATABASE_URL!.indexOf('localhost') === -1;
-export const sequelize = new (Sequelize as any)(process.env.DATABASE_URL, {
+// @ts-expect-error
+const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
+// @ts-expect-error
+export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,
 	dialectOptions: { ssl: useSSL ? { rejectUnauthorized: false } : false },
 	pool: {
@@ -69,12 +71,12 @@ export const ReviewNew = sequelize.import('./review/modelNew');
 export const Thread = sequelize.import('./thread/model');
 export const ThreadComment = sequelize.import('./threadComment/model');
 export const ThreadEvent = sequelize.import('./threadEvent/model');
+export const User = sequelize.import('./user/model');
 export const UserScopeVisit = sequelize.import('./userScopeVisit/model');
+export const UserThreadSubscription = sequelize.import('./userThreadSubscription/model');
 export const ActivityItem = sequelize.import('./activityItem/model');
 export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
-
-export const User = sequelize.import('./user/model');
 export const WorkerTask = sequelize.import('./workerTask/model');
 
 export const attributesPublicUser = [
@@ -102,7 +104,8 @@ export const includeUserModel = (() => {
 })();
 
 /* Create associations for models that have associate function */
-Object.values(sequelize.models).forEach((model: any) => {
+Object.values(sequelize.models).forEach((model) => {
+	// @ts-expect-error
 	const classMethods = model.options.classMethods || {};
 	if (classMethods.associate) {
 		classMethods.associate(sequelize.models);

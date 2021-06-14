@@ -4,7 +4,7 @@ import { ForbiddenError } from 'server/utils/errors';
 import { muteUserSubscription } from '../shared/queries';
 import { createUserThreadSubscription } from './queries';
 
-const unwrapRequest = (req: any) => {
+const unwrapPostRequest = (req: any) => {
 	return {
 		threadId: req.body.threadId as string,
 		userId: req.user?.id as string,
@@ -13,7 +13,7 @@ const unwrapRequest = (req: any) => {
 
 const unwrapPutRequest = (req: any) => {
 	return {
-		...unwrapRequest(req),
+		...unwrapPostRequest(req),
 		muted: req.body.muted as boolean,
 	};
 };
@@ -21,7 +21,7 @@ const unwrapPutRequest = (req: any) => {
 app.post(
 	'/api/threads/subscriptions',
 	wrap(async (req, res) => {
-		const { threadId, userId } = unwrapRequest(req);
+		const { threadId, userId } = unwrapPostRequest(req);
 		const result = await createUserThreadSubscription({
 			threadId,
 			userId,

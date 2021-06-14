@@ -13,6 +13,7 @@ export * from './pubQuery';
 export * from './request';
 export * from './review';
 export * from './scope';
+export * from './sequelize';
 export * from './thread';
 export * from './userSubscription';
 export * from './util';

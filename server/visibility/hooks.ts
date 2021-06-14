@@ -1,6 +1,6 @@
 import * as types from 'types';
 import { Visibility } from 'server/models';
-import { updateUserThreadSubscriptions } from 'server/userThreadSubscription/queries';
+import { updateUserThreadSubscriptions } from 'server/userSubscription/queries';
 
 import { getParentModelForVisibility } from './queries';
 

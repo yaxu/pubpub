@@ -13,13 +13,3 @@ export type Thread = {
 	locked?: boolean;
 	comments: ThreadComment[];
 };
-
-export type UserThreadSubscription = {
-	id: string;
-	updatedAt: string;
-	createdAt: string;
-	userId: string;
-	threadId: string;
-	muted: boolean;
-	createdAutomatically: boolean;
-};

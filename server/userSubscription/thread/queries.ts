@@ -2,8 +2,14 @@ import Bluebird from 'bluebird';
 
 import * as types from 'types';
 import { DefinitelyHas } from 'types';
-import { Discussion, ReviewNew, UserThreadSubscription, Visibility } from 'server/models';
+import { Discussion, ReviewNew, UserSubscription, Visibility } from 'server/models';
 import { getScope } from 'server/utils/queryHelpers';
+
+import {
+	createUserSubscription,
+	destroyUserSubscription,
+	findUserSubscription,
+} from '../shared/queries';
 
 type QueryOptions = {
 	userId: string;
@@ -12,10 +18,6 @@ type QueryOptions = {
 
 type CreateOptions = QueryOptions & {
 	createdAutomatically: boolean;
-};
-
-type MuteOptions = QueryOptions & {
-	muted: boolean;
 };
 
 const canUserSubscribeToThread = async (options: QueryOptions): Promise<boolean> => {
@@ -54,37 +56,29 @@ const canUserSubscribeToThread = async (options: QueryOptions): Promise<boolean>
 
 export const createUserThreadSubscription = async (
 	options: CreateOptions,
-): Promise<null | types.UserThreadSubscription> => {
+): Promise<null | types.UserSubscription> => {
 	const { userId, threadId, createdAutomatically } = options;
 	if (await canUserSubscribeToThread(options)) {
-		const existing = await UserThreadSubscription.findOne({ where: { userId, threadId } });
+		const existing = await findUserSubscription({ userId, threadId });
 		if (existing) {
 			return existing;
 		}
-		return UserThreadSubscription.create({ userId, threadId, createdAutomatically });
+		return createUserSubscription({ userId, threadId, createdAutomatically });
 	}
 	return null;
 };
 
-export const muteUserThreadSubscription = async (options: MuteOptions) => {
-	const { userId, threadId, muted } = options;
-	await UserThreadSubscription.update({ muted }, { where: { userId, threadId } });
-};
-
-export const destroyUserThreadSubscription = async (options: QueryOptions) => {
-	const { userId, threadId } = options;
-	await UserThreadSubscription.destroy({ where: { userId, threadId } });
-};
-
 export const updateUserThreadSubscriptions = async (threadId: string) => {
 	await Bluebird.map(
-		await UserThreadSubscription.findAll({
+		await UserSubscription.findAll({
 			where: { threadId },
 		}),
-		async (subscription: types.UserThreadSubscription) => {
-			const canSubscribe = await canUserSubscribeToThread(subscription);
-			if (!canSubscribe) {
-				await destroyUserThreadSubscription(subscription);
+		async (subscription: types.UserSubscription) => {
+			if ('threadId' in subscription && subscription.threadId) {
+				const canSubscribe = await canUserSubscribeToThread(subscription);
+				if (!canSubscribe) {
+					await destroyUserSubscription({ id: subscription.id });
+				}
 			}
 		},
 		{ concurrency: 5 },

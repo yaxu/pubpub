@@ -1,7 +1,8 @@
 import app, { wrap } from 'server/server';
 import { ForbiddenError } from 'server/utils/errors';
 
-import { createUserThreadSubscription, muteUserThreadSubscription } from './queries';
+import { muteUserSubscription } from '../shared/queries';
+import { createUserThreadSubscription } from './queries';
 
 const unwrapRequest = (req: any) => {
 	return {
@@ -37,7 +38,7 @@ app.put(
 	'/api/threads/subscriptions',
 	wrap(async (req, res) => {
 		const { threadId, userId, muted } = unwrapPutRequest(req);
-		await muteUserThreadSubscription({ threadId, userId, muted });
+		await muteUserSubscription({ threadId, userId, muted });
 		return res.status(200).json({});
 	}),
 );

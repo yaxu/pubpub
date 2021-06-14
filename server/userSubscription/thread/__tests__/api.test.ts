@@ -1,7 +1,7 @@
 /* global describe, it, expect, beforeAll, afterAll */
 import { modelize, login, setup, teardown } from 'stubstub';
 
-import { UserThreadSubscription } from 'server/models';
+import { UserSubscription } from 'server/models';
 import { updateVisibility } from 'server/visibility/queries';
 import { createThreadComment } from 'server/threadComment/queries';
 
@@ -33,7 +33,7 @@ const models = modelize`
                     access: "public"
                 }
                 Thread toBeSubscribedToThread {
-                    UserThreadSubscription existingSubscription {
+                    UserSubscription existingSubscription {
                         createdAutomatically: true
                         User boredUser {}
                     }
@@ -54,11 +54,11 @@ const models = modelize`
                     access: "public"
                 }
                 Thread toBeBootedFromThread {
-                    UserThreadSubscription toBeRemovedSubscription {
+                    UserSubscription toBeRemovedSubscription {
                         createdAutomatically: true
                         User toBeBootedUser {}
                     }
-                    UserThreadSubscription toRemainSubscription {
+                    UserSubscription toRemainSubscription {
                         createdAutomatically: true
                         user: member
                     }
@@ -71,7 +71,7 @@ const models = modelize`
                     access: "public"
                 }
                 Thread toBeCommentedOnThread {
-                    UserThreadSubscription mutedSubscription {
+                    UserSubscription mutedSubscription {
                         createdAutomatically: true
                         muted: true
                         User mutedThisThreadUser {}
@@ -106,11 +106,11 @@ describe('/api/threads/subscriptions', () => {
 	it('Lets a Member subscribe to a Discussion thread with visibility=members', async () => {
 		const { member, membersDiscussionThread } = models;
 		const agent = await login(member);
-		const { body: userThreadSubscription } = await agent
+		const { body: userSubscription } = await agent
 			.post('/api/threads/subscriptions')
 			.send({ threadId: membersDiscussionThread.id })
 			.expect(200);
-		expect(userThreadSubscription).toMatchObject({
+		expect(userSubscription).toMatchObject({
 			threadId: membersDiscussionThread.id,
 			userId: member.id,
 			createdAutomatically: false,
@@ -129,11 +129,11 @@ describe('/api/threads/subscriptions', () => {
 	it('Lets a Member subscribe to a Review thread with visibility=members', async () => {
 		const { member, membersReviewThread } = models;
 		const agent = await login(member);
-		const { body: userThreadSubscription } = await agent
+		const { body: userSubscription } = await agent
 			.post('/api/threads/subscriptions')
 			.send({ threadId: membersReviewThread.id })
 			.expect(200);
-		expect(userThreadSubscription).toMatchObject({
+		expect(userSubscription).toMatchObject({
 			threadId: membersReviewThread.id,
 			userId: member.id,
 			createdAutomatically: false,
@@ -143,11 +143,11 @@ describe('/api/threads/subscriptions', () => {
 	it('Lets a Member subscribe to a Review thread with visibility=members', async () => {
 		const { member, membersReviewThread } = models;
 		const agent = await login(member);
-		const { body: userThreadSubscription } = await agent
+		const { body: userSubscription } = await agent
 			.post('/api/threads/subscriptions')
 			.send({ threadId: membersReviewThread.id })
 			.expect(200);
-		expect(userThreadSubscription).toMatchObject({
+		expect(userSubscription).toMatchObject({
 			threadId: membersReviewThread.id,
 			userId: member.id,
 			createdAutomatically: false,
@@ -157,11 +157,11 @@ describe('/api/threads/subscriptions', () => {
 	it('Lets a non-Member subscribe to a Review thread with visibility=public', async () => {
 		const { rando, toBeSubscribedToThread } = models;
 		const agent = await login(rando);
-		const { body: userThreadSubscription } = await agent
+		const { body: userSubscription } = await agent
 			.post('/api/threads/subscriptions')
 			.send({ threadId: toBeSubscribedToThread.id })
 			.expect(200);
-		expect(userThreadSubscription).toMatchObject({
+		expect(userSubscription).toMatchObject({
 			threadId: toBeSubscribedToThread.id,
 			userId: rando.id,
 			createdAutomatically: false,
@@ -175,31 +175,31 @@ describe('/api/threads/subscriptions', () => {
 			.put('/api/threads/subscriptions')
 			.send({ threadId: toBeSubscribedToThread.id, muted: true })
 			.expect(200);
-		const mutedThread = await UserThreadSubscription.findOne({
+		const mutedThread = await UserSubscription.findOne({
 			where: { id: existingSubscription.id },
 		});
 		expect(mutedThread.muted).toEqual(true);
 	});
 });
 
-describe('Visibility hooks updating UserThreadSubscriptions', () => {
+describe('Visibility hooks updating UserSubscriptions', () => {
 	it('Kicks some users from a thread when visibility access changes', async () => {
 		const { toBeRemovedSubscription, toRemainSubscription, toBeChangedVisibility } = models;
 		await updateVisibility({ visibilityId: toBeChangedVisibility.id, access: 'members' });
 		expect(
-			await UserThreadSubscription.count({
+			await UserSubscription.count({
 				where: { id: toBeRemovedSubscription.id },
 			}),
 		).toBe(0);
 		expect(
-			await UserThreadSubscription.count({
+			await UserSubscription.count({
 				where: { id: toRemainSubscription.id },
 			}),
 		).toBe(1);
 	});
 });
 
-describe('ThreadComment hooks creating UserThreadSubscriptions', () => {
+describe('ThreadComment hooks creating UserSubscriptions', () => {
 	it('Automatically subscribes users to a thread when they add a comment', async () => {
 		const { toBeCommentedOnThread, rando } = models;
 		await createThreadComment(
@@ -207,7 +207,7 @@ describe('ThreadComment hooks creating UserThreadSubscriptions', () => {
 			rando,
 		);
 		expect(
-			await UserThreadSubscription.findOne({
+			await UserSubscription.findOne({
 				where: { userId: rando.id, threadId: toBeCommentedOnThread.id },
 			}),
 		).toMatchObject({
@@ -224,7 +224,7 @@ describe('ThreadComment hooks creating UserThreadSubscriptions', () => {
 			mutedThisThreadUser,
 		);
 		expect(
-			await UserThreadSubscription.findOne({
+			await UserSubscription.findOne({
 				where: { userId: mutedThisThreadUser.id, threadId: toBeCommentedOnThread.id },
 			}),
 		).toMatchObject({

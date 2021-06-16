@@ -1,17 +1,7 @@
 import * as types from 'types';
 import { TaggedThreadParent } from 'types';
-import { Discussion, Pub, ReviewNew, Visibility, VisibilityUser } from 'server/models';
-import { getMembersForScope } from 'server/member/queries';
-
-type CanUserSeeThreadOptions = {
-	userId: string;
-	threadId: string;
-};
-
-type FilterUsersOptions = {
-	userIds: string[];
-	threadId: string;
-};
+import { Discussion, Pub, ReviewNew, Visibility } from 'server/models';
+import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
 
 export const getParentModelForThread = async <AssociatedModels = {}>(
 	threadId: string,
@@ -33,6 +23,11 @@ export const getParentModelForThread = async <AssociatedModels = {}>(
 	return null;
 };
 
+type FilterUsersOptions = {
+	userIds: string[];
+	threadId: string;
+};
+
 export const filterUsersWhoCanSeeThread = async (
 	options: FilterUsersOptions,
 ): Promise<string[]> => {
@@ -49,26 +44,19 @@ export const filterUsersWhoCanSeeThread = async (
 	});
 
 	if (parent) {
-		const {
-			visibility: { access, id: visibilityId },
-			pub,
-		} = parent.value;
-		if (access === 'public') {
-			return userIds;
-		}
-		if (access === 'members') {
-			const members = await getMembersForScope({
-				communityId: pub.communityId,
-				pubId: pub.id,
-			});
-			const memberUserIds = new Set(members.map((member) => member.userId));
-			return userIds.filter((userId) => memberUserIds.has(userId));
-		}
-		const visibilityUsers = await VisibilityUser.findAll({ where: { visibilityId } });
-		const visibilityUserIds = new Set(visibilityUsers.map((vu) => vu.userId));
-		return userIds.filter((userId) => visibilityUserIds.has(userId));
+		const { visibility, pub } = parent.value;
+		return filterUsersAcceptedByVisibility({
+			visibility,
+			scope: { pubId: pub.id, communityId: pub.communityId },
+			userIds,
+		});
 	}
 	return [];
+};
+
+type CanUserSeeThreadOptions = {
+	userId: string;
+	threadId: string;
 };
 
 export const canUserSeeThread = async (options: CanUserSeeThreadOptions): Promise<boolean> => {

@@ -1,3 +1,5 @@
+import { Op } from 'sequelize';
+
 import * as types from 'types';
 import { ActivityItem, UserNotification } from 'server/models';
 
@@ -13,8 +15,14 @@ type CreateOptions = Pick<
 >;
 
 type MarkReadOptions = {
-	userNotificationId: string;
+	userNotificationIds: string[];
+	userId: string;
 	isRead: boolean;
+};
+
+type DeleteOptions = {
+	userId: string;
+	userNotificationIds: string[];
 };
 
 export const getUserNotifications = (
@@ -40,19 +48,24 @@ export const createUserNotification = async (
 	return UserNotification.create({ activityItemId, userId, userSubscriptionId });
 };
 
-export const markUserNotificationRead = async (options: MarkReadOptions) => {
-	const { isRead, userNotificationId } = options;
-	await UserNotification.update({ isRead }, { where: { id: userNotificationId } });
+export const markUserNotificationsRead = async (options: MarkReadOptions) => {
+	const { isRead, userId, userNotificationIds } = options;
+	const [updatedCount] = await UserNotification.update(
+		{ isRead },
+		{
+			where: {
+				userId,
+				id: { [Op.in]: userNotificationIds },
+			},
+		},
+	);
+	return updatedCount;
 };
 
-export const deleteUserNotification = async (userNotificationId: string) => {
-	await UserNotification.destroy({ where: { id: userNotificationId } });
-};
-
-export const markAllNotificationsReadForUser = async (userId: string) => {
-	await UserNotification.update({ isRead: true }, { where: { userId } });
-};
-
-export const deleteAllNotificationsForUser = async (userId: string) => {
-	await UserNotification.destroy({ where: { userId } });
+export const deleteUserNotifications = async (options: DeleteOptions) => {
+	const { userId, userNotificationIds } = options;
+	const destroyedCount = await UserNotification.destroy({
+		where: { userId, id: { [Op.in]: userNotificationIds } },
+	});
+	return destroyedCount;
 };

@@ -17,18 +17,19 @@ type QueryOptions = {
 
 type CreateOptions = QueryOptions & {
 	createdAutomatically: boolean;
+	muted: boolean;
 };
 
 export const createUserThreadSubscription = async (
 	options: CreateOptions,
 ): Promise<null | types.UserSubscription> => {
-	const { userId, threadId, createdAutomatically } = options;
+	const { userId, threadId, createdAutomatically, muted } = options;
 	if (await canUserSeeThread(options)) {
 		const existing = await findUserSubscription({ userId, threadId });
 		if (existing) {
 			return existing;
 		}
-		return createUserSubscription({ userId, threadId, createdAutomatically });
+		return createUserSubscription({ userId, threadId, createdAutomatically, muted });
 	}
 	return null;
 };

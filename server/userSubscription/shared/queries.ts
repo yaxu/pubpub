@@ -4,6 +4,7 @@ import * as types from 'types';
 type CreateOptions = types.UniqueUserSubscriptionQuery & {
 	id?: never;
 	createdAutomatically: boolean;
+	muted: boolean;
 };
 
 type MuteOptions = types.UniqueUserSubscriptionQuery & { muted: boolean };
@@ -17,8 +18,8 @@ export const findUserSubscription = async (
 export const createUserSubscription = async (
 	options: CreateOptions,
 ): Promise<types.UserSubscription> => {
-	const { createdAutomatically, ...associationIds } = options;
-	return UserSubscription.create({ createdAutomatically, ...associationIds });
+	const { createdAutomatically, muted, ...associationIds } = options;
+	return UserSubscription.create({ createdAutomatically, muted, ...associationIds });
 };
 
 export const muteUserSubscription = async (options: MuteOptions) => {

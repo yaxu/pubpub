@@ -48,6 +48,10 @@ export const deleteUserNotification = async (userNotificationId: string) => {
 	await UserNotification.destroy({ where: { id: userNotificationId } });
 };
 
+export const markAllNotificationsReadForUser = async (userId: string) => {
+	await UserNotification.update({isRead: true},{ where: { userId } });
+};
+
 export const deleteAllNotificationsForUser = async (userId: string) => {
 	await UserNotification.destroy({ where: { userId } });
 };

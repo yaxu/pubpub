@@ -1,12 +1,11 @@
 import * as types from 'types';
-import { TaggedThreadParent } from 'types';
 import { Discussion, Pub, ReviewNew, Visibility } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
 
 export const getParentModelForThread = async <AssociatedModels = {}>(
 	threadId: string,
 	queryOptions: any = {},
-): Promise<null | TaggedThreadParent<AssociatedModels>> => {
+): Promise<null | types.TaggedThreadParent<AssociatedModels>> => {
 	const [discussion, review]: [
 		null | (types.Discussion & AssociatedModels),
 		null | (types.Review & AssociatedModels),

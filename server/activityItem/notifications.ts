@@ -6,11 +6,12 @@ import { indexByProperty, splitArrayOn } from 'utils/arrays';
 import { filterUsersWhoCanSeeThread } from 'server/thread/queries';
 
 type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
-	item: types.ActivityItem & { kind: Kind },
+	item: types.ActivityItemOfKind<Kind>,
 ) => Promise<void>;
 
-const notifyForDiscussionComment: ActivityItemResponder<'pub-discussion-comment-added'> = async (
-	item,
+const createNotificationsForNewThreadComment = async (
+	item: types.ActivityItemOfKind<'pub-discussion-comment-added' | 'pub-review-comment-added'>,
+	includePubLevelSubscribers: boolean,
 ) => {
 	const {
 		actorId,
@@ -18,8 +19,12 @@ const notifyForDiscussionComment: ActivityItemResponder<'pub-discussion-comment-
 		payload: { threadId },
 	} = item;
 
+	const subscriptionWhereQueries = includePubLevelSubscribers
+		? [{ pubId }, { threadId }]
+		: [{ threadId }];
+
 	const subscriptions: types.UserSubscription[] = await UserSubscription.findAll({
-		where: { [Op.or]: [{ threadId }, { pubId }], userId: { [Op.not]: actorId } },
+		where: { [Op.or]: subscriptionWhereQueries, userId: { [Op.not]: actorId } },
 	});
 
 	const [mutedThreadSubscriptions, unmutedThreadSubscriptions] = splitArrayOn(
@@ -38,7 +43,8 @@ const notifyForDiscussionComment: ActivityItemResponder<'pub-discussion-comment-
 		...unmutedThreadSubscriptions,
 		...unmutedPubSubscriptionsNotSupersededByThreadMute,
 	];
-	const indexedSubscriptionsByUserId = indexByProperty(
+
+	const subscriptionsByUserId = indexByProperty(
 		subscriptionsThatMayProduceNotifications,
 		'userId',
 	);
@@ -52,7 +58,7 @@ const notifyForDiscussionComment: ActivityItemResponder<'pub-discussion-comment-
 		userIdsToNotifty.map((userId) => {
 			return {
 				userId,
-				userSubscriptionId: indexedSubscriptionsByUserId[userId].id,
+				userSubscriptionId: subscriptionsByUserId[userId].id,
 				activityItemId: item.id,
 			};
 		}),
@@ -62,7 +68,8 @@ const notifyForDiscussionComment: ActivityItemResponder<'pub-discussion-comment-
 const notificationCreatorsByKind: Partial<
 	{ [Kind in types.ActivityItemKind]: ActivityItemResponder<Kind> }
 > = {
-	'pub-discussion-comment-added': notifyForDiscussionComment,
+	'pub-discussion-comment-added': (item) => createNotificationsForNewThreadComment(item, true),
+	'pub-review-comment-added': (item) => createNotificationsForNewThreadComment(item, false),
 };
 
 export const getNotificationTask = (item: types.ActivityItem) => {

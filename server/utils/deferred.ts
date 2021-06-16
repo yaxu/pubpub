@@ -25,7 +25,7 @@ const createDeferredState = () => {
 		}
 	};
 
-	const awaitDeferredTasks = (): Promise<void> => {
+	const finishDeferredTasks = (): Promise<void> => {
 		return new Promise((resolve) => onDeferredTasksComplete(resolve));
 	};
 
@@ -34,7 +34,7 @@ const createDeferredState = () => {
 		task().then(decrementCount);
 	};
 
-	return { awaitDeferredTasks, defer };
+	return { finishDeferredTasks, defer };
 };
 
-export const { defer, awaitDeferredTasks } = createDeferredState();
+export const { defer, finishDeferredTasks } = createDeferredState();

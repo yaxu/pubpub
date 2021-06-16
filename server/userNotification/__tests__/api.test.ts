@@ -32,7 +32,7 @@ const models = modelize`
     }
 
 
-    Thread thread {
+    Thread {
         UserSubscription {
             user: user
             createdAutomatically: true

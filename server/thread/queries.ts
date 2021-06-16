@@ -1,5 +1,5 @@
 import * as types from 'types';
-import { DefinitelyHas } from 'types';
+import { TaggedThreadParent } from 'types';
 import { Discussion, Pub, ReviewNew, Visibility, VisibilityUser } from 'server/models';
 import { getMembersForScope } from 'server/member/queries';
 
@@ -13,39 +13,50 @@ type FilterUsersOptions = {
 	threadId: string;
 };
 
+export const getParentModelForThread = async <AssociatedModels = {}>(
+	threadId: string,
+	queryOptions: any = {},
+): Promise<null | TaggedThreadParent<AssociatedModels>> => {
+	const [discussion, review]: [
+		null | (types.Discussion & AssociatedModels),
+		null | (types.Review & AssociatedModels),
+	] = await Promise.all([
+		Discussion.findOne({ where: { threadId }, ...queryOptions }),
+		ReviewNew.findOne({ where: { threadId }, ...queryOptions }),
+	]);
+	if (discussion) {
+		return { type: 'discussion', value: discussion };
+	}
+	if (review) {
+		return { type: 'review', value: review };
+	}
+	return null;
+};
+
 export const filterUsersWhoCanSeeThread = async (
 	options: FilterUsersOptions,
 ): Promise<string[]> => {
 	const { userIds, threadId } = options;
-	const [parentDiscussion, parentReview]: [
-		null | DefinitelyHas<types.Discussion, 'visibility' | 'pub'>,
-		null | DefinitelyHas<types.Review, 'visibility' | 'pub'>,
-	] = await Promise.all([
-		Discussion.findOne({
-			where: { threadId },
-			include: [
-				{ model: Visibility, as: 'visibility' },
-				{ model: Pub, as: 'pub' },
-			],
-		}),
-		ReviewNew.findOne({
-			where: { threadId },
-			include: [
-				{ model: Visibility, as: 'visibility' },
-				{ model: Pub, as: 'pub' },
-			],
-		}),
-	]);
-	const parentItem = parentDiscussion || parentReview;
-	if (parentItem) {
+
+	const parent = await getParentModelForThread<{
+		visibility: types.Visibility;
+		pub: types.Pub;
+	}>(threadId, {
+		include: [
+			{ model: Visibility, as: 'visibility' },
+			{ model: Pub, as: 'pub' },
+		],
+	});
+
+	if (parent) {
 		const {
 			visibility: { access, id: visibilityId },
-		} = parentItem;
+			pub,
+		} = parent.value;
 		if (access === 'public') {
 			return userIds;
 		}
 		if (access === 'members') {
-			const { pub } = parentItem;
 			const members = await getMembersForScope({
 				communityId: pub.communityId,
 				pubId: pub.id,

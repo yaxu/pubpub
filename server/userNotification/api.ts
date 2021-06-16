@@ -4,10 +4,20 @@ import { ForbiddenError } from 'server/utils/errors';
 import {
 	deleteAllNotificationsForUser,
 	deleteUserNotification,
+	getUserNotifications,
 	markAllNotificationsReadForUser,
 	markUserNotificationRead,
 } from './queries';
 import { canUserManipulateNotification } from './permissions';
+
+const unwrapGetRequest = (req: any) => {
+	const { offset, limit } = req.query;
+	return {
+		userId: req.user?.id as string,
+		offset: offset ? parseInt(offset, 10) : 0,
+		limit: limit ? parseInt(limit, 10) : 50,
+	};
+};
 
 const unwrapRequest = (req: any) => {
 	return {
@@ -28,6 +38,15 @@ const unwrapBulkRequest = (req: any) => {
 		userId: req.user?.id as string,
 	};
 };
+
+app.get(
+	'/api/userNotifications',
+	wrap(async (req, res) => {
+		const { userId, offset, limit } = unwrapGetRequest(req);
+		const notifications = await getUserNotifications({ userId, offset, limit });
+		return res.status(200).json(notifications.map((n) => n.toJSON()));
+	}),
+);
 
 app.put(
 	'/api/userNotifications',

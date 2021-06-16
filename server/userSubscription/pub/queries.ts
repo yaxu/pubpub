@@ -14,5 +14,5 @@ export const createUserPubSubscription = (options: CreateOptions) => {
 	// than Thread item notifciations, we'll want to add some permissions checks here.
 	// As it stands, we allow any user to subscribe to a Pub by ID, but they will only receive
 	// notifications about Threads that they have permission to view.
-	return createUserSubscription({muted: false, ...options});
+	return createUserSubscription({ muted: false, ...options });
 };

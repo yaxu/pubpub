@@ -1,8 +1,9 @@
 /* global describe, it, expect, beforeAll, afterAll */
 import { modelize, login, setup, teardown } from 'stubstub';
 
-const models = `
+const models = modelize`
     User user {}
+    User rando {}
 
     Community community {
         Pub {
@@ -17,17 +18,17 @@ const models = `
 
     ActivityItem activityItem1 {
         community: community
-        kind: 'pub-thread-comment-added'
+        kind: 'pub-discussion-comment-added'
     }
 
     ActivityItem activityItem2 {
         community: community
-        kind: 'pub-thread-comment-added'
+        kind: 'pub-discussion-comment-added'
     }
 
     ActivityItem activityItem3 {
         community: community
-        kind: 'pub-thread-comment-added'
+        kind: 'pub-discussion-comment-added'
     }
 
 
@@ -50,3 +51,6 @@ const models = `
         }
     }
 `;
+
+setup(beforeAll, models.resolve);
+teardown(afterAll);

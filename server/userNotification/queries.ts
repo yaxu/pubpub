@@ -1,5 +1,5 @@
 import * as types from 'types';
-import { UserNotification } from 'server/models';
+import { ActivityItem, UserNotification } from 'server/models';
 
 type GetOptions = {
 	userId: string;
@@ -25,6 +25,7 @@ export const getUserNotifications = (
 		where: { userId },
 		limit,
 		offset,
+		include: [{ model: ActivityItem, as: 'activityItem' }],
 		order: [
 			['isRead', 'DESC'],
 			['createdAt', 'DESC'],
@@ -49,7 +50,7 @@ export const deleteUserNotification = async (userNotificationId: string) => {
 };
 
 export const markAllNotificationsReadForUser = async (userId: string) => {
-	await UserNotification.update({isRead: true},{ where: { userId } });
+	await UserNotification.update({ isRead: true }, { where: { userId } });
 };
 
 export const deleteAllNotificationsForUser = async (userId: string) => {

@@ -6,7 +6,7 @@ export default (sequelize, dataTypes) => {
 			userId: { type: dataTypes.UUID, allowNull: false },
 			userSubscriptionId: { type: dataTypes.UUID, allowNull: false },
 			activityItemId: { type: dataTypes.UUID, allowNull: false },
-			isRead: { types: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+			isRead: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 		},
 		{
 			indexes: [{ fields: ['userId'], method: 'BTREE' }],

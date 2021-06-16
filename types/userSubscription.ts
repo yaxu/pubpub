@@ -9,7 +9,9 @@ export type UserSubscription = {
 	userId: string;
 	muted: boolean;
 	createdAutomatically: boolean;
-} & UserSubscriptionAssociation;
+	pubId: null | string;
+	threadId: null | string;
+};
 
 export type UniqueUserSubscriptionQuery =
 	| Pick<UserSubscription, 'id'>

@@ -17,13 +17,13 @@ type QueryOptions = {
 
 type CreateOptions = QueryOptions & {
 	createdAutomatically: boolean;
-	muted: boolean;
+	muted?: boolean;
 };
 
 export const createUserThreadSubscription = async (
 	options: CreateOptions,
 ): Promise<null | types.UserSubscription> => {
-	const { userId, threadId, createdAutomatically, muted } = options;
+	const { userId, threadId, createdAutomatically, muted = false } = options;
 	if (await canUserSeeThread(options)) {
 		const existing = await findUserSubscription({ userId, threadId });
 		if (existing) {
@@ -40,8 +40,11 @@ export const updateUserThreadSubscriptions = async (threadId: string) => {
 			where: { threadId },
 		}),
 		async (subscription: types.UserSubscription) => {
-			if ('threadId' in subscription && subscription.threadId) {
-				const canSubscribe = await canUserSeeThread(subscription);
+			if (typeof subscription.threadId === 'string') {
+				const canSubscribe = await canUserSeeThread({
+					threadId: subscription.threadId,
+					userId: subscription.userId,
+				});
 				if (!canSubscribe) {
 					await destroyUserSubscription({ id: subscription.id });
 				}

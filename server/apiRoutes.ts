@@ -32,4 +32,5 @@ require('./threadComment/api');
 require('./uploadPolicy/api');
 require('./user/api');
 require('./userSubscription/api');
+require('./userNotification/api');
 require('./workerTask/api');

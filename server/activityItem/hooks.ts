@@ -1,12 +1,8 @@
 import * as types from 'types';
 import { ActivityItem } from 'server/models';
 import { defer } from 'server/utils/deferred';
-
-import { getNotificationTask } from './notifications';
+import { createNotificationsForActivityItem } from 'server/userNotification';
 
 ActivityItem.afterCreate((item: types.ActivityItem) => {
-	const notify = getNotificationTask(item);
-	if (notify) {
-		defer(notify);
-	}
+	defer(() => createNotificationsForActivityItem(item));
 });

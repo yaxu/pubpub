@@ -1,5 +1,5 @@
-type Task = () => Promise<any>;
 type Callback = () => unknown;
+type DeferredTask = () => Promise<void>;
 
 const createDeferredState = () => {
 	let deferredCount = 0;
@@ -29,7 +29,7 @@ const createDeferredState = () => {
 		return new Promise((resolve) => onDeferredTasksComplete(resolve));
 	};
 
-	const defer = (task: Task) => {
+	const defer = (task: DeferredTask) => {
 		incrementCount();
 		task().then(decrementCount);
 	};

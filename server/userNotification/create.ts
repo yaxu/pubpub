@@ -9,7 +9,7 @@ type ActivityItemResponder<Kind extends types.ActivityItemKind> = (
 	item: types.ActivityItemOfKind<Kind>,
 ) => Promise<void>;
 
-const createNotificationsForNewThreadComment = async (
+const createNotificationsForThreadComment = async (
 	item: types.ActivityItemOfKind<'pub-discussion-comment-added' | 'pub-review-comment-added'>,
 	includePubLevelSubscribers: boolean,
 ) => {
@@ -68,14 +68,13 @@ const createNotificationsForNewThreadComment = async (
 const notificationCreatorsByKind: Partial<
 	{ [Kind in types.ActivityItemKind]: ActivityItemResponder<Kind> }
 > = {
-	'pub-discussion-comment-added': (item) => createNotificationsForNewThreadComment(item, true),
-	'pub-review-comment-added': (item) => createNotificationsForNewThreadComment(item, false),
+	'pub-discussion-comment-added': (item) => createNotificationsForThreadComment(item, true),
+	'pub-review-comment-added': (item) => createNotificationsForThreadComment(item, false),
 };
 
-export const getNotificationTask = (item: types.ActivityItem) => {
+export const createNotificationsForActivityItem = async (item: types.ActivityItem) => {
 	const creator = notificationCreatorsByKind[item.kind] as ActivityItemResponder<any>;
 	if (creator) {
-		return () => creator(item);
+		await creator(item);
 	}
-	return null;
 };

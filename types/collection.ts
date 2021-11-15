@@ -1,8 +1,11 @@
+import { SerializedMetadata } from 'utils/collections/types';
 import { CollectionLayout } from 'utils/layout/types';
 
 import { CollectionAttribution } from './attribution';
 import { Pub } from './pub';
 import { ScopeSummary } from './scope';
+
+export type CollectionKind = 'tag' | 'issue' | 'book' | 'conference';
 
 export type Collection = {
 	id: string;
@@ -13,8 +16,8 @@ export type Collection = {
 	isPublic: boolean;
 	viewHash?: string;
 	editHash?: string;
-	metadata?: { [k: string]: any };
-	kind: 'tag' | 'issue' | 'book' | 'conference';
+	metadata?: SerializedMetadata;
+	kind: CollectionKind;
 	doi?: string;
 	readNextPreviewSize: 'none' | 'minimal' | 'medium' | 'choose-best';
 	pageId?: null | string;

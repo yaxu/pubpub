@@ -3,7 +3,7 @@ import { Card, Checkbox } from '@blueprintjs/core';
 
 import { LayoutBlockCollectionHeader } from 'utils/layout';
 import { Collection } from 'types';
-import { getOrderedCollectionMetadataFields } from 'utils/collections/getMetadata';
+import { getOrderedCollectionMetadataFields } from 'utils/collections/formatMetadata';
 
 type Content = LayoutBlockCollectionHeader['content'];
 

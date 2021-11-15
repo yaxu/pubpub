@@ -18,6 +18,7 @@ import { Collection } from 'types';
 import { enumerateMetadataFields, normalizeMetadataToKind } from 'utils/collections/metadata';
 import { getSchemaForKind } from 'utils/collections/schemas';
 import { apiFetch } from 'client/utils/apiFetch';
+import { MetadataField } from 'utils/collections/types';
 
 require('./collectionMetadataEditor.scss');
 
@@ -27,11 +28,10 @@ type Props = {
 	onUpdateCollection: (update: Partial<Collection>) => unknown;
 };
 
-const validateField = ({ type, value }) => !value || !type || type.validate(value);
+const validateField = ({ type, value }: MetadataField & { value: any }) =>
+	!value || !type || type.validate(value);
 
-type State = any;
-
-class CollectionMetadataEditor extends React.Component<Props, State> {
+class CollectionMetadataEditor extends React.Component<Props, any> {
 	constructor(props: Props) {
 		super(props);
 		const initialMetadata = this.normalizeMetadata(props.collection.metadata || {});

@@ -1,26 +1,5 @@
-import { IconName } from 'components/Icon/Icon';
-
-type Community = {
-	website: string;
-	facebook: string;
-	email: string;
-	twitter: string;
-};
-
-export type Collection = {
-	id: string;
-	title: string;
-	slug: string;
-	kind: string;
-	isPublic: boolean;
-};
-
-export type Page = {
-	id: string;
-	title: string;
-	slug: string;
-	isPublic: boolean;
-};
+import { IconName } from 'components';
+import { Community, Collection, Page } from 'types';
 
 type NavBuildContext = {
 	pages: Page[];
@@ -92,7 +71,7 @@ export const populateSocialItems = (communityData: Community): SocialItem[] => {
 			value: communityData.email,
 			url: `mailto:${communityData.email}`,
 		},
-	].filter((item) => item.value);
+	].filter((item) => item.value) as SocialItem[];
 };
 
 const getNavbarChildForPageOrCollection = (item: Page | Collection): NavbarChild => {

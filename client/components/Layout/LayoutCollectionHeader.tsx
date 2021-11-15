@@ -12,7 +12,7 @@ import { formatDate } from 'utils/dates';
 import {
 	getOrderedCollectionMetadataFields,
 	formattedMetadata,
-} from 'utils/collections/getMetadata';
+} from 'utils/collections/formatMetadata';
 
 require('./layoutCollectionHeader.scss');
 
@@ -39,9 +39,9 @@ const MetadataDetails = (props: Props) => {
 			{fields.map((field) => {
 				const name = field.name;
 				const data = metadata[name];
-				const isField = hiddenMetadataFields.includes(name);
+				const isHidden = hiddenMetadataFields.includes(name);
 				const formattedData = formattedMetadata(name, data);
-				return <>{data && !isField && <div> {formattedData}</div>}</>;
+				return <>{data && !isHidden && <div> {formattedData}</div>}</>;
 			})}
 		</>
 	);

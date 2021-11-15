@@ -1,4 +1,6 @@
-export default (collection) => {
+import { Collection } from 'types';
+
+export default (collection: Collection) => {
 	if (collection.doi) {
 		return collection.doi;
 	}

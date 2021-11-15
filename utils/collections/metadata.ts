@@ -1,10 +1,16 @@
+import { CollectionKind } from 'types';
+
 import metadataSchemas, { getSchemaForKind } from './schemas';
+import { CollectionContext, SerializedMetadata, MetadataField } from './types';
 
 const isNullOrUndefined = (val) => val === null || val === undefined;
 
-export const mapMetadataFields = (kind, fn) => {
-	const schema = getSchemaForKind(kind);
-	const res = {};
+export const mapMetadataFields = <T>(
+	kind: CollectionKind,
+	fn: (field: MetadataField) => T,
+): Record<string, T> => {
+	const schema = getSchemaForKind(kind)!;
+	const res: Record<string, T> = {};
 	schema.metadata.forEach((field) => {
 		const result = fn(field);
 		if (typeof result !== 'undefined') {
@@ -16,7 +22,11 @@ export const mapMetadataFields = (kind, fn) => {
 
 export const getAllSchemaKinds = () => metadataSchemas.map((s) => s.kind);
 
-export const normalizeMetadataToKind = (metadata, kind, context) =>
+export const normalizeMetadataToKind = (
+	metadata: Record<string, any>,
+	kind: CollectionKind,
+	context: CollectionContext,
+) =>
 	mapMetadataFields(kind, (field) => {
 		const { name, derivedFrom, defaultDerivedFrom } = field;
 		if (derivedFrom) {
@@ -35,7 +45,15 @@ export const normalizeMetadataToKind = (metadata, kind, context) =>
 		return undefined;
 	});
 
-export const deserializeMetadata = ({ metadata, kind, fallback }) =>
+export const deserializeMetadata = ({
+	metadata,
+	kind,
+	fallback,
+}: {
+	metadata: SerializedMetadata;
+	kind: CollectionKind;
+	fallback?: (field: MetadataField) => any;
+}) =>
 	mapMetadataFields(kind, (field) => {
 		const { name, type } = field;
 		if (metadata[name]) {
@@ -50,8 +68,8 @@ export const deserializeMetadata = ({ metadata, kind, fallback }) =>
 		return undefined;
 	});
 
-export const enumerateMetadataFields = (metadata, kind) => {
-	const { metadata: shape } = getSchemaForKind(kind);
+export const enumerateMetadataFields = (metadata: SerializedMetadata, kind: CollectionKind) => {
+	const { metadata: shape } = getSchemaForKind(kind)!;
 	return shape.map((field) => {
 		const { name } = field;
 		return {

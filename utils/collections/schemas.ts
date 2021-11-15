@@ -1,40 +1,25 @@
+import { CollectionKind } from 'types';
 import { collectionUrl } from 'utils/canonicalUrls';
-import { IconName } from 'client/components/Icon/Icon';
 
-type ContextHint = {
-	value: string;
-	label: string;
-	isDefault?: boolean;
-	crossrefComponentType?: string;
-};
-
-type CollectionSchema = {
-	kind: string;
-	label: { singular: string; plural: string };
-	bpDisplayIcon: IconName;
-	metadata: any[];
-	contextHints: ContextHint[];
-};
+import { CollectionSchema, MetadataField, MetadataType } from './types';
 
 const dateRegex = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
 
-const types = {
-	date: {
-		name: 'date',
-		deserialize: (str) => {
-			const [year, month, day] = dateRegex.exec(str)!.slice(1);
-			const date = new Date();
-			date.setFullYear(parseInt(year, 10));
-			date.setMonth(parseInt(month, 10) - 1);
-			date.setDate(parseInt(day, 10));
-			return date;
-		},
-		validate: (str) => dateRegex.test(str),
-		labelInfo: '(in YYYY-MM-DD format)',
+const dateType: MetadataType<Date> = {
+	name: 'date',
+	deserialize: (str) => {
+		const [year, month, day] = dateRegex.exec(str)!.slice(1);
+		const date = new Date();
+		date.setFullYear(parseInt(year, 10));
+		date.setMonth(parseInt(month, 10) - 1);
+		date.setDate(parseInt(day, 10));
+		return date;
 	},
+	validate: (str) => dateRegex.test(str),
+	labelInfo: '(in YYYY-MM-DD format)',
 };
 
-const sharedFields = {
+const sharedFields: Record<string, MetadataField> = {
 	doi: {
 		name: 'doi',
 		label: 'DOI',
@@ -69,11 +54,11 @@ const schemas: CollectionSchema[] = [
 			{ name: 'electronicIssn', label: 'Electronic ISSN' },
 			{ name: 'volume', label: 'Volume' },
 			{ name: 'issue', label: 'Issue' },
-			{ name: 'printPublicationDate', label: 'Print publication date', type: types.date },
+			{ name: 'printPublicationDate', label: 'Print publication date', type: dateType },
 			{
 				name: 'publicationDate',
 				label: 'Publication date',
-				type: types.date,
+				type: dateType,
 			},
 		],
 	},
@@ -108,7 +93,7 @@ const schemas: CollectionSchema[] = [
 			sharedFields.url,
 			{ name: 'isbn', label: 'ISBN' },
 			{ name: 'copyrightYear', label: 'Copyright year', pattern: '^[0-9]*$' },
-			{ name: 'publicationDate', label: 'Publication date', type: types.date },
+			{ name: 'publicationDate', label: 'Publication date', type: dateType },
 			{ name: 'edition', label: 'Edition no.', pattern: '^[0-9]*$' },
 		],
 	},
@@ -123,14 +108,16 @@ const schemas: CollectionSchema[] = [
 			{ name: 'theme', label: 'Theme' },
 			{ name: 'acronym', label: 'Acronym' },
 			{ name: 'location', label: 'Location' },
-			{ name: 'date', label: 'Date', type: types.date },
+			{ name: 'date', label: 'Date', type: dateType },
 		],
 	},
 ];
 
+export type MetadataSchemaField = typeof schemas[number]['metadata'][number];
+
 export default schemas;
 
-export const getSchemaForKind = (kind) => {
+export const getSchemaForKind = (kind: CollectionKind) => {
 	const result = schemas.find((s) => s.kind === kind);
 	if (result) {
 		return result;
@@ -138,7 +125,7 @@ export const getSchemaForKind = (kind) => {
 	return null;
 };
 
-export const getIconForCollectionKind = (kind) => {
+export const getIconForCollectionKind = (kind: CollectionKind) => {
 	const schema = getSchemaForKind(kind);
 	if (schema) {
 		return schema.bpDisplayIcon;

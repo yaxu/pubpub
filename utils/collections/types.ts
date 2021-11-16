@@ -16,29 +16,32 @@ export type ContextHint = {
 	crossrefComponentType?: string;
 };
 
+export type MetadataFormatter<Type> = (options: { label: string; value: Type }) => string;
+
 export type MetadataDeriver = (context: CollectionContext) => Maybe<SerializedMetadataValue>;
 
-export type MetadataType<T> = {
+export type MetadataType<Type, SerializedType extends SerializedMetadataValue> = {
 	name: string;
-	deserialize: (v: SerializedMetadataValue) => T;
-	validate: (s: string) => boolean;
+	deserialize: (v: SerializedType) => Type;
+	validate: (s: SerializedType) => boolean;
 	labelInfo: string;
 };
 
-export type MetadataField = {
+export type MetadataField<Type, SerializedType extends SerializedMetadataValue> = {
 	name: string;
 	label: string;
+	formatter: MetadataFormatter<Type>;
 	pattern?: string;
 	derivedFrom?: MetadataDeriver;
 	defaultDerivedFrom?: MetadataDeriver;
 	derivedLabelInfo?: string;
-	type?: MetadataType<any>;
+	type?: MetadataType<Type, SerializedType>;
 };
 
 export type CollectionSchema = {
 	kind: string;
 	label: { singular: string; plural: string };
 	bpDisplayIcon: IconName;
-	metadata: MetadataField[];
+	metadata: MetadataField<any, any>[];
 	contextHints: ContextHint[];
 };

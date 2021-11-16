@@ -7,7 +7,7 @@ const isNullOrUndefined = (val) => val === null || val === undefined;
 
 export const mapMetadataFields = <T>(
 	kind: CollectionKind,
-	fn: (field: MetadataField) => T,
+	fn: (field: MetadataField<any, any>) => T,
 ): Record<string, T> => {
 	const schema = getSchemaForKind(kind)!;
 	const res: Record<string, T> = {};
@@ -52,7 +52,7 @@ export const deserializeMetadata = ({
 }: {
 	metadata: SerializedMetadata;
 	kind: CollectionKind;
-	fallback?: (field: MetadataField) => any;
+	fallback?: (field: MetadataField<any, any>) => any;
 }) =>
 	mapMetadataFields(kind, (field) => {
 		const { name, type } = field;

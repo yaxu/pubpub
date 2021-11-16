@@ -11,7 +11,7 @@ import { capitalize } from 'utils/strings';
 import { formatDate } from 'utils/dates';
 import {
 	getOrderedCollectionMetadataFields,
-	formattedMetadata,
+	formatMetadataValue,
 } from 'utils/collections/formatMetadata';
 
 require('./layoutCollectionHeader.scss');
@@ -40,8 +40,8 @@ const MetadataDetails = (props: Props) => {
 				const name = field.name;
 				const data = metadata[name];
 				const isHidden = hiddenMetadataFields.includes(name);
-				const formattedData = formattedMetadata(name, data);
-				return <>{data && !isHidden && <div> {formattedData}</div>}</>;
+				const formattedData = data && formatMetadataValue(field, data);
+				return <>{formattedData && !isHidden && <div> {formattedData}</div>}</>;
 			})}
 		</>
 	);

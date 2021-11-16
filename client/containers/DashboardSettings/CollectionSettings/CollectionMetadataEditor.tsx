@@ -28,7 +28,7 @@ type Props = {
 	onUpdateCollection: (update: Partial<Collection>) => unknown;
 };
 
-const validateField = ({ type, value }: MetadataField & { value: any }) =>
+const validateField = ({ type, value }: MetadataField<any, any> & { value: any }) =>
 	!value || !type || type.validate(value);
 
 class CollectionMetadataEditor extends React.Component<Props, any> {

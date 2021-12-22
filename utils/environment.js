@@ -19,6 +19,8 @@ export const isProd = () => {
 	return environment === PRODUCTION;
 };
 
+export const isQubQub = () => true;
+
 export const isDuqDuq = () => {
 	return environment === DUQDUQ;
 };

@@ -3,7 +3,7 @@
  */
 import queryString from 'query-string';
 
-import { isDuqDuq } from 'utils/environment';
+import { isDuqDuq, isQubQub } from 'utils/environment';
 
 export const profileUrl = (userSlug) => `/user/${userSlug}`;
 
@@ -28,7 +28,7 @@ export const pubShortUrl = (pub) => {
 };
 
 export const pubUrl = (community, pub, options = {}) => {
-	const baseCommunityUrl = community === null ? '' : communityUrl(community);
+	const baseCommunityUrl = community === null || isQubQub() ? '' : communityUrl(community);
 	let baseUrl = `${baseCommunityUrl}/pub/${pub.slug}`;
 	const {
 		isDraft,

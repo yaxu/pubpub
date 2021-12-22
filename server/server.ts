@@ -20,6 +20,7 @@ setAppCommit(process.env.HEROKU_SLUG_COMMIT);
 import 'server/utils/serverModuleOverwrite';
 import { HTTPStatusError, errorMiddleware } from 'server/utils/errors';
 
+import { cursedPdfMiddleware } from './utils/pdf';
 import { sequelize, User } from './models';
 import './hooks';
 
@@ -102,6 +103,8 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use(cursedPdfMiddleware);
+
 /* ------------------- */
 /* Configure app login */
 /* ------------------- */
@@ -156,7 +159,6 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(Sentry.Handlers.errorHandler());
 }
 app.use(errorMiddleware);
-
 /* ------------ */
 /* Start Server */
 /* ------------ */

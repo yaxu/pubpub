@@ -5,9 +5,9 @@ import { Collection, InitialData } from 'types';
 
 export const renderToNodeStream = (res, reactElement) => {
 	res.setHeader('content-type', 'text/html');
-	res.write('<!DOCTYPE html>');
 	ReactBeautifulDnD.resetServerContext();
-	return ReactDOMServer.renderToNodeStream(reactElement).pipe(res);
+	const content = ReactDOMServer.renderToStaticMarkup(reactElement);
+	return res.write(content);
 };
 
 type MetaProps = {

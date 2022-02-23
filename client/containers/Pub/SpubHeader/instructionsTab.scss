@@ -1,15 +1,16 @@
 @import 'styles/variables.scss';
 
-.instruction-tab-component {
-	.submission-workflow-title {
-		margin: 0;
-
-		font-family: $header-font;
-		font-size: 40px;
-		font-style: normal;
+.instructions-tab-component {
+	h1 {
+		margin: 5px 0;
 		font-weight: 400;
+		font-size: 40px;
 		line-height: 56px;
+		color: var(--community-accent-dark);
+	}
 
-		box-decoration-break: clone;
+	.instructions {
+		max-height: 400px;
+		overflow: scroll;
 	}
 }

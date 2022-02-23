@@ -1,21 +1,14 @@
-.submission-tab-tabs {
-	display: flex;
-	flex-direction: column;
-	row-gap: 48px;
+.spub-settings-component {
+    .pub-header-popover {
+        z-index: 21;
+    }
 
-	.bp3-tab-indicator-wrapper {
-		min-height: 30px;
-	}
-	.pub-header-popover {
-		z-index: 21;
-	}
-
-	.submission-tab-prompt {
-		display: flex;
-		flex-direction: row;
-		column-gap: 340px;
-	}
-	.submission-tab-prompt-text {
-		width: 300px;
-	}
+    .submission-tab-prompt {
+        display: flex;
+        flex-direction: row;
+        column-gap: 340px;
+    }
+    .submission-tab-prompt-text {
+        width: 300px;
+    }
 }

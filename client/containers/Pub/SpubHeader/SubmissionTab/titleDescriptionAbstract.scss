@@ -1,0 +1,25 @@
+.title-description-abstract-component {
+    .field {
+        > h2 {
+            font-size: 14px;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+            color: var(--community-accent-dark);
+        }
+        margin-bottom: 10px;
+    }
+
+    .minimal-editor-component > .editor-wrapper,
+    .submission-input input {
+        min-height: unset;
+        border: none;
+        border-radius: 0;
+        border-bottom: 1px solid #bdbdbd;
+        box-shadow: none;
+        background-color: transparent;
+        &:focus,
+        &:focus-within {
+            border-bottom-color: var(--community-accent-dark);
+        }
+    }
+}

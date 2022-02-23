@@ -1,0 +1,7 @@
+.tab-column-component {
+    width: 100%;
+    > .row > .pub.col-12 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}

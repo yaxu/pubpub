@@ -15,6 +15,7 @@ type Props = {
 
 const SpubSettings = (props: Props) => {
 	const { communityData } = usePageContext();
+
 	const renderHeaderAndBackgroundSetting = () => {
 		return (
 			<div className="submission-tab-prompt">

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Tab, Tabs, TabId, Icon, IconName } from '@blueprintjs/core';
 
 import { DocJson, DefinitelyHas, PubHistoryState, PubPageData } from 'types';
-import { assert } from 'utils/assert';
 import { apiFetch } from 'client/utils/apiFetch';
 import { getEmptyDoc } from 'components/Editor';
+import { GridWrapper } from 'components';
 
+import TopTabs, { SpubHeaderTab } from './TopTabs';
 import InstructionsTab from './InstructionsTab';
 import SubmissionTab from './SubmissionTab';
 import PreviewTab from './PreviewTab';
@@ -21,15 +21,13 @@ type Props = {
 	pubData: DefinitelyHas<PubPageData, 'submission'>;
 };
 
-export const renderTabTitle = (icon: IconName, title: string) => (
-	<>
-		<Icon icon={icon} /> {title}
-	</>
-);
-
 const SpubHeader = (props: Props) => {
-	const [selectedTab, setSelectedTab] = useState<TabId>('instructions');
-	const [abstract, setAbstract] = useState(props.pubData.submission.abstract || getEmptyDoc());
+	const { pubData } = props;
+	const [selectedTab, setSelectedTab] = useState<SpubHeaderTab>('instructions');
+	const [abstract, setAbstract] = useState(
+		() => props.pubData.submission.abstract || getEmptyDoc(),
+	);
+
 	const updateAbstract = async (newAbstract: DocJson) => {
 		return apiFetch('/api/submissions', {
 			method: 'PUT',
@@ -51,58 +49,26 @@ const SpubHeader = (props: Props) => {
 			}),
 		}).catch(() => props.updateLocalData('pub', props.pubData));
 	};
-	assert(props.pubData.submission.submissionWorkflow !== undefined);
+
 	const updateHistoryData = (newHistoryData: Partial<PubHistoryState>) => {
 		return props.updateLocalData('history', newHistoryData);
 	};
-	const instructionTabTitle = renderTabTitle('align-left', 'Instructions');
-	const submissionTabTitle = renderTabTitle('manually-entered-data', 'Submission');
-	const previewTabTitle = renderTabTitle('eye-open', 'Preview & Submit');
-	const maybeActiveClass = (tabId: string) => `${tabId === selectedTab ? 'active' : 'inactive'}`;
-	return (
-		<Tabs
-			id="spubHeader"
-			onChange={(t) => setSelectedTab(t)}
-			selectedTabId={selectedTab}
-			className="spub-header-component tabs bp3-large"
-		>
-			<Tab
-				id="instructions"
-				title={instructionTabTitle}
-				className={`tab-panel ${maybeActiveClass('instructions')}`}
-				panel={
-					<InstructionsTab
-						submissionWorkflow={props.pubData.submission.submissionWorkflow}
-					/>
-				}
-			/>
 
-			<Tab
-				id="submission"
-				title={submissionTabTitle}
-				className={`tab-panel ${maybeActiveClass('submission')}`}
-				panel={
-					<SubmissionTab
-						abstract={abstract}
-						onUpdatePub={updateAndSavePubData}
-						onUpdateAbstract={updateAbstract}
-						pub={props.pubData}
-					/>
-				}
-			/>
-			<Tab
-				id="preview"
-				title={previewTabTitle}
-				className={`${maybeActiveClass('preview')}`}
-				panel={
-					<PreviewTab
-						updateHistoryData={updateHistoryData}
-						historyData={props.historyData}
-						pubData={props.pubData}
-					/>
-				}
-			/>
-		</Tabs>
+	return (
+		<div className="spub-header-component">
+			<TopTabs selectedTab={selectedTab} onSelectTab={setSelectedTab} />
+			{selectedTab === 'instructions' && (
+				<InstructionsTab submissionWorkflow={pubData.submission.submissionWorkflow} />
+			)}
+			{selectedTab === 'submission' && (
+				<SubmissionTab
+					pub={pubData}
+					abstract={abstract}
+					onUpdatePub={updateAndSavePubData}
+					onUpdateAbstract={updateAbstract}
+				/>
+			)}
+		</div>
 	);
 };
 

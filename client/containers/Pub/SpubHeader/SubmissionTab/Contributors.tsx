@@ -14,18 +14,12 @@ const Contributors = (props: Props) => {
 	const { communityData } = usePageContext();
 
 	return (
-		<div>
-			<p>
-				Add the names, roles & affiliations of other people who have a part to play in the
-				creation of this submission’s content.
-			</p>
-			<PubAttributionEditor
-				pubData={pubData}
-				communityData={communityData}
-				updatePubData={onUpdatePub}
-				canEdit
-			/>
-		</div>
+		<PubAttributionEditor
+			pubData={pubData}
+			communityData={communityData}
+			updatePubData={onUpdatePub}
+			canEdit
+		/>
 	);
 };
 

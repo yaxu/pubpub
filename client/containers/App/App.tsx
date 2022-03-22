@@ -35,7 +35,7 @@ const App = (props: Props) => {
 	const { communityData, loginData, locationData } = pageContextProps;
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
-	const { ActiveComponent, hideNav, hideFooter, isDashboard } = pathObject;
+	const { ActiveComponent, hideNav, hideFooter, isDashboard, fullWidth, flex } = pathObject;
 
 	// Our debugging lifeline
 	if (typeof window !== 'undefined') {
@@ -49,7 +49,14 @@ const App = (props: Props) => {
 		<PageContext.Provider value={pageContextProps}>
 			<RKProvider>
 				{renderCssVariablesStyle(communityData)}
-				<div id="app" className={classNames({ dashboard: isDashboard })}>
+				<div
+					id="app"
+					className={classNames({
+						dashboard: isDashboard,
+						'full-width': fullWidth,
+						flex,
+					})}
+				>
 					<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 					{locationData.isDuqDuq && (
 						<div className="duqduq-warning">Development Environment</div>

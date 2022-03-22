@@ -3,14 +3,12 @@ export default (sequelize, dataTypes) => {
 		'Submission',
 		{
 			id: sequelize.idType,
-			status: {
-				type: dataTypes.TEXT,
-				allowNull: false,
-			},
+			status: { type: dataTypes.TEXT, allowNull: false },
 			submittedAt: { type: dataTypes.DATE },
 			submissionWorkflowId: { type: dataTypes.UUID, allowNull: false },
 			pubId: { type: dataTypes.UUID, allowNull: false },
 			abstract: { type: dataTypes.JSONB, allowNull: true },
+			rank: { type: dataTypes.TEXT, allowNull: false },
 		},
 		{
 			classMethods: {

@@ -21,3 +21,7 @@ export type DeepPartial<T> = {
 };
 
 export type OmitSequelizeProvidedFields<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R
+	? (...args: P) => R
+	: never;

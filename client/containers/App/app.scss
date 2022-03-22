@@ -24,7 +24,6 @@
         $side-menu-width: 260px;
         $breadcrumbs-height: 85px;
         $header-height: 56px;
-        display: block;
         .header-component:not(.preview) {
             position: fixed;
             width: 100%;
@@ -55,16 +54,37 @@
             top: $header-height;
             .breadcrumbs-content {
                 width: 100%;
-                max-width: calc(1200px + 100px);
+
                 padding: 16px 50px;
             }
         }
         #main-content {
             width: calc(100vw - #{$side-menu-width});
-            max-width: calc(1200px + 100px);
+
             margin-left: $side-menu-width;
             padding: 16px 50px;
             padding-top: calc(25px + #{$header-height} + #{$breadcrumbs-height});
+        }
+        &:not(.full-width) {
+            .breadcrumbs-content {
+                max-width: calc(1200px + 100px);
+            }
+            #main-content {
+                max-width: calc(1200px + 100px);
+            }
+        }
+
+        &.flex {
+            #main-content {
+                display: flex;
+                flex-direction: column;
+                padding-bottom: 0;
+            }
+        }
+
+        &:not(.flex) {
+            // NOTE(ian): I think flex should be the default, but I'm not sure what relies on block
+            display: block;
         }
     }
 }

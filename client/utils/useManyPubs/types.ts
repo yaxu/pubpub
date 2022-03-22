@@ -6,12 +6,6 @@ export type KeyedPubsQuery = Pick<
 	'term' | 'scopedCollectionId' | 'ordering' | 'isReleased' | 'submissionStatuses'
 >;
 
-export type ManyPubsApiResult = {
-	pubIds: string[];
-	pubsById: Record<string, Pub>;
-	loadedAllPubs: boolean;
-};
-
 export type OrderingValue = string | number;
 export type OrderByFn = (pub: Pub, scopedCollectionId?: string) => OrderingValue;
 

@@ -1,9 +1,12 @@
+import { Op } from 'sequelize';
+
 import * as types from 'types';
 import { Collection, Submission, SubmissionWorkflow } from 'server/models';
 import { createPub } from 'server/pub/queries';
 import { defer } from 'server/utils/deferred';
 import { getPub } from 'server/utils/queryHelpers';
 import { getEmptyDoc } from 'client/components/Editor';
+import { findRankInRankedList } from 'utils/rank';
 
 import { sendSubmissionEmail } from './emails';
 import { appendAbstractToPubDraft } from './abstract';
@@ -68,7 +71,7 @@ export const createSubmission = async ({
 };
 
 export const updateSubmission = async (options: UpdateOptions, actorId: string) => {
-	const { id, status, customEmailText, skipEmail, abstract } = options;
+	const { id, status, customEmailText, skipEmail, abstract, rank } = options;
 	const submission = (await getSubmissionById(id))!;
 	const previousStatus = submission.status;
 	const isBeingSubmitted = previousStatus === 'incomplete' && status === 'pending';
@@ -77,6 +80,7 @@ export const updateSubmission = async (options: UpdateOptions, actorId: string) 
 		{
 			status,
 			abstract,
+			rank,
 			...(isBeingSubmitted && { submittedAt: new Date().toISOString() }),
 		},
 		{
@@ -91,6 +95,21 @@ export const updateSubmission = async (options: UpdateOptions, actorId: string) 
 	}
 
 	defer(async () => {
+		if (isBeingSubmitted) {
+			const { submissionWorkflowId } = submission;
+			const pendingSubmissions: types.Submission[] = await Submission.findAll({
+				where: {
+					status: 'pending',
+					submissionWorkflowId,
+					id: { [Op.ne]: id },
+				},
+			});
+			const rankAtEndOfPending = findRankInRankedList(
+				pendingSubmissions,
+				pendingSubmissions.length,
+			);
+			await Submission.update({ rank: rankAtEndOfPending }, { where: { id } });
+		}
 		if (!skipEmail) {
 			await sendSubmissionEmail({
 				previousStatus,

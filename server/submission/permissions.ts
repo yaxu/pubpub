@@ -71,9 +71,10 @@ type CanUpdateOptions = {
 	id: string;
 	userId: string;
 	status?: types.SubmissionStatus;
+	rank?: string;
 };
 
-export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptions) => {
+export const canUpdateSubmission = async ({ userId, status, id, rank }: CanUpdateOptions) => {
 	const {
 		status: oldStatus,
 		pubId,
@@ -100,6 +101,10 @@ export const canUpdateSubmission = async ({ userId, status, id }: CanUpdateOptio
 		getScope({ loginId: userId, pubId }),
 		getScope({ loginId: userId, collectionId: collection.id }),
 	]);
+
+	if (rank) {
+		return canManageCollection;
+	}
 
 	if (status && oldStatus !== status) {
 		const canChangeStatusAsSubmitter =

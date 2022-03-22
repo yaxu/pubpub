@@ -1,4 +1,4 @@
-import { DocJson, Pub, SubmissionWorkflow } from 'types';
+import { DocJson, Pub, SubmissionWorkflow, SubmissionWorkflowCustomStatus } from 'types';
 
 export const managerStatuses = ['pending', 'accepted', 'declined'] as const;
 export const submitterStatuses = ['pending'] as const;
@@ -19,6 +19,9 @@ export type Submission = {
 	abstract: null | DocJson;
 	submissionWorkflowId: string;
 	submissionWorkflow?: SubmissionWorkflow;
+	customStatusId: null | string;
+	customStatus?: SubmissionWorkflowCustomStatus;
+	rank: string;
 };
 
 export type SubmissionEmailKind = 'received' | 'accepted' | 'declined';

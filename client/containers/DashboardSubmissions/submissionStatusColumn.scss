@@ -1,0 +1,24 @@
+@import '../DashboardSubmissionWorkflow/shared.scss';
+
+.submission-status-column-component {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding: 10px;
+    background: $light-background;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    .label {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .pubs {
+        flex-grow: 1;
+        > :not(:last-child) {
+            margin-bottom: 10px;
+        }
+    }
+}

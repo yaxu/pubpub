@@ -6,6 +6,7 @@ import { Icon } from 'components';
 import { getEmptyDoc } from 'client/components/Editor/utils/doc';
 
 import WorkflowTextEditor from '../DashboardSubmissionWorkflow/WorkflowTextEditor';
+import { SendEmailAboutSubmissionOptions } from './types';
 
 require('./verdictDialog.scss');
 
@@ -18,12 +19,12 @@ type Props = {
 	initialEmailText?: DocJson;
 	onClose: () => unknown;
 	onJudgePub: (status: SubmissionStatus) => void;
-	onSubmit: (customEmailText?: DocJson, shouldSendEmail?: boolean) => any;
+	onSubmit: (emailOptions: SendEmailAboutSubmissionOptions) => any;
 };
 
 type PreStatusChangeBodyProps = {
 	shouldOfferEmail: boolean;
-	handleSubmission: (customEmailText: DocJson, shouldSendEmail: boolean) => void;
+	handleSubmission: (emailOptions: SendEmailAboutSubmissionOptions) => void;
 	isHandlingSubmission: boolean;
 	actionTitle: string;
 	onClose: () => unknown;
@@ -70,7 +71,9 @@ const PreStatusChangeBody = (props: PreStatusChangeBodyProps) => {
 						Cancel
 					</Button>
 					<Button
-						onClick={() => props.handleSubmission(customEmailText, shouldSendEmail)}
+						onClick={() =>
+							props.handleSubmission({ customEmailText, skipEmail: !shouldSendEmail })
+						}
 						loading={props.isHandlingSubmission}
 						intent="primary"
 					>
@@ -109,10 +112,10 @@ const VerdictDialog = (props: Props) => {
 	const [isHandlingSubmission, setIsHandlingSubmission] = useState(false);
 	const [updatedSubmission, setUpdatedSubmission] = useState(null);
 	const [submissionError, setSubmissionError] = useState(null);
-	const onSubmit = (customEmailText: DocJson, shouldSendEmail: boolean) => {
+	const onSubmit = (emailOptions: SendEmailAboutSubmissionOptions) => {
 		setIsHandlingSubmission(true);
 		props
-			.onSubmit(customEmailText, shouldSendEmail)
+			.onSubmit(emailOptions)
 			.then((submissionRes) => {
 				setUpdatedSubmission(submissionRes);
 				setIsHandlingSubmission(false);

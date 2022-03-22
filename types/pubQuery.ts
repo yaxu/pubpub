@@ -1,4 +1,4 @@
-import { SubmissionStatus } from 'types';
+import { SubmissionStatus, DefinitelyHas, Pub } from 'types';
 
 export type PubsQueryOrderingField =
 	| 'collectionRank'
@@ -45,4 +45,12 @@ export type PubGetOptions = {
 	getReviews?: boolean;
 	getEdgesOptions?: PubEdgeIncludesOptions;
 	getSubmissions?: boolean;
+};
+
+export type ManyPubsQuery = DefinitelyHas<PubsQuery, 'ordering' | 'limit'>;
+
+export type ManyPubsApiResult = {
+	pubIds: string[];
+	pubsById: Record<string, Pub>;
+	loadedAllPubs: boolean;
 };

@@ -4,7 +4,7 @@ import { DashboardFrame } from 'components';
 import { usePageContext } from 'utils/hooks';
 import { SubmissionWorkflow } from 'types';
 
-import SubmissionItems from './SubmissionItems';
+import SubmissionsManager from './SubmissionsManager';
 import AcceptSubmissionsToggle from './AcceptSubmissionsToggle';
 import SubmissionWorkflowButton from './SubmissionWorkflowButton';
 import { PubWithSubmission } from './types';
@@ -47,14 +47,7 @@ const DashboardSubmissions = (props: Props) => {
 				</>
 			}
 		>
-			<SubmissionItems
-				initialPubs={initialPubs}
-				collection={activeCollection}
-				initiallyLoadedAllPubs={initiallyLoadedAllPubs}
-				acceptSubmissionsToggle={
-					submissionWorkflow.enabled ? null : acceptSubmissionsToggle
-				}
-			/>
+			<SubmissionsManager initialPubs={initialPubs} submissionWorkflow={submissionWorkflow} />
 		</DashboardFrame>
 	);
 };

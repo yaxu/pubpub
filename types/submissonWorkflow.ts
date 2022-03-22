@@ -14,4 +14,11 @@ export type SubmissionWorkflow = {
 	targetEmailAddress: string;
 	collectionId: string;
 	collection?: Collection;
+	customStatuses: SubmissionWorkflowCustomStatus[];
+};
+
+export type SubmissionWorkflowCustomStatus = {
+	id: string;
+	label: string;
+	rank: string;
 };

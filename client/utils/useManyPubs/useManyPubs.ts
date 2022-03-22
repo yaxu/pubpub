@@ -4,7 +4,7 @@ import { useUpdate, useUpdateEffect } from 'react-use';
 import { Pub } from 'types';
 import { usePageContext } from 'utils/hooks';
 import { indexByProperty } from 'utils/arrays';
-import { apiFetch } from 'client/utils/apiFetch';
+import { fetchManyPubs } from 'client/utils/fetchManyPubs';
 import { useLazyRef } from 'client/utils/useLazyRef';
 
 import {
@@ -16,7 +16,6 @@ import {
 import {
 	KeyedPubsQuery,
 	ManyPubsQuery,
-	ManyPubsApiResult,
 	ManyPubsOptions,
 	QueryState,
 	ManyPubsReturnValues,
@@ -112,13 +111,15 @@ export const useManyPubs = <P extends Pub = Pub>(
 		const nextQueryState = getStartLoadingPubsState(queryState, batchSize);
 		setCurrentQueryState(nextQueryState);
 
-		const result: ManyPubsApiResult = await apiFetch.post('/api/pubs/many', {
+		const {
+			loadedAllPubs,
+			pubsById: newPubsById,
+			pubIds,
+		} = await fetchManyPubs({
 			query,
 			pubOptions,
 			alreadyFetchedPubIds: Object.keys(pubsById.current),
 		});
-
-		const { loadedAllPubs, pubsById: newPubsById, pubIds } = result;
 		const nextPubsById = { ...pubsById.current, ...newPubsById };
 		const resolvedPubs = pubIds.map((id) => nextPubsById[id]);
 		const resolvedPubsById = indexByProperty(resolvedPubs, 'id');

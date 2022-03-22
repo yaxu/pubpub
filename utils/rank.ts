@@ -33,8 +33,14 @@ const getBounds = (ranks: string[], index: number) => {
 	return ranks.slice(index - 1, index + 1);
 };
 
-export const sortByRank = <T>(array: T[], rankKey = 'rank'): T[] =>
-	array.concat().sort((a, b) => (a[rankKey] || '').localeCompare(b[rankKey] || ''));
+type RankKey<T> = string | ((t: T) => string);
+
+export const sortByRank = <T>(array: T[], rankKey: RankKey<T> = 'rank'): T[] => {
+	if (typeof rankKey === 'string') {
+		return array.concat().sort((a, b) => (a[rankKey] || '').localeCompare(b[rankKey] || ''));
+	}
+	return array.concat().sort((a, b) => rankKey(a).localeCompare(rankKey(b)));
+};
 
 export const findRank = (ranks: string[], index: number, count = 1) => {
 	const [above, below] = getBounds(ranks, index);
@@ -46,8 +52,14 @@ export const generateRanks = (count: number) => {
 	return mudder.base36.mudder(BOTTOM, TOP, count);
 };
 
-export const findRankInRankedList = (rankedList: any[], index: number, rankKey = 'rank') =>
+export const findRankInRankedList = <T>(
+	rankedList: T[],
+	index: number,
+	rankKey: RankKey<T> = 'rank',
+): string =>
 	findRank(
-		sortByRank(rankedList, rankKey).map((s) => s[rankKey]),
+		sortByRank(rankedList, rankKey).map((s) =>
+			typeof rankKey === 'string' ? s[rankKey] : rankKey(s),
+		),
 		index,
 	);

@@ -8,6 +8,7 @@ import { pubUrl } from 'utils/canonicalUrls';
 import { usePageContext } from 'utils/hooks';
 
 import VerdictDialog from './VerdictDialog';
+import { SendEmailAboutSubmissionOptions } from './types';
 
 require('./arbitrationMenu.scss');
 
@@ -73,14 +74,14 @@ const ArbitrationMenu = (props: Props) => {
 											`${pastTense}Text`
 										]
 									}
-									onSubmit={(
-										customEmailText?: DocJson,
-										shouldSendEmail?: boolean,
-									) =>
+									onSubmit={({
+										customEmailText,
+										skipEmail,
+									}: SendEmailAboutSubmissionOptions) =>
 										apiFetch.put('/api/submissions', {
 											id: props.pub.submission.id,
 											status: pastTense,
-											skipEmail: !shouldSendEmail,
+											skipEmail,
 											customEmailText:
 												customEmailText ||
 												props.pub.submission.submissionWorkflow?.[

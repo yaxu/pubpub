@@ -106,6 +106,8 @@ export default (viewData, locationData, chunkName) => {
 		DashboardSubmissions: {
 			ActiveComponent: DashboardSubmissions,
 			isDashboard: true,
+			fullWidth: true,
+			flex: true,
 		},
 		DashboardSubmissionWorkflow: {
 			ActiveComponent: DashboardSubmissionWorkflow,

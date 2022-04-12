@@ -7,7 +7,7 @@ import { fromProsemirror, emitPandocJson } from '@pubpub/prosemirror-pandoc';
 import dateFormat from 'dateformat';
 
 import { DocJson } from 'types';
-import { editorSchema, getReactedDocFromJson, Note } from 'components/Editor';
+import { editorSchema, getNotes, getReactedDocFromJson, jsonToNode, Note } from 'components/Editor';
 import { getPathToCslFileForCitationStyleKind } from 'server/utils/citations';
 import { PandocTarget } from 'utils/export/formats';
 
@@ -134,10 +134,8 @@ const createYamlMetadataFile = async (pubMetadata: PubMetadata, pandocTarget: Pa
 
 const createResources = (pandocNotes: PandocNotes) => {
 	return {
-		note: (note: Pick<Note, 'unstructuredValue' | 'structuredValue'>) => {
-			const { structuredValue, unstructuredValue } = note;
-			const hash = getHashForNote({ structuredValue, unstructuredValue });
-			return pandocNotes[hash];
+		note: (id: string) => {
+			return pandocNotes[id];
 		},
 	};
 };
@@ -179,10 +177,22 @@ type ExportWithPandocOptions = {
 	notesData: NotesData;
 };
 
+const debugPubDocs = (docs: DocJson[]) => {
+	docs.forEach((doc) => {
+		const node = jsonToNode(doc);
+		const notesFromDoc = getNotes(node);
+		const theNote = notesFromDoc.citations.find((cite) =>
+			cite.unstructuredValue.includes('Complete MIDI'),
+		);
+		console.log({ theNote });
+	});
+};
+
 export const exportWithPandoc = async (options: ExportWithPandocOptions) => {
 	const { pandocTarget, pubMetadata, tmpFile, notesData } = options;
 	const pandocNotes = getPandocNotesByHash(notesData);
 	const pubDoc = reactPubDoc(options);
+	debugPubDocs([pubDoc, options.pubDoc]);
 	const metadataFile = await createYamlMetadataFile(pubMetadata, pandocTarget);
 	const bibliographyFile = await createCslJsonBibliographyFile(pandocNotes);
 	const pandocFlags = getPandocFlags(options);

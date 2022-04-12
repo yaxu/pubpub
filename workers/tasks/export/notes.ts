@@ -99,7 +99,8 @@ export const getPandocNotesByHash = (notesData: NotesData): PandocNotes => {
 	const notes = [...citations, ...footnotes];
 	const index: PandocNotes = {};
 	notes.forEach((note) => {
-		const hash = getHashForNote(note);
+		const hash = note.id;
+		console.log('ahhhhh!', { hash });
 		const { hasStructuredContent, cslJson } = getCslJsonForNote(
 			note,
 			hash,

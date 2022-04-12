@@ -291,7 +291,8 @@ rules.transform('Cite', 'citation', {
 		const { value: structuredValue, unstructuredValue, html } = node.attrs;
 		const inputHtml = (html || unstructuredValue) as string;
 		const citationNumber = 1 + count('citation');
-		const { id, hash } = resources.note({ structuredValue, unstructuredValue });
+		const note = resources.note(node.attrs.id);
+		const { id, hash } = note;
 		return {
 			type: 'Cite',
 			content: htmlStringToPandocInline(inputHtml),
@@ -322,7 +323,7 @@ rules.transform('Note', 'footnote', {
 	},
 	fromProsemirrorNode: (node, { resources }) => {
 		const { value: unstructuredValue, structuredValue } = node.attrs;
-		const { html } = resources.note({ structuredValue, unstructuredValue });
+		const { html } = resources.note(node.attrs.id);
 		const unstructuredBlocks = unstructuredValue && htmlStringToPandocBlocks(unstructuredValue);
 		const structuredBlocks = html && htmlStringToPandocBlocks(html);
 		const content = [structuredBlocks, unstructuredBlocks].reduce(

@@ -21,6 +21,7 @@ module.exports = {
 			server: resolve(__dirname, '../../server'),
 			utils: resolve(__dirname, '../../utils'),
 			types: resolve(__dirname, '../../types'),
+			facets: resolve(__dirname, '../../facets'),
 		},
 	},
 	devtool: '#source-map',

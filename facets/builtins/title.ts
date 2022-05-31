@@ -1,4 +1,10 @@
-import { facet } from './lib';
+import { DocJson } from 'types';
+
+import { facet } from '../lib';
+
+type UpdateMutationOptions = {
+	doc: DocJson;
+};
 
 export const title = facet({
 	scopeTypes: ['pub'],

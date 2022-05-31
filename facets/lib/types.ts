@@ -1,13 +1,24 @@
-import { z } from 'zod';
+import { TypeOf, ZodSchema } from 'zod';
 
-import { primitives } from './primitives';
+export type FacetPropDefinition<Schema extends ZodSchema, Type = TypeOf<Schema>> = {
+	schema: Schema;
+	default?: Type;
+	cascade?: (upper: Type, lower: Type) => Type;
+} & ({ nullable: true; backstop: null } | { nullable: false; backstop: Type });
 
-type ScopeType = 'community' | 'collection' | 'pub';
+export type FacetPropsDefinition = Record<string, FacetPropDefinition<any>>;
 
-type FacetUriDefinition = { intrinsic: true } | { uri: string };
-
-export type FacetDefinition = {
-	scopeTypes?: ScopeType[];
+export type FacetConstructorOptions = {
 	name: string;
-	props: (prims: typeof primitives) => Record<string, z.ZodSchema>;
-} & FacetUriDefinition;
+	props: FacetPropsDefinition;
+};
+
+export type FacetDefinition = FacetConstructorOptions;
+
+export type FacetPropsDefinitionTypeOf<Props extends FacetPropsDefinition> = {
+	[K in keyof Props]: Props[K]['nullable'] extends true
+		? null | TypeOf<Props[K]['schema']>
+		: TypeOf<Props[K]['schema']>;
+};
+
+export type FacetTypeOf<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<Def['props']>;

@@ -1,12 +1,13 @@
 import { z } from 'zod';
 
-const string = z.string();
-const boolean = z.boolean();
-const number = z.number();
-const url = string;
-const color = string;
+export const string = z.string();
+export const boolean = z.boolean();
+export const number = z.number();
+export const url = string;
+export const color = string;
 
-const stringEnum = (values: [string, ...string[]]) => z.enum(values);
+export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(values: U) =>
+	z.enum<T, U>(values);
 
 const prosemirrorDoc = z.object({
 	type: z.literal('doc'),
@@ -19,6 +20,8 @@ export const primitives = {
 	string,
 	boolean,
 	number,
-	stringEnum,
+	oneOf,
 	prosemirrorDoc,
 };
+
+export type Primitive = typeof primitives[keyof typeof primitives];

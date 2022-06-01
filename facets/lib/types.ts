@@ -1,24 +1,34 @@
 import { TypeOf, ZodSchema } from 'zod';
 
-export type FacetPropDefinition<Schema extends ZodSchema, Type = TypeOf<Schema>> = {
-	schema: Schema;
-	default?: Type;
-	cascade?: (upper: Type, lower: Type) => Type;
-} & ({ nullable: true; backstop: null } | { nullable: false; backstop: Type });
-
-export type FacetPropsDefinition = Record<string, FacetPropDefinition<any>>;
-
-export type FacetConstructorOptions = {
-	name: string;
-	props: FacetPropsDefinition;
+export type FacetPropOptions<Schema extends ZodSchema, RootValue extends TypeOf<Schema>> = {
+	rootValue: null | RootValue;
+	defaultValue?: TypeOf<Schema>;
+	cascade?: (upper: TypeOf<Schema>, lower: TypeOf<Schema>) => TypeOf<Schema>;
 };
 
-export type FacetDefinition = FacetConstructorOptions;
+export type FacetPropDefinition<
+	Schema extends ZodSchema,
+	RootValue extends TypeOf<Schema>,
+> = FacetPropOptions<Schema, RootValue> & { schema: Schema };
 
-export type FacetPropsDefinitionTypeOf<Props extends FacetPropsDefinition> = {
-	[K in keyof Props]: Props[K]['nullable'] extends true
-		? null | TypeOf<Props[K]['schema']>
-		: TypeOf<Props[K]['schema']>;
+export type FacetDefinition<Name extends string> = {
+	name: Name;
+	props: Record<string, FacetPropDefinition<any, any>>;
 };
 
-export type FacetTypeOf<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<Def['props']>;
+type _IsNeverNull<T> = Extract<T, null> extends never ? true : false;
+type _FacetPropsDefinitionTypeOf<Props extends FacetDefinition<any>['props'], NullishValue> = {
+	[K in keyof Props]:
+		| NullishValue
+		| TypeOf<Props[K]['schema']>
+		| (_IsNeverNull<Props[K]['rootValue']> extends true ? never : null);
+};
+
+export type FacetTypeOf<Def extends FacetDefinition<any>> = _FacetPropsDefinitionTypeOf<
+	Def['props'],
+	never
+>;
+
+export type FacetUpdateTypeOf<Def extends FacetDefinition<any>> = Partial<
+	_FacetPropsDefinitionTypeOf<Def['props'], null>
+>;

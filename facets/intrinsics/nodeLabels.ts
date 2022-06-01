@@ -1,30 +1,29 @@
 import { z } from 'zod';
 
-import { prop, nullable, facet, string, url, oneOf, merge, FacetTypeOf } from '../lib';
+import { prop, facet, merge, FacetTypeOf } from '../lib';
 
 const nodeLabel = z.object({ enabled: z.boolean(), label: z.string() });
 
 export const nodeLabels = facet({
-	name: 'nodeLabels',
+	name: 'NodeLabels',
 	props: {
 		image: prop(nodeLabel, {
-			backstop: { enabled: false, label: 'Image' },
-			cascade: merge,
+			rootValue: { enabled: false, label: 'Image' },
 		}),
 		video: prop(nodeLabel, {
-			backstop: { enabled: false, label: 'Video' },
+			rootValue: { enabled: false, label: 'Video' },
 			cascade: merge,
 		}),
 		audio: prop(nodeLabel, {
-			backstop: { enabled: false, label: 'Audio' },
+			rootValue: { enabled: false, label: 'Audio' },
 			cascade: merge,
 		}),
 		table: prop(nodeLabel, {
-			backstop: { enabled: false, label: 'Table' },
+			rootValue: { enabled: false, label: 'Table' },
 			cascade: merge,
 		}),
 		blockEquation: prop(nodeLabel, {
-			backstop: { enabled: false, label: 'Equation' },
+			rootValue: { enabled: false, label: 'Equation' },
 			cascade: merge,
 		}),
 	},

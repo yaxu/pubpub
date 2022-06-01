@@ -1,38 +1,23 @@
 import { Schema, TypeOf } from 'zod';
 
-import { FacetConstructorOptions, FacetPropDefinition, FacetTypeOf } from './types';
+import { FacetDefinition, FacetPropOptions, FacetTypeOf, FacetPropDefinition } from './types';
 
-export const facet = <Options extends FacetConstructorOptions>(options: Options) => {
-	const empty = (): FacetTypeOf<Options> => {};
+export const facet = <Name extends string, Def extends FacetDefinition<Name>>(options: Def) => {
+	const empty = (): FacetTypeOf<Def> => {};
 
 	return { ...options, empty };
 };
 
 export const prop = <
 	PropSchema extends Schema,
-	Options extends Omit<FacetPropDefinition<PropSchema>, 'schema' | 'nullable'>,
+	RootValue extends TypeOf<PropSchema>,
+	Options extends FacetPropOptions<PropSchema, RootValue>,
 >(
 	schema: PropSchema,
-	options?: Options,
+	options: Options,
 ) => {
 	return {
 		...options,
 		schema,
-		nullable: false,
-	} as const;
-};
-
-export const nullable = <
-	PropSchema extends Schema,
-	Options extends Omit<FacetPropDefinition<PropSchema>, 'schema' | 'nullable' | 'backstop'>,
->(
-	schema: PropSchema,
-	options?: Options,
-) => {
-	return {
-		...options,
-		schema,
-		backstop: null,
-		nullable: true,
-	} as const;
+	};
 };

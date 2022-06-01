@@ -1,25 +1,37 @@
 import { TypeOf, ZodSchema } from 'zod';
 
-export type FacetPropOptions<Schema extends ZodSchema, RootValue extends TypeOf<Schema>> = {
-	rootValue: null | RootValue;
-	defaultValue?: TypeOf<Schema>;
-	cascade?: (upper: TypeOf<Schema>, lower: TypeOf<Schema>) => TypeOf<Schema>;
+type _IsNeverNull<T> = Extract<T, null> extends never ? true : false;
+
+export type NullableTypeOf<Schema extends ZodSchema> = null | TypeOf<Schema>;
+export type NullableTypeOfWhenRootValueAbsent<
+	Schema extends ZodSchema,
+	RootValue extends NullableTypeOf<Schema>,
+> = _IsNeverNull<RootValue> extends true ? TypeOf<Schema> : NullableTypeOf<Schema>;
+
+export type FacetPropOptions<
+	Schema extends ZodSchema,
+	RootValue extends NullableTypeOf<Schema>,
+	ProvidedToConstructorType = NullableTypeOf<Schema>,
+	ReceivedFromFacetType = NullableTypeOfWhenRootValueAbsent<Schema, RootValue>,
+> = {
+	rootValue: RootValue;
+	defaultValue?: ProvidedToConstructorType;
+	cascade?: (upper: ReceivedFromFacetType, lower: ReceivedFromFacetType) => ReceivedFromFacetType;
 };
 
 export type FacetPropDefinition<
 	Schema extends ZodSchema,
-	RootValue extends TypeOf<Schema>,
+	RootValue extends null | NullableTypeOf<Schema>,
 > = FacetPropOptions<Schema, RootValue> & { schema: Schema };
 
-export type FacetDefinition<Name extends string> = {
+export type FacetDefinition<Name extends string = any> = {
 	name: Name;
 	props: Record<string, FacetPropDefinition<any, any>>;
 };
 
-type _IsNeverNull<T> = Extract<T, null> extends never ? true : false;
-type _FacetPropsDefinitionTypeOf<Props extends FacetDefinition<any>['props'], NullishValue> = {
+type _FacetPropsDefinitionTypeOf<Props extends FacetDefinition<any>['props'], FallbackValue> = {
 	[K in keyof Props]:
-		| NullishValue
+		| FallbackValue
 		| TypeOf<Props[K]['schema']>
 		| (_IsNeverNull<Props[K]['rootValue']> extends true ? never : null);
 };
@@ -29,6 +41,6 @@ export type FacetTypeOf<Def extends FacetDefinition<any>> = _FacetPropsDefinitio
 	never
 >;
 
-export type FacetUpdateTypeOf<Def extends FacetDefinition<any>> = Partial<
+export type FacetInsertion<Def extends FacetDefinition<any>> = Partial<
 	_FacetPropsDefinitionTypeOf<Def['props'], null>
 >;

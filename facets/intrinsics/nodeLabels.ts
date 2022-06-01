@@ -9,6 +9,7 @@ export const nodeLabels = facet({
 	props: {
 		image: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Image' },
+			cascade: merge,
 		}),
 		video: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Video' },

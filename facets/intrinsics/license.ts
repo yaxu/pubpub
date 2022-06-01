@@ -1,3 +1,4 @@
+import { createEmptyFacet, createFacet } from 'facets/lib/operations';
 import { prop, facet, number, oneOf, FacetTypeOf } from '../lib';
 
 const licenseKind = oneOf(['cc-zero', 'cc-by-nd', 'copyright']);

@@ -1,4 +1,16 @@
-import { prop, facet, string, oneOf, FacetTypeOf, FacetUpdateTypeOf } from '../lib';
+import { TypeOf } from 'zod';
+import {
+	prop,
+	facet,
+	string,
+	oneOf,
+	FacetDefinition,
+	FacetTypeOf,
+	FacetInsertion,
+	merge,
+	createFacet,
+	cascadeFacets,
+} from '../lib';
 
 const headerTheme = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
 
@@ -11,4 +23,8 @@ export const pubHeaderTheme = facet({
 	},
 });
 
-export type PubHeaderTheme = FacetUpdateTypeOf<typeof pubHeaderTheme>;
+export type PubHeaderTheme = FacetTypeOf<typeof pubHeaderTheme>;
+
+const oneTheme = createFacet(pubHeaderTheme, { backgroundColor: 'blue', theme: 'black-blocks' });
+const anotherTheme = createFacet(pubHeaderTheme, { backgroundColor: 'red' });
+const cascadedTheme = cascadeFacets(pubHeaderTheme, oneTheme, anotherTheme);

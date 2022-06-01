@@ -1,8 +1,8 @@
 import { IntrinsicFacetByName, IntrinsicFacetName } from './intrinsics';
-import { FacetTypeOf, FacetUpdateTypeOf } from './lib';
+import { FacetTypeOf, FacetInsertion } from './lib';
 
 type UpdateQuery = Partial<{
-	[K in IntrinsicFacetName]: FacetUpdateTypeOf<IntrinsicFacetByName<K>>;
+	[K in IntrinsicFacetName]: FacetInsertion<IntrinsicFacetByName<K>>;
 }>;
 
 const update = (q: UpdateQuery) => {};

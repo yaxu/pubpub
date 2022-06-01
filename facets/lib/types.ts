@@ -3,6 +3,7 @@ import { TypeOf, ZodSchema } from 'zod';
 type _IsNeverNull<T> = Extract<T, null> extends never ? true : false;
 
 export type NullableTypeOf<Schema extends ZodSchema> = null | TypeOf<Schema>;
+
 export type NullableTypeOfWhenRootValueAbsent<
 	Schema extends ZodSchema,
 	RootValue extends NullableTypeOf<Schema>,

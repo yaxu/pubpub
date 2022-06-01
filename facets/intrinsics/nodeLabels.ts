@@ -9,23 +9,18 @@ export const nodeLabels = facet({
 	props: {
 		image: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Image' },
-			cascade: merge,
 		}),
 		video: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Video' },
-			cascade: merge,
 		}),
 		audio: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Audio' },
-			cascade: merge,
 		}),
 		table: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Table' },
-			cascade: merge,
 		}),
 		blockEquation: prop(nodeLabel, {
 			rootValue: { enabled: false, label: 'Equation' },
-			cascade: merge,
 		}),
 	},
 });

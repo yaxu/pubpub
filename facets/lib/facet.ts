@@ -1,14 +1,11 @@
-import { FacetProp } from './prop';
-import { TypeOfFacetPropType } from './propType';
-import { IsNeverNull } from './types';
+import { FacetProp, NullableFacetPropTypeIfRootValueIsNull } from './prop';
 
 type FacetProps = Record<string, FacetProp<any, any>>;
 
 type FacetPropsDefinitionTypeOf<Props extends FacetProps, FallbackValue = never> = {
 	[K in keyof Props]:
 		| FallbackValue
-		| TypeOfFacetPropType<Props[K]['propType']>
-		| (IsNeverNull<Props[K]['rootValue']> extends true ? never : null);
+		| NullableFacetPropTypeIfRootValueIsNull<Props[K]['propType'], Props[K]['rootValue']>;
 };
 
 export type FacetOptions<Name extends string, Props extends FacetProps> = {

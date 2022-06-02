@@ -1,11 +1,6 @@
 /* eslint-disable global-require */
-import path from 'path';
 import Sequelize from 'sequelize';
 import knexJs from 'knex';
-
-if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-	require(path.join(process.cwd(), 'config.js'));
-}
 
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;

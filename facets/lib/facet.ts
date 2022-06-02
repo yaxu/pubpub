@@ -1,36 +1,40 @@
-import { Schema, z } from 'zod';
+import { FacetProp } from './prop';
+import { TypeOfFacetPropType } from './propType';
+import { IsNeverNull } from './types';
 
-import { FacetDefinition, FacetPropOptions, FacetTypeOf, NullableTypeOf } from './types';
+type FacetProps = Record<string, FacetProp<any, any>>;
 
-export const facet = <
-	Name extends string,
-	Def extends FacetDefinition<Name>,
-	Type = FacetTypeOf<Def>,
->(
-	options: Def,
-) => {
-	const { props } = options;
-
-	const empty = (): Type => {
-		const emptyFacet: Partial<Type> = {};
-		Object.entries(props).forEach(([key, prop]) => {
-			const value = prop.defaultValue ?? null;
-			emptyFacet[key as keyof Type] = value;
-		});
-		return emptyFacet as Type;
-	};
-
-	const create = (args: Partial<Type>): Type => {
-		const emptyPartial: Type = empty();
-		return { ...emptyPartial, ...args };
-	};
-
-	return { ...options, empty, create };
+type FacetPropsDefinitionTypeOf<Props extends FacetProps, FallbackValue = never> = {
+	[K in keyof Props]:
+		| FallbackValue
+		| TypeOfFacetPropType<Props[K]['propType']>
+		| (IsNeverNull<Props[K]['rootValue']> extends true ? never : null);
 };
 
-export const prop = <PropSchema extends Schema, RootValue extends NullableTypeOf<PropSchema>>(
-	schema: PropSchema,
-	options: FacetPropOptions<PropSchema, RootValue>,
-) => {
-	return { ...options, schema };
+export type FacetOptions<Name extends string, Props extends FacetProps> = {
+	name: Name;
+	props: Props;
+};
+
+export type FacetDefinition<
+	Name extends string = string,
+	Props extends FacetProps = FacetProps,
+> = FacetOptions<Name, Props> & {
+	__facet: true;
+};
+
+export type CascadedFacetType<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<
+	Def['props'],
+	never
+>;
+
+export type FacetInstanceType<Def extends FacetDefinition> = FacetPropsDefinitionTypeOf<
+	Def['props'],
+	null
+>;
+
+export const facet = <Name extends string, Props extends FacetProps>(
+	options: FacetOptions<Name, Props>,
+): FacetDefinition<Name, Props> => {
+	return { ...options, __facet: true };
 };

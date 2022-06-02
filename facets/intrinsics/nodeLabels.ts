@@ -1,8 +1,11 @@
 import { z } from 'zod';
 
-import { prop, facet, merge, FacetTypeOf } from '../lib';
+import { propType, prop, facet } from '../lib';
 
-const nodeLabel = z.object({ enabled: z.boolean(), label: z.string() });
+const nodeLabel = propType({
+	name: 'nodeLabel',
+	schema: z.object({ enabled: z.boolean(), label: z.string() }),
+});
 
 export const nodeLabels = facet({
 	name: 'NodeLabels',
@@ -24,5 +27,3 @@ export const nodeLabels = facet({
 		}),
 	},
 });
-
-export type NodeLabels = FacetTypeOf<typeof nodeLabels>;

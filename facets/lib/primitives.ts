@@ -1,27 +1,11 @@
 import { z } from 'zod';
 
-export const string = z.string();
-export const boolean = z.boolean();
-export const number = z.number();
-export const url = string;
-export const color = string;
+import { propType } from './propType';
 
-export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(values: U) =>
-	z.enum<T, U>(values);
+export const string = propType({ name: 'string', schema: z.string() });
+export const boolean = propType({ name: 'boolean', schema: z.boolean() });
+export const number = propType({ name: 'number', schema: z.boolean() });
 
-const prosemirrorDoc = z.object({
-	type: z.literal('doc'),
-	attrs: z.object({}).catchall(z.union([z.string(), z.number(), z.boolean()])),
-	content: z.array(z.any()),
-});
-
-export const primitives = {
-	url,
-	string,
-	boolean,
-	number,
-	oneOf,
-	prosemirrorDoc,
+export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(strings: U) => {
+	return propType({ schema: z.enum(strings) });
 };
-
-export type Primitive = typeof primitives[keyof typeof primitives];

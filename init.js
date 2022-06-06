@@ -10,12 +10,10 @@ const { setupLocalDatabase } = require('./localDatabase');
 const watchables = watch && (Array.isArray(watch) ? watch : [watch]).filter((x) => x);
 
 const main = async () => {
-	console.log(process.env.NODE_ENV);
 	if (process.env.NODE_ENV !== 'production' && process.env.USE_LOCAL_DB) {
-		console.log('cool');
 		process.env.DATABASE_URL = await setupLocalDatabase();
 	} else {
-		console.log('not cool');
+		console.log('not cool!!!');
 	}
 
 	if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {

@@ -4,6 +4,7 @@ import knexJs from 'knex';
 
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
+console.log('using db url', process.env.DATABASE_URL);
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	logging: false,

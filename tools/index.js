@@ -14,7 +14,6 @@ require('utils/environment').setEnvironment(
 	process.env.IS_DUQDUQ,
 	process.env.IS_QUBQUB,
 );
-require('server/hooks');
 
 const command = process.argv[2];
 const commandFiles = {
@@ -36,6 +35,7 @@ const commandFiles = {
 	firebaseDownload: './firebaseDownload',
 	flattenBranchHistory: './flattenBranchHistory',
 	layoutcheck: './layoutcheck/check',
+	localdb: './localdb',
 	migrate: './migrate',
 	migrateDash: './dashboardMigrations/runMigrations',
 	migration2020_05_06: './migration2020_05_06',

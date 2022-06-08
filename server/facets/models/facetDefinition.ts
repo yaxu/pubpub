@@ -4,7 +4,7 @@ export default (sequelize, dataTypes) => {
 		{
 			id: sequelize.idType,
 			name: { type: dataTypes.TEXT, allowNull: false },
-			schema: { typ: dataTypes.JSONB, allowNull: false },
+			structure: { typ: dataTypes.JSONB, allowNull: false },
 		},
 		{
 			classMethods: {

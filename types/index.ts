@@ -7,6 +7,7 @@ export * from './customScript';
 export * from './discussion';
 export * from './doc';
 export * from './featureFlag';
+export * from './json';
 export * from './license';
 export * from './member';
 export * from './page';

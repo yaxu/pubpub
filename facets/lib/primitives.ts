@@ -30,7 +30,6 @@ export const double = propType({
 export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(strings: U) => {
 	return propType({
 		schema: z.enum(strings),
-		kind: 'enum',
 		postgresType: DataTypes.STRING,
 	});
 };

@@ -3,7 +3,6 @@ import { DataTypes } from 'sequelize';
 
 type FacetPropTypeOptions<Schema extends ZodSchema = ZodSchema> = {
 	name?: string;
-	kind?: 'enum';
 	schema: Schema;
 	postgresType: typeof DataTypes[keyof typeof DataTypes];
 };

@@ -1,3 +1,4 @@
+export * from './canonicalize';
 export * from './cascade';
 export * from './facet';
 export * from './operations';

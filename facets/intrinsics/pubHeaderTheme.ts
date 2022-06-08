@@ -7,6 +7,6 @@ export const pubHeaderTheme = facet({
 	props: {
 		backgroundImage: prop(string, { rootValue: null }),
 		backgroundColor: prop(string, { rootValue: 'community' }),
-		theme: prop(headerTheme, { rootValue: 'black-blocks' as const }),
+		theme: prop(headerTheme, { rootValue: null }),
 	},
 });

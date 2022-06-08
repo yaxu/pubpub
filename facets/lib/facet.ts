@@ -1,6 +1,6 @@
 import { FacetProp, NullableFacetPropTypeIfRootValueIsNull } from './prop';
 
-type FacetProps = Record<string, FacetProp<any, any>>;
+export type FacetProps = Record<string, FacetProp<any, any>>;
 
 type FacetPropsDefinitionTypeOf<Props extends FacetProps, FallbackValue = never> = {
 	[K in keyof Props]:

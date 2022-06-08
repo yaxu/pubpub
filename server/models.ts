@@ -3,6 +3,8 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import knexJs from 'knex';
 
+import { ingestFacets } from './facets/ingest';
+
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 	require(path.join(process.cwd(), 'config.js'));
 }
@@ -85,6 +87,8 @@ export const ActivityItem = sequelize.import('./activityItem/model');
 export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
 export const WorkerTask = sequelize.import('./workerTask/model');
+
+const facetModels = ingestFacets(sequelize);
 
 export const attributesPublicUser = [
 	'id',

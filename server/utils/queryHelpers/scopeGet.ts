@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { Scope, MemberPermission } from 'types';
+import { ScopeId, MemberPermission } from 'types';
 import {
 	Collection,
 	CollectionPub,
@@ -22,7 +22,7 @@ let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
 
-const getScopeIdsObject = ({ pubId, collectionId, communityId }): Scope => {
+const getScopeIdsObject = ({ pubId, collectionId, communityId }): ScopeId => {
 	if (pubId) {
 		return { pubId, communityId };
 	}

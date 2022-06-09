@@ -29,7 +29,7 @@ const getSequelizePropsDefinition = (props: FacetProps) => {
 };
 
 export const ingestFacets = (sequelize: Sequelize) => {
-	const FacetInstance = sequelize.import('./models/facetInstance');
+	const FacetInstance = sequelize.import('./models/facetInstance') as any;
 	const modelsByName: Record<string, any> = {};
 	Object.values(intrinsics).forEach((facet) => {
 		const { name, props } = facet;
@@ -37,9 +37,10 @@ export const ingestFacets = (sequelize: Sequelize) => {
 			name,
 			{
 				...getSequelizePropsDefinition(props),
-				facetDefinitionId: { type: DataTypes.UUID, allowNull: false },
+				id: (sequelize as any).idType,
+				facetInstanceId: { type: DataTypes.UUID, allowNull: false },
 			},
-			{ tableName: `$F_${name}` },
+			{ tableName: `Facet_${name}` },
 		) as any;
 		FacetModel.belongsTo(FacetInstance, {
 			foreignKey: 'facetInstanceId',
@@ -48,5 +49,5 @@ export const ingestFacets = (sequelize: Sequelize) => {
 		});
 		modelsByName[name] = FacetModel;
 	});
-	return modelsByName as Record<keyof typeof intrinsics, any>;
+	return { facetModels: modelsByName as Record<keyof typeof intrinsics, any>, FacetInstance };
 };

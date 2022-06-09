@@ -9,7 +9,7 @@ const nodeLabel = propType({
 	postgresType: DataTypes.JSONB,
 });
 
-export const nodeLabels = facet({
+export const NodeLabels = facet({
 	name: 'NodeLabels',
 	props: {
 		image: prop(nodeLabel, {

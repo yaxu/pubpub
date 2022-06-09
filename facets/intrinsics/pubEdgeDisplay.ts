@@ -1,6 +1,6 @@
 import { facet, prop, boolean } from '../lib';
 
-export const pubEdgeDisplay = facet({
+export const PubEdgeDisplay = facet({
 	name: 'PubEdgeDisplay',
 	props: {
 		defaultsToCarousel: prop(boolean, { rootValue: true }),

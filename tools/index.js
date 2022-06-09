@@ -14,6 +14,7 @@ require('utils/environment').setEnvironment(
 	process.env.IS_DUQDUQ,
 	process.env.IS_QUBQUB,
 );
+const { setupLocalDatabase } = require('localDatabase');
 
 const command = process.argv[2];
 const commandFiles = {
@@ -51,13 +52,18 @@ const commandFiles = {
 	syncDevFirebase: './syncFirebase',
 };
 
-const activeCommandFile = commandFiles[command];
-if (activeCommandFile) {
-	/* eslint-disable-next-line import/no-dynamic-require */
-	require(activeCommandFile);
-} else {
-	console.warn(`Invalid command: "${command}"`);
-}
+const main = async () => {
+	await setupLocalDatabase();
+	const activeCommandFile = commandFiles[command];
+	if (activeCommandFile) {
+		/* eslint-disable-next-line import/no-dynamic-require */
+		require(activeCommandFile);
+	} else {
+		console.warn(`Invalid command: "${command}"`);
+	}
+};
+
+main();
 
 /* Other useful tooling commands:
 

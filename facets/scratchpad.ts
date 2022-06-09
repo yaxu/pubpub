@@ -1,4 +1,4 @@
-import { pubHeaderTheme, nodeLabels, citationStyle } from './intrinsics';
+import { PubHeaderTheme, NodeLabels, CitationStyle } from './intrinsics';
 import {
 	CascadedFacetType,
 	createEmptyFacetInstance,

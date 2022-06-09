@@ -18,7 +18,7 @@ const citationStyleKind = oneOf([
 
 const inlineCitationStyleKind = oneOf(['count', 'authorYear', 'author', 'label']);
 
-export const citationStyle = facet({
+export const CitationStyle = facet({
 	name: 'CitationStyle',
 	props: {
 		citationStyle: prop(citationStyleKind, { rootValue: 'apa' as const }),

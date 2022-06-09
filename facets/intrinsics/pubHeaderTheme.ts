@@ -2,7 +2,7 @@ import { prop, facet, string, oneOf } from '../lib';
 
 const headerTheme = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
 
-export const pubHeaderTheme = facet({
+export const PubHeaderTheme = facet({
 	name: 'PubHeaderTheme',
 	props: {
 		backgroundImage: prop(string, { rootValue: null }),

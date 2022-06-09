@@ -83,7 +83,7 @@ export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
 export const WorkerTask = sequelize.import('./workerTask/model');
 
-export const facetModels = ingestFacets(sequelize);
+export const { facetModels, FacetInstance } = ingestFacets(sequelize);
 
 export const attributesPublicUser = [
 	'id',

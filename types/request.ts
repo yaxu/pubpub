@@ -1,4 +1,4 @@
-import { Collection, Community, Scope, DefinitelyHas, Member, MemberPermission, Pub } from 'types';
+import { Collection, Community, ScopeId, DefinitelyHas, Member, MemberPermission, Pub } from 'types';
 
 export type LoginData = {
 	id: string | null;
@@ -59,7 +59,7 @@ export type ScopeData = {
 		reviews: number;
 		submissions: number;
 	};
-	scope: Scope;
+	scope: ScopeId;
 	memberData: Member[];
 };
 

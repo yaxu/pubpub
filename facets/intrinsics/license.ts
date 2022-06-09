@@ -2,7 +2,7 @@ import { oneOf, prop, facet, integer } from '../lib';
 
 const licenseKind = oneOf(['cc-zero', 'cc-by-nd', 'copyright']);
 
-export const license = facet({
+export const License = facet({
 	name: 'License',
 	props: {
 		kind: prop(licenseKind, { rootValue: 'cc-by-nd' as const }),

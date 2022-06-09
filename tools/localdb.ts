@@ -1,7 +1,7 @@
 import { setupLocalDatabase } from '../localDatabase';
 
 const main = async () => {
-	process.env.DATABASE_URL = await setupLocalDatabase();
+	await setupLocalDatabase(true);
 	const { modelize } = await import('stubstub');
 	const models = modelize`
         Community {

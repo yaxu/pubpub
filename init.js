@@ -13,13 +13,11 @@ const main = async () => {
 		require(path.join(process.cwd(), 'config.js'));
 	}
 
-	if (process.env.NODE_ENV !== 'production' && process.env.USE_LOCAL_DB) {
-		process.env.DATABASE_URL = await setupLocalDatabase();
-	}
-
 	if (process.env.NODE_ENV === 'production') {
 		require('newrelic');
 	}
+
+	setupLocalDatabase();
 
 	const loadServer = () => {
 		return require('./dist/server/server/server').startServer();

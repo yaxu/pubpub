@@ -1,6 +1,7 @@
 export * from './canonicalize';
 export * from './cascade';
 export * from './facet';
+export * from './instance';
 export * from './operations';
 export * from './parse';
 export * from './primitives';

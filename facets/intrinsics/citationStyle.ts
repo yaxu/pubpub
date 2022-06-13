@@ -22,6 +22,6 @@ export const CitationStyle = facet({
 	name: 'CitationStyle',
 	props: {
 		citationStyle: prop(citationStyleKind, { rootValue: 'apa' as const }),
-		inlineCitationStyleKind: prop(inlineCitationStyleKind, { rootValue: 'count' as const }),
+		inlineCitationStyle: prop(inlineCitationStyleKind, { rootValue: 'count' as const }),
 	},
 });

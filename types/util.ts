@@ -21,3 +21,5 @@ export type DeepPartial<T> = {
 };
 
 export type OmitSequelizeProvidedFields<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] };

@@ -6,6 +6,7 @@ export * from './context';
 export * from './customScript';
 export * from './discussion';
 export * from './doc';
+export * from './facets';
 export * from './featureFlag';
 export * from './json';
 export * from './license';

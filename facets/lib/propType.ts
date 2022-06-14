@@ -18,13 +18,6 @@ export type TypeOfPropType<PropType extends FacetPropType> = TypeOf<PropType['sc
 export type NullableTypeOfPropType<PropType extends FacetPropType> =
 	null | TypeOfPropType<PropType>;
 
-export type NullablePropTypeIfRootValueIsNull<
-	PropType extends FacetPropType,
-	RootValue extends NullableTypeOfPropType<PropType>,
-> = IsNeverNull<RootValue> extends true
-	? TypeOfPropType<PropType>
-	: NullableTypeOfPropType<PropType>;
-
 export const propType = <Schema extends ZodSchema>(
 	options: FacetPropTypeOptions<Schema>,
 ): FacetPropType<Schema> => {

@@ -1,142 +1,106 @@
 import {
-	NullableTypeOfPropType,
-	FacetPropType,
-	TypeOfPropType,
-	NullablePropTypeIfRootValueIsNull,
-} from './propType';
-import { FacetCascadeNotImplError } from './errors';
+	FacetProp,
+	CascadedTypeOfFacetProp,
+	TypeOfFacetProp,
+	NullableTypeOfFacetProp,
+} from './prop';
+import { FacetPropType, TypeOfPropType } from './propType';
 import { FacetDefinition, FacetInstanceType } from './facet';
+import { FacetCascadeNotImplError } from './errors';
+import { mapFacet } from './map';
+import { createEmptyFacetInstance } from '.';
 
-export type FacetPropCascadeStrategy =
-	| 'overwrite' // Non-null values from lower scopes overwrite those from higher scopes
-	| 'defer' // Non-null values from *higher* scopes overwrite those from lower scopes
-	| 'merge' //  // Values are object-spread: {...a, ...b}
-	| 'extend'; // Non-null values are array-spread: [...a, ...b]
+type WithScope<T> = {
+	scope:
+		| {
+				kind: 'community' | 'collection' | 'pub';
+				id: string;
+		  }
+		| { root: true };
+	value: T;
+};
 
-export type AvailableCascadeStrategyForPropType<
-	PropType extends FacetPropType,
-	Type = TypeOfPropType<PropType>,
-> =
-	| 'defer'
+type FacetPropCascadeDirection = 'asc' | 'desc';
+
+type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
+	// Any prop type can use the `overwrite` strategy
 	| 'overwrite'
-	| (Type extends Record<string, any> ? 'merge' : never)
-	| (Type extends any[] ? 'extend' : never);
+	// Only props that are objects can object-merge during cascade" {...a, ...b}
+	| (TypeOfPropType<PropType> extends Record<string, any> ? 'merge' : never)
+	// Only props that are arrays can array-merge during cascasde: [...a, ...b]
+	| (TypeOfPropType<PropType> extends any[] ? 'extend' : never);
 
-type ScopeContributionTypeForStrategy<
-	Strategy extends FacetPropCascadeStrategy,
-	PropType extends FacetPropType,
-> = Strategy extends 'overwrite'
-	? NullableTypeOfPropType<PropType> // In `overwrite`, only the lowest scope contributes a value
-	: Strategy extends 'defer'
-	? NullableTypeOfPropType<PropType> // In `defer`, only the highest scope contributes a value
-	: Strategy extends 'extend'
-	? TypeOfPropType<PropType> // In `extend`, any scope can contribute a value (implicitly, Type extends any[])
-	: Strategy extends 'merge'
-	? Partial<TypeOfPropType<PropType>> // In `merge`, any scope can contribute keys from the value
-	: never;
-
-type CascadeResultTypeForStrategy<
-	Strategy extends FacetPropCascadeStrategy,
-	PropType extends FacetPropType,
-	RootValue extends NullableTypeOfPropType<FacetPropType>,
-> = Strategy extends 'overwrite'
-	? NullablePropTypeIfRootValueIsNull<PropType, RootValue> // In `overwrite`, we end up with `null` if all scopes contribute an null value
-	: Strategy extends 'defer'
-	? NullablePropTypeIfRootValueIsNull<PropType, RootValue> // Same with `defer`
-	: Strategy extends 'extend'
-	? TypeOfPropType<PropType> // In `extend`, we are guaranteed to end up with an empty array (a Type with length = 0)
-	: Strategy extends 'merge'
-	? Partial<TypeOfPropType<PropType>> // In `merge`, we are guaranteed to end up with a Partial<Type>
-	: never;
-
-type FacetPropCascadableValues<PropType extends FacetPropType, Source> = {
-	value: NullableTypeOfPropType<PropType>;
-	source: Source;
-}[];
-
-type FacetPropCascadeContribution<
-	Strategy extends FacetPropCascadeStrategy,
-	PropType extends FacetPropType,
-	Source,
-> = {
-	source: Source;
-	contribution: ScopeContributionTypeForStrategy<Strategy, PropType>;
+export type FacetPropCascade<PropType extends FacetPropType> = {
+	strategy: AvailableCascadeStrategyForPropType<PropType>;
+	direction: FacetPropCascadeDirection;
 };
 
-type FacetPropCascadeResult<
-	Strategy extends FacetPropCascadeStrategy,
-	PropType extends FacetPropType,
-	RootValue extends NullableTypeOfPropType<FacetPropType>,
-	Source,
-> = {
-	strategy: Strategy;
-	result: CascadeResultTypeForStrategy<Strategy, PropType, RootValue>;
-	contributions: FacetPropCascadeContribution<Strategy, PropType, Source>[];
+type PropCascadeContribution<Prop extends FacetProp> = {
+	overwrite: NullableTypeOfFacetProp<Prop>;
+	extend: TypeOfFacetProp<Prop>; // This is a (possibly empty) array
+	merge: Partial<TypeOfFacetProp<Prop>>;
+}[Prop['cascade']['strategy']];
+
+type PropCascadeResult<Prop extends FacetProp> = {
+	overwrite: CascadedTypeOfFacetProp<Prop>;
+	extend: TypeOfFacetProp<Prop>; // This is a (possibly empty) array
+	merge: Partial<TypeOfFacetProp<Prop>>;
+}[Prop['cascade']['strategy']];
+
+export type FacetPropCascadeResult<Prop extends FacetProp> = {
+	result: PropCascadeResult<Prop>;
+	contributions: WithScope<PropCascadeContribution<Prop>>[];
 };
 
-export type FacetPropCascadeFn<
-	PropType extends FacetPropType,
-	RootValue extends NullableTypeOfPropType<PropType>,
-	Strategy extends FacetPropCascadeStrategy,
-	Source extends any = any,
-> = (
-	values: FacetPropCascadableValues<PropType, Source>,
-) => FacetPropCascadeResult<
-	Strategy,
-	TypeOfPropType<PropType>,
-	NullablePropTypeIfRootValueIsNull<PropType, RootValue>,
-	Source
->;
-
-const overwrite: FacetPropCascadeFn<any, any, 'overwrite', any> = (
-	values: FacetPropCascadableValues<any, any>,
-) => {
-	const contributions = values
-		.map((entry) => {
-			const { value, source } = entry;
-			if (entry.value !== null) {
-				return { contribution: value, source };
-			}
-			return null;
-		})
-		.filter((x): x is FacetPropCascadeContribution<'overwrite', any, any> => !!x);
-	const result = contributions.length
-		? contributions[contributions.length - 1].contribution
-		: null;
-	return {
-		strategy: 'overwrite' as const,
-		contributions,
-		result,
-	};
+export type FacetCascadedType<Def extends FacetDefinition> = {
+	[K in keyof Def['props']]: PropCascadeResult<Def['props'][K]>;
 };
 
-export const createCascadeFn = <
-	PropType extends FacetPropType,
-	RootValue extends NullableTypeOfPropType<PropType>,
-	Strategy extends FacetPropCascadeStrategy,
-	Source,
->(
-	strategy: Strategy,
-): FacetPropCascadeFn<PropType, RootValue, Strategy, Source> => {
-	type ReturnType = FacetPropCascadeFn<PropType, RootValue, Strategy, Source>;
+export type FacetCascadeResult<Def extends FacetDefinition> = {
+	result: FacetCascadedType<Def>;
+	props: { [K in keyof Def['props']]: FacetPropCascadeResult<Def['props'][K]> };
+};
+
+function cascadeProp<Prop extends FacetProp>(
+	prop: Prop,
+	sources: WithScope<NullableTypeOfFacetProp<Prop>>[],
+): FacetPropCascadeResult<Prop> {
+	const {
+		cascade: { strategy, direction },
+	} = prop;
+	if (direction === 'asc') {
+		sources = sources.concat().reverse();
+	}
 	if (strategy === 'overwrite') {
-		return overwrite as ReturnType;
+		type PropWithCascade = Prop & { cascade: { strategy: 'overwrite' } };
+		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
+		const result: PropCascadeResult<PropWithCascade> = sources
+			.map((s) => s.value)
+			.reduce((a, b) => a ?? b, null);
+		return {
+			contributions,
+			result,
+		};
 	}
 	throw new FacetCascadeNotImplError(strategy);
-};
+}
 
-type FacetCascadableInstances<Def extends FacetDefinition, Source extends any> = ({
-    source: Source;
-    instance: FacetInstanceType<Def>
-})[];
-
-export const cascadeFacetInstances = <Def extends FacetDefinition, Source extends any>(
-	definition: Def, instances: FacetCascadableInstances<Def, Source>
-): CascadedFacetType<Def> {
-	const { props } = definition;
-	const empty = createEmptyFacetInstance(definition);
-	const result: Partial<CascadedFacetType<Def>> = {};
-	Object.entries(props).forEach(([key, prop]) => {
-		const values
-	});
+export function cascade<Def extends FacetDefinition>(
+	def: Def,
+	instances: WithScope<FacetInstanceType<Def>>[],
+): FacetCascadeResult<Def> {
+	const props = mapFacet(def, (key, prop) => {
+		const propInstances = instances.map((instance) => {
+			const { scope, value } = instance;
+			return { scope, value: value[key] };
+		});
+		return cascadeProp(prop, [
+			{ scope: { root: true as const }, value: prop.rootValue },
+			...propInstances,
+		]);
+	}) as FacetCascadeResult<Def>['props'];
+	const result = mapFacet(def, (key) => {
+		return props[key].result;
+	}) as FacetCascadedType<Def>;
+	return { props, result };
 }

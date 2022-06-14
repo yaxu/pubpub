@@ -1,4 +1,4 @@
-import { FacetDefinition, CascadedFacetType, FacetInstanceType } from './facet';
+import { FacetDefinition, FacetInstanceType } from './facet';
 
 export function createEmptyFacetInstance<
 	Definition extends FacetDefinition,

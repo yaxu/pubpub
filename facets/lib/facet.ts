@@ -1,12 +1,10 @@
-import { FacetProp, NullableFacetPropTypeIfRootValueIsNull } from './prop';
+import { FacetProp, CascadedTypeOfFacetProp } from './prop';
 import { FacetPropType } from './propType';
 
 export type FacetProps = Record<string, FacetProp<FacetPropType, any>>;
 
 type FacetPropsDefinitionTypeOf<Props extends FacetProps, FallbackValue = never> = {
-	[K in keyof Props]:
-		| FallbackValue
-		| NullableFacetPropTypeIfRootValueIsNull<Props[K]['propType'], Props[K]['rootValue']>;
+	[K in keyof Props]: FallbackValue | CascadedTypeOfFacetProp<Props[K]>;
 };
 
 export type FacetOptions<Name extends string, Props extends FacetProps> = {

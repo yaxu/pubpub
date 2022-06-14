@@ -11,3 +11,9 @@ export class FacetParseError extends FacetsError {
 		super(`Error when parsing ${facet.name} instance: invalid ${propName}`);
 	}
 }
+
+export class FacetCascadeNotImplError extends FacetsError {
+	constructor(cascadeStrategy: string) {
+		super(`The facet cascade strategy ${cascadeStrategy} has no implementation yet.`);
+	}
+}

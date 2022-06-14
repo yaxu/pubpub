@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { DataTypes } from 'sequelize';
 
-import { propType } from './propType';
+import { FacetPropType, propType } from './propType';
 
 export const string = propType({
 	name: 'string',
@@ -31,5 +31,12 @@ export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(strings:
 	return propType({
 		schema: z.enum(strings),
 		postgresType: DataTypes.STRING,
+	});
+};
+
+export const many = <PropType extends FacetPropType>(type: PropType) => {
+	return propType({
+		schema: z.array(type.schema),
+		postgresType: DataTypes.JSONB, // FILL ME IN LaTER
 	});
 };

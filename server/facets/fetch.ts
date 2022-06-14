@@ -166,15 +166,16 @@ const getFacetModelsByKindForFacetInstanceIds = async (
 	facetInstanceIds: string[],
 ): Promise<FacetModelsByKindById> => {
 	const entries = await Promise.all(
-		Object.entries(intrinsics).map(async ([facetName, facetDefinition]) => {
-			const FacetModel = facetModels[facetName];
+		Object.values(intrinsics).map(async (facetDefinition) => {
+			const { name } = facetDefinition;
+			const FacetModel = facetModels[name];
 			const facetModelsInstances = await FacetModel.findAll({
 				where: { facetInstanceId: facetInstanceIds },
 			});
 			const instances = facetModelsInstances.map((instance) =>
 				parseFacetInstance(facetDefinition, instance),
 			);
-			return [facetName, instances] as const;
+			return [name, instances] as const;
 		}),
 	);
 	const facetModelsByKindById: Partial<FacetModelsByKindById> = {};

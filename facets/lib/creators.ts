@@ -1,5 +1,4 @@
 import { FacetDefinition, CascadedFacetType, FacetInstanceType } from './facet';
-import { overwrite } from './cascade';
 
 export function createEmptyFacetInstance<
 	Definition extends FacetDefinition,
@@ -22,19 +21,4 @@ export function createFacetInstance<Definition extends FacetDefinition>(
 		...createEmptyFacetInstance(definition),
 		...args,
 	};
-}
-
-export function cascadeFacetInstances<
-	Def extends FacetDefinition,
-	CascadedType = CascadedFacetType<Def>,
->(definition: Def, upper: FacetInstanceType<Def>, lower: FacetInstanceType<Def>): CascadedType {
-	const { props } = definition;
-	const cascaded: Partial<CascadedType> = {};
-	Object.entries(props).forEach(([key, prop]) => {
-		const { cascade = overwrite } = prop;
-		const upperProp = upper[key];
-		const lowerProp = lower[key];
-		cascaded[key as keyof CascadedType] = cascade(upperProp, lowerProp);
-	});
-	return cascaded as CascadedType;
 }

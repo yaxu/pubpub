@@ -1,4 +1,4 @@
-import { prop, facet, string, oneOf } from '../lib';
+import { prop, facet, string, oneOf, many } from '../lib';
 
 const headerTheme = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
 

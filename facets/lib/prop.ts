@@ -1,15 +1,9 @@
-import { FacetPropType, TypeOfFacetPropType } from './propType';
-
-type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
-type CascadeFn<T> = (upper: T, lower: T) => T;
-type NullablePropType<PropType extends FacetPropType> = null | TypeOfFacetPropType<PropType>;
-
-export type NullableFacetPropTypeIfRootValueIsNull<
-	PropType extends FacetPropType,
-	RootValue extends NullablePropType<PropType>,
-> = IsNeverNull<RootValue> extends true
-	? TypeOfFacetPropType<PropType>
-	: NullablePropType<PropType>;
+import {
+	FacetPropCascadeFn,
+	AvailableCascadeStrategyForPropType,
+	createCascadeFn,
+} from './cascade';
+import { FacetPropType, NullableTypeOfPropType } from './propType';
 
 export type FacetPropOptions<
 	// The PropType of the prop.
@@ -19,13 +13,11 @@ export type FacetPropOptions<
 	// specific -- type and preserve that information in the inferred return type. This lets us
 	// determine statically whether a facet prop will ever be null and adjust its TypeScript
 	// definitions accordingly.
-	RootValue extends NullablePropType<PropType>,
+	RootValue extends NullableTypeOfPropType<PropType>,
+	// How to cascade this prop down scopes
+	CascadeStrategy extends AvailableCascadeStrategyForPropType<PropType>,
 	// When we provide a defaultValue to a facet, it may be `null`.
-	DefaultValue = NullablePropType<PropType>,
-	// The value accessed from the `cascade` function may or may not be nullable depending on what
-	// was provided as the `rootValue`. In other words, if a non-null `rootValue` is provided, we
-	// can be sure that the value is never null.
-	CascadingValue = NullableFacetPropTypeIfRootValueIsNull<PropType, RootValue>,
+	DefaultValue = NullableTypeOfPropType<PropType>,
 > = {
 	// The value of this prop at the "root" of PubPub -- in the absence of any other facet instances
 	// that override it, what value does this prop have?
@@ -34,24 +26,37 @@ export type FacetPropOptions<
 	// `rootValue`, this value will actually be stored on a facet instance.
 	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
-	cascade?: CascadeFn<CascadingValue>;
+	cascade?: CascadeStrategy;
 };
 
 export type FacetProp<
 	PropType extends FacetPropType,
-	RootValue extends NullablePropType<PropType>,
+	RootValue extends NullableTypeOfPropType<PropType>,
+	CascadeStrategy extends AvailableCascadeStrategyForPropType<PropType>,
 > =
-	// Everything in the FacetPropOptions above...
-	FacetPropOptions<PropType, RootValue> & {
+	// Everything in the FacetPropOptions above, minus the name of the cascade strategy...
+	Omit<FacetPropOptions<PropType, RootValue, CascadeStrategy>, 'cascade'> & {
 		__facetProp: true;
 		// Plus the provided propType.
 		propType: PropType;
+		// Plus the returned cascading function.
+		cascade: FacetPropCascadeFn<PropType, RootValue, CascadeStrategy, any>;
 	};
 
 // Creates a prop definition.
-export const prop = <PropType extends FacetPropType, RootValue extends NullablePropType<PropType>>(
+export const prop = <
+	PropType extends FacetPropType,
+	RootValue extends NullableTypeOfPropType<PropType>,
+	CascadeStrategy extends AvailableCascadeStrategyForPropType<PropType> = 'overwrite',
+>(
 	propType: PropType,
-	options: FacetPropOptions<PropType, RootValue>,
-): FacetProp<PropType, RootValue> => {
-	return { ...options, propType, __facetProp: true };
+	options: FacetPropOptions<PropType, RootValue, CascadeStrategy>,
+): FacetProp<PropType, RootValue, CascadeStrategy> => {
+	const cascade = options.cascade ?? ('overwrite' as CascadeStrategy);
+	return {
+		...options,
+		propType,
+		cascade: createCascadeFn<PropType, RootValue, CascadeStrategy, any>(cascade),
+		__facetProp: true,
+	};
 };

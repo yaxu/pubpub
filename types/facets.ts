@@ -1,1 +1,1 @@
-export type { FacetInstance } from 'facets';
+export type { FacetBinding } from 'facets';

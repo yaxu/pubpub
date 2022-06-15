@@ -1,186 +1,180 @@
 import { Op } from 'sequelize';
 
 import * as types from 'types';
-import { Collection, CollectionPub, Pub, FacetInstance, facetModels } from 'server/models';
-import { bucketBy, indexById } from 'utils/arrays';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { assert } from 'utils/assert';
-import { intrinsics, Intrinsics, parseFacetInstance } from 'facets';
+import { FacetBinding } from 'server/models';
+import { flattenOnce, pruneFalsyValues } from 'utils/arrays';
+import {
+	ALL_INTRINSIC_FACETS,
+	cascade,
+	FacetCascadeResult,
+	FacetDefinition,
+	FacetInstanceType,
+	IntrinsicFacetDefinition,
+	IntrinsicFacetName,
+	Intrinsics,
+	mapFacetDefinitions,
+	mapFacetDefinitionsToCascadedInstances,
+} from 'facets';
+import { mapObject } from 'utils/objects';
+import { ResolvedScopeIds, resolveScopeIds, ScopeIdsByKind, ScopeStack } from './resolveScopeIds';
+import {
+	mapByScopeKind,
+	getBindingKeyForScopeKind,
+	ByScopeKind,
+	Scope,
+	createByScopeKind,
+	getScopeKindAndId,
+} from './scopes';
+import { loadFacetInstancesForBindingIds } from './load';
 
-type ScopeIdsByKind = {
-	pubIds?: string[];
-	collectionIds?: string[];
-	communityIds?: string[];
-};
+type ValidFacetName = IntrinsicFacetName;
 
-type ScopeStack = {
-	communityId: string;
-	collectionId: null | string;
-	pubId: null | string;
-};
+type ByFacetKind<T> = types.Writeable<{ [K in keyof Intrinsics]?: T }>;
 
-type ResolvedScopeIds = {
-	scopesWithDependencies: ScopeIdsByKind;
-	scopeStacks: ScopeStack[];
-};
+type FacetBindings = ByScopeKind<Record<string, types.FacetBinding[]>>;
 
-type FacetModelsByKindById = types.Writeable<{
-	[K in keyof Intrinsics]: Record<string, Intrinsics[K]>;
+type CascadedFacetsByKind = types.Writeable<{
+	[K in keyof Intrinsics]?: FacetInstanceType<Intrinsics[K]>;
 }>;
 
-const getPrimaryCollectionIdsByPubId = async (
-	collectionPubs: types.CollectionPub[],
-	collections: types.Collection[],
-): Promise<Record<string, string>> => {
-	const collectionsById = indexById(collections);
-	const collectionPubsByPubId = bucketBy(collectionPubs, (cp) => cp.pubId);
-	const primaryCollectionIds: Record<string, string> = {};
-	Object.entries(collectionPubsByPubId).forEach(([pubId, collectionPubsForPubId]) => {
-		const augmentedCollectionPubs: types.DefinitelyHas<types.CollectionPub, 'collection'>[] =
-			collectionPubsForPubId.map((collectionPub) => {
-				return {
-					...collectionPub,
-					collection: collectionsById[collectionPub.collectionId],
-				};
-			});
-		const primaryCollection = getPrimaryCollection(augmentedCollectionPubs);
-		if (primaryCollection) {
-			primaryCollectionIds[pubId] = primaryCollection.id;
-		}
-	});
-	return primaryCollectionIds;
-};
+type FacetInstancesByBindingId<Def extends FacetDefinition> = Record<
+	string,
+	FacetInstanceType<Def>
+>;
 
-const getIdIndexOfCommunityIds = <Item extends { id: string; communityId: string }>(
-	items: Item[],
-): Record<string, string> => {
-	const idIndex: Record<string, string> = {};
-	Object.entries(indexById(items)).forEach(([itemId, item]) => {
-		idIndex[itemId] = item.communityId;
-	});
-	return idIndex;
-};
+type FacetInstances = ByFacetKind<FacetInstancesByBindingId<IntrinsicFacetDefinition>>;
 
-const getScopeStacks = (
-	requestedScopes: ScopeIdsByKind,
-	primaryCollectionIdsByPubId: Record<string, string>,
-	communityIdsByPubId: Record<string, string>,
-	communityIdsByCollectionId: Record<string, string>,
-) => {
-	const { pubIds = [], collectionIds = [], communityIds = [] } = requestedScopes;
-	const pubStacks: ScopeStack[] = pubIds.map((pubId) => {
-		const communityId = communityIdsByPubId[pubId];
-		const primaryCollectionId = primaryCollectionIdsByPubId[pubId];
-		if (primaryCollectionId) {
-			assert(communityIdsByCollectionId[primaryCollectionId] === communityId);
-		}
-		return {
-			communityId,
-			collectionId: primaryCollectionId ?? null,
-			pubId,
-		};
-	});
-	const collectionStacks: ScopeStack[] = collectionIds.map((collectionId) => {
-		const communityId = communityIdsByCollectionId[collectionId];
-		return {
-			communityId,
-			collectionId,
-			pubId: null,
-		};
-	});
-	const communityStacks: ScopeStack[] = communityIds.map((communityId) => {
-		return {
-			communityId,
-			collectionId: null,
-			pubId: null,
-		};
-	});
-	return [...pubStacks, ...collectionStacks, ...communityStacks];
-};
+type CascadedFacetsByScopeId<FacetNames extends ValidFacetName> = Record<
+	string,
+	types.DefinitelyHas<CascadedFacetsByKind, FacetNames>
+>;
 
-const resolveScopeIds = async (requestedScopes: ScopeIdsByKind): Promise<ResolvedScopeIds> => {
-	const { pubIds = [], collectionIds = [], communityIds = [] } = requestedScopes;
-	const collectionPubs = await CollectionPub.findAll({
-		where: { pubId: [...new Set(pubIds)] },
-		attributes: ['id', 'pubId', 'collectionId'],
-	});
-	const allCollectionIds = [
-		...new Set([...collectionIds, ...collectionPubs.map((cp) => cp.collectionId)]),
-	];
-	const [pubs, collections]: [types.Pub[], types.Collection[]] = await Promise.all([
-		Pub.findAll({ attributes: ['id', 'communityId'], where: { id: pubIds } }),
-		Collection.findAll({
-			attributes: ['id', 'communityId'],
-			where: {
-				id: allCollectionIds,
-			},
+type CascadedFacetsForScopes<FacetNames extends ValidFacetName> = ByScopeKind<
+	CascadedFacetsByScopeId<FacetNames>
+>;
+
+const cascadeSingleFacetForScopeStack = <Def extends FacetDefinition>(
+	stack: ScopeStack,
+	def: Def,
+	bindings: FacetBindings,
+	instances: FacetInstancesByBindingId<Def>,
+): FacetCascadeResult<Def> => {
+	const matchingInstancesWithScopes = flattenOnce(
+		stack.map((scope) => {
+			const bindingsForScope = bindings[scope.kind][scope.id];
+			const matchingInstances = pruneFalsyValues(
+				bindingsForScope.map((binding) => instances[binding.id]),
+			);
+			return matchingInstances.map((value) => ({ scope, value }));
 		}),
-	]);
-	const allCommunityIds = [
-		...new Set([
-			...communityIds,
-			...pubs.map((pub) => pub.communityId),
-			...collections.map((collection) => collection.communityId),
-		]),
-	];
-	const communityIdsByPubId = getIdIndexOfCommunityIds(pubs);
-	const communityIdsByCollectionId = getIdIndexOfCommunityIds(collections);
-	const primaryCollectionIdsByPubId = await getPrimaryCollectionIdsByPubId(
-		collectionPubs,
-		collections,
 	);
-	return {
-		scopeStacks: getScopeStacks(
-			requestedScopes,
-			primaryCollectionIdsByPubId,
-			communityIdsByPubId,
-			communityIdsByCollectionId,
-		),
-		scopesWithDependencies: {
-			pubIds,
-			collectionIds: allCollectionIds,
-			communityIds: allCommunityIds,
-		},
-	};
+	return cascade(def, matchingInstancesWithScopes);
 };
 
-const getFacetInstancesForResolvedScopeIds = async (
+const cascadeFacetsForScopeStack = (
+	stack: ScopeStack,
+	bindings: FacetBindings,
+	instances: FacetInstances,
+): CascadedFacetsByKind => {
+	return mapFacetDefinitionsToCascadedInstances((def, skip) => {
+		const instancesForFacetDefinition = instances[def.name as keyof Intrinsics];
+		if (instancesForFacetDefinition) {
+			return cascadeSingleFacetForScopeStack(
+				stack,
+				def,
+				bindings,
+				instancesForFacetDefinition,
+			);
+		}
+		return skip;
+	});
+};
+
+const getFacetBindingsForResolvedScopeIds = async (
 	resolvedScopeIds: ResolvedScopeIds,
-): Promise<types.FacetInstance[]> => {
+): Promise<{ facetBindings: FacetBindings; facetBindingIds: string[] }> => {
+	const { scopeIdsIncludingDependencies } = resolvedScopeIds;
 	const {
-		scopesWithDependencies: { pubIds = [], collectionIds = [], communityIds = [] },
-	} = resolvedScopeIds;
-	const facetInstances: types.FacetInstance[] = await FacetInstance.findAll({
+		pub: pubIds = [],
+		collection: collectionIds = [],
+		community: communityIds = [],
+	} = scopeIdsIncludingDependencies;
+	const facetBindingInstances: types.FacetBinding[] = await FacetBinding.findAll({
 		where: {
 			[Op.or]: [
 				{ pubId: pubIds },
-				{ collectionid: collectionIds },
+				{ collectionId: collectionIds },
 				{ communityId: communityIds },
 			],
 		},
 	});
-	return facetInstances;
+	const facetBindingIds = facetBindingInstances.map((binding) => binding.id);
+	const facetBindings = mapByScopeKind(scopeIdsIncludingDependencies, (scopeIds, scopeKind) => {
+		const bindingKey = getBindingKeyForScopeKind(scopeKind);
+		const bindingsByScopeId: Record<string, types.FacetBinding[]> = {};
+		scopeIds.forEach((scopeId) => {
+			bindingsByScopeId[scopeId] = facetBindingInstances.filter(
+				(instance) => instance[bindingKey] === scopeId,
+			);
+		});
+		return bindingsByScopeId;
+	});
+	return { facetBindings, facetBindingIds };
 };
 
-const getFacetModelsByKindForFacetInstanceIds = async (
-	facetInstanceIds: string[],
-): Promise<FacetModelsByKindById> => {
-	const entries = await Promise.all(
-		Object.values(intrinsics).map(async (facetDefinition) => {
-			const { name } = facetDefinition;
-			const FacetModel = facetModels[name];
-			const facetModelsInstances = await FacetModel.findAll({
-				where: { facetInstanceId: facetInstanceIds },
-			});
-			const instances = facetModelsInstances.map((instance) =>
-				parseFacetInstance(facetDefinition, instance),
-			);
-			return [name, instances] as const;
-		}),
+const getFacetInstancesForBindingIds = async <FacetNames extends ValidFacetName>(
+	facetBindingIds: string[],
+	facetNames: FacetNames[],
+): Promise<types.DefinitelyHas<FacetInstances, FacetNames>> => {
+	const facetInstances: FacetInstances = {};
+	await Promise.all(
+		Object.values(
+			mapFacetDefinitions(async (definition) => {
+				const { name } = definition;
+				if (facetNames.includes(name as any)) {
+					facetInstances[name] = await loadFacetInstancesForBindingIds(
+						definition,
+						facetBindingIds,
+					);
+				}
+			}),
+		),
 	);
-	const facetModelsByKindById: Partial<FacetModelsByKindById> = {};
-	entries.forEach(([facetName, facetModelInstances]) => {
-		facetModelsByKindById[facetName as keyof Intrinsics] = indexById(facetModelInstances);
+	return facetInstances as types.DefinitelyHas<FacetInstances, FacetNames>;
+};
+
+const fetchFacetsForResolvedScopeIds = async <FacetNames extends ValidFacetName>(
+	resolvedScopeIds: ResolvedScopeIds,
+	facetNames: FacetNames[],
+): Promise<CascadedFacetsForScopes<FacetNames>> => {
+	const { scopeStacks } = resolvedScopeIds;
+	const { facetBindings, facetBindingIds } = await getFacetBindingsForResolvedScopeIds(
+		resolvedScopeIds,
+	);
+	const facetInstances = await getFacetInstancesForBindingIds(facetBindingIds, facetNames);
+	const cascadedFacets = mapByScopeKind(scopeStacks, (scopeStacksByScopeId) => {
+		return mapObject(scopeStacksByScopeId, (stack: ScopeStack) => {
+			return cascadeFacetsForScopeStack(stack, facetBindings, facetInstances);
+		});
 	});
-	return facetModelsByKindById as FacetModelsByKindById;
+	return cascadedFacets as CascadedFacetsForScopes<FacetNames>;
+};
+
+export const fetchFacetsForScopeIds = async <FacetNames extends ValidFacetName>(
+	requestedScopes: ScopeIdsByKind,
+	facetNames?: FacetNames[],
+) => {
+	const resolvedScopeIds = await resolveScopeIds(requestedScopes);
+	return fetchFacetsForResolvedScopeIds(resolvedScopeIds, facetNames ?? ALL_INTRINSIC_FACETS);
+};
+
+export const fetchFacetsForScope = async <FacetNames extends ValidFacetName>(
+	scope: Scope,
+	facetNames?: FacetNames[],
+) => {
+	const scopeIds = createByScopeKind<string[]>(() => []);
+	const { kind, id } = getScopeKindAndId(scope);
+	scopeIds[kind].push(id);
+	const fetchResult = await fetchFacetsForScopeIds(scopeIds, facetNames);
+	return fetchResult[kind][id];
 };

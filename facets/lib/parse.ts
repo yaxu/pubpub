@@ -19,14 +19,18 @@ function parsePartialOrEntireFacetInstance<
 		if (instanceHasKey) {
 			const propSchema = prop.propType.schema;
 			const instanceValue = instance[propName];
-			const parsedValue = propSchema.safeParse(instanceValue);
-			if (parsedValue.success) {
-				parsedInstance[propName as any] = parsedValue.data;
+			if (instanceValue === null) {
+				parsedInstance[propName as any] = null;
 			} else {
-				throw new FacetParseError(definition, propName);
+				const parsedValue = propSchema.safeParse(instanceValue);
+				if (parsedValue.success) {
+					parsedInstance[propName as any] = parsedValue.data;
+				} else {
+					throw new FacetParseError(definition, propName, instanceValue);
+				}
 			}
 		} else if (!allowPartialInstance) {
-			throw new FacetParseError(definition, propName);
+			throw new FacetParseError(definition, propName, undefined);
 		}
 	});
 	return parsedInstance as ReturnType;

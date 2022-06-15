@@ -15,10 +15,7 @@ export const intersperse = <P, Q>(
 	return res;
 };
 
-export const indexByProperty = <T extends { [key: string]: any }>(
-	array: T[],
-	property: keyof T,
-) => {
+export const indexByProperty = <T extends Record<string, any>>(array: T[], property: keyof T) => {
 	const res: Record<string, T> = {};
 	array.forEach((el) => {
 		res[el[property]] = el;
@@ -78,12 +75,26 @@ export const arraysHaveSameElements = <T>(first: T[], second: T[]) => {
 	return first.every((el) => second.includes(el)) && second.every((el) => first.includes(el));
 };
 
-export const pruneFalsyValues = (arr) => arr.filter(Boolean);
+export const pruneFalsyValues = <T>(arr: T[]): T[] => arr.filter(Boolean);
 
 export const bucketBy = <T>(arr: T[], getKey: (t: T) => string): Record<string, T[]> => {
 	const buckets: Record<string, T[]> = {};
 	arr.forEach((item) => {
 		const bucketKey = getKey(item);
+		const bucket = buckets[bucketKey] || [];
+		bucket.push(item);
+		buckets[bucketKey] = bucket;
+	});
+	return buckets;
+};
+
+export const bucketByProperty = <T extends Record<string, any>>(
+	arr: T[],
+	key: keyof T,
+): Record<string, T[]> => {
+	const buckets: Record<string, T[]> = {};
+	arr.forEach((item) => {
+		const bucketKey = item[key];
 		const bucket = buckets[bucketKey] || [];
 		bucket.push(item);
 		buckets[bucketKey] = bucket;

@@ -8,9 +8,8 @@ import { FacetPropType, TypeOfPropType } from './propType';
 import { FacetDefinition, FacetInstanceType } from './facet';
 import { FacetCascadeNotImplError } from './errors';
 import { mapFacet } from './map';
-import { createEmptyFacetInstance } from '.';
 
-type WithScope<T> = {
+export type WithScope<T> = {
 	scope:
 		| {
 				kind: 'community' | 'collection' | 'pub';
@@ -76,7 +75,7 @@ function cascadeProp<Prop extends FacetProp>(
 		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
 		const result: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
-			.reduce((a, b) => a ?? b, null);
+			.reduce((a, b) => b ?? a, null);
 		return {
 			contributions,
 			result,

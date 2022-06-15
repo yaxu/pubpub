@@ -6,9 +6,15 @@ export class FacetsError extends Error {
 	}
 }
 
+export class FacetDoesNotExistError extends FacetsError {
+	constructor(supposedFacetName: string) {
+		super(`The facet ${supposedFacetName} does not exist.`);
+	}
+}
+
 export class FacetParseError extends FacetsError {
-	constructor(facet: FacetDefinition, propName: string) {
-		super(`Error when parsing ${facet.name} instance: invalid ${propName}`);
+	constructor(facet: FacetDefinition, propName: string, propValue: any) {
+		super(`Error when parsing ${facet.name} instance: invalid ${propName} = ${propValue}.`);
 	}
 }
 

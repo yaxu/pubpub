@@ -1,4 +1,4 @@
-import { prop, facet, string, oneOf, many } from '../lib';
+import { prop, facet, string, oneOf } from '../lib';
 
 const headerTheme = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
 
@@ -7,6 +7,6 @@ export const PubHeaderTheme = facet({
 	props: {
 		backgroundImage: prop(string, { rootValue: null }),
 		backgroundColor: prop(string, { rootValue: 'community' }),
-		theme: prop(headerTheme, { rootValue: null }),
+		theme: prop(headerTheme, { rootValue: 'light' }),
 	},
 });

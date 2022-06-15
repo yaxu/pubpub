@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { isProd } from 'utils/environment';
 import { addWorkerTask } from 'server/utils/workers';
 import { sendEmail } from 'server/utils/email';
-import { updateFacetsForScope } from 'server/facets/update';
+import * as facets from 'server/facets';
 import * as featureFlags from 'server/featureFlag/interface';
 import * as tasks from 'workers/tasks';
 import * as models from 'server/models';
@@ -41,12 +41,13 @@ const context = {
 	...tasks,
 	...models,
 	...featureFlags,
+	...facets,
 	...generateFindFunctions(),
 	clear,
 	scope,
 	addWorkerTask,
 	sendEmail,
-	updateFacetsForScope,
+
 };
 
 module.exports = {

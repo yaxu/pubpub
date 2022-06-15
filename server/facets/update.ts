@@ -5,9 +5,8 @@ import {
 	Intrinsics,
 	parsePartialFacetInstance,
 } from 'facets';
-import { FacetInstance, facetModels } from 'server/models';
+import { FacetBinding, facetModels } from 'server/models';
 
-type Scope = { communityId: string } | { collectionId: string } | { pubId: string };
 type IntrinsicName = keyof Intrinsics;
 type UpdateFacetByName<Name extends IntrinsicName> = Partial<FacetInstanceType<Intrinsics[Name]>>;
 type UpdateFacetsQuery = Partial<{
@@ -21,9 +20,10 @@ const updateFacetForScope = async <Name extends IntrinsicName>(
 ) => {
 	const FacetModel = facetModels[facet.name];
 	const existing = await FacetModel.findOne({
-		includes: [
+		include: [
 			{
-				model: FacetInstance,
+				model: FacetBinding,
+				as: 'facetBinding',
 				where: { ...scope },
 				required: true,
 			},
@@ -33,8 +33,8 @@ const updateFacetForScope = async <Name extends IntrinsicName>(
 		existing.update(update);
 		await existing.save();
 	} else {
-		const facetInstance = await FacetInstance.create({ ...scope });
-		await FacetModel.create({ ...update, facetInstanceId: facetInstance.id });
+		const facetBinding = await FacetBinding.create({ ...scope });
+		await FacetModel.create({ ...update, facetBindingId: facetBinding.id });
 	}
 };
 

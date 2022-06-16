@@ -76,10 +76,15 @@ function cascadeProp<Prop extends FacetProp>(
 		const result: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
 			.reduce((a, b) => b ?? a, null);
-		return {
-			contributions,
-			result,
-		};
+		return { contributions, result };
+	}
+	if (strategy === 'extend') {
+		type PropWithCascade = Prop & { cascade: { strategy: 'extend' } };
+		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
+		const result: PropCascadeResult<PropWithCascade> = sources
+			.map((s) => (s.value || []) as any[])
+			.reduce((a, b) => [...a, ...b], []);
+		return { contributions, result };
 	}
 	throw new FacetCascadeNotImplError(strategy);
 }

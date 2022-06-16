@@ -6,6 +6,7 @@ import {
 	parsePartialFacetInstance,
 } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
+import { Scope } from './scopes';
 
 type IntrinsicName = keyof Intrinsics;
 type UpdateFacetByName<Name extends IntrinsicName> = Partial<FacetInstanceType<Intrinsics[Name]>>;

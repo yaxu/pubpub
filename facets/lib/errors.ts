@@ -20,6 +20,6 @@ export class FacetParseError extends FacetsError {
 
 export class FacetCascadeNotImplError extends FacetsError {
 	constructor(cascadeStrategy: string) {
-		super(`The facet cascade strategy ${cascadeStrategy} has no implementation yet.`);
+		super(`The facet cascade strategy "${cascadeStrategy}" has no implementation yet.`);
 	}
 }

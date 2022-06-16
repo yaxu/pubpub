@@ -99,22 +99,29 @@ export const resolveScopeIds = async (
 		collection: collectionIds = [],
 		community: communityIds = [],
 	} = requestedScopes;
-	const collectionPubs = await CollectionPub.findAll({
-		where: { pubId: [...new Set(pubIds)] },
-		attributes: ['id', 'pubId', 'collectionId'],
-	});
+	const collectionPubs = (
+		await CollectionPub.findAll({
+			where: { pubId: [...new Set(pubIds)] },
+			attributes: ['id', 'pubId', 'collectionId'],
+		})
+	).map((cp) => cp.toJSON());
 	const allCollectionIds = [
 		...new Set([...collectionIds, ...collectionPubs.map((cp) => cp.collectionId)]),
 	];
-	const [pubs, collections]: [types.Pub[], types.Collection[]] = await Promise.all([
+	const [pubSequelizeModels, collectionSequelizeModels]: [
+		types.SequelizeModel<types.Pub>[],
+		types.SequelizeModel<types.Collection>[],
+	] = await Promise.all([
 		Pub.findAll({ attributes: ['id', 'communityId'], where: { id: pubIds } }),
 		Collection.findAll({
-			attributes: ['id', 'communityId'],
+			attributes: ['id', 'communityId', 'isPublic', 'kind'],
 			where: {
 				id: allCollectionIds,
 			},
 		}),
 	]);
+	const pubs = pubSequelizeModels.map((pub) => pub.toJSON());
+	const collections = collectionSequelizeModels.map((collection) => collection.toJSON());
 	const allCommunityIds = [
 		...new Set([
 			...communityIds,

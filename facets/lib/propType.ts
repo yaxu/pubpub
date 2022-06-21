@@ -1,8 +1,6 @@
 import { TypeOf, ZodSchema } from 'zod';
 import { DataTypes } from 'sequelize';
 
-type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
-
 type FacetPropTypeOptions<Schema extends ZodSchema = ZodSchema> = {
 	name?: string;
 	schema: Schema;

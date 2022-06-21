@@ -3,4 +3,3 @@ export * from './license';
 export * from './nodeLabels';
 export * from './pubEdgeDisplay';
 export * from './pubHeaderTheme';
-export * from './listo';

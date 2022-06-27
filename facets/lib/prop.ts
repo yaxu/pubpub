@@ -23,6 +23,8 @@ export type FacetPropOptions<
 	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
 	cascade?: FacetPropCascade<PropType>;
+	// A human-readable label for this prop
+	label?: string;
 };
 
 export type FacetProp<

@@ -9,13 +9,12 @@ import { FacetDefinition, FacetInstanceType } from './facet';
 import { FacetCascadeNotImplError } from './errors';
 import { mapFacet } from './map';
 
+export type FacetSourceScope =
+	| { kind: 'community' | 'collection' | 'pub'; id: string }
+	| { root: true };
+
 export type WithScope<T> = {
-	scope:
-		| {
-				kind: 'community' | 'collection' | 'pub';
-				id: string;
-		  }
-		| { root: true };
+	scope: FacetSourceScope;
 	value: T;
 };
 
@@ -36,13 +35,13 @@ export type FacetPropCascade<PropType extends FacetPropType> = {
 
 type PropCascadeContribution<Prop extends FacetProp> = {
 	overwrite: NullableTypeOfFacetProp<Prop>;
-	extend: TypeOfFacetProp<Prop>; // This is a (possibly empty) array
+	extend: TypeOfFacetProp<Prop> & any[];
 	merge: Partial<TypeOfFacetProp<Prop>>;
 }[Prop['cascade']['strategy']];
 
 type PropCascadeResult<Prop extends FacetProp> = {
 	overwrite: CascadedTypeOfFacetProp<Prop>;
-	extend: TypeOfFacetProp<Prop>; // This is a (possibly empty) array
+	extend: TypeOfFacetProp<Prop> & any[];
 	merge: Partial<TypeOfFacetProp<Prop>>;
 }[Prop['cascade']['strategy']];
 
@@ -80,7 +79,14 @@ function cascadeProp<Prop extends FacetProp>(
 	}
 	if (strategy === 'extend') {
 		type PropWithCascade = Prop & { cascade: { strategy: 'extend' } };
-		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
+		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.map(
+			(source) => {
+				return {
+					scope: source.scope,
+					value: source.value ?? ([] as any[]),
+				};
+			},
+		);
 		const result: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => (s.value || []) as any[])
 			.reduce((a, b) => [...a, ...b], []);

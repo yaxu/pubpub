@@ -34,9 +34,9 @@ export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(strings:
 	});
 };
 
-export const many = <PropType extends FacetPropType>(type: PropType) => {
+export const arrayOf = <PropType extends FacetPropType>(type: PropType) => {
 	return propType({
 		schema: z.array(type.schema),
-		postgresType: DataTypes.JSONB, // FILL ME IN LaTER
+		postgresType: DataTypes.JSONB,
 	});
 };

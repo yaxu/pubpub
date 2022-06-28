@@ -1,42 +1,46 @@
-import { z } from 'zod';
-import { DataTypes } from 'sequelize';
+import { z, ZodEnum } from 'zod';
 
 import { FacetPropType, propType } from './propType';
 
 export const string = propType({
 	name: 'string',
 	schema: z.string(),
-	postgresType: DataTypes.TEXT,
+	postgresType: 'text',
 });
 
 export const boolean = propType({
 	name: 'boolean',
 	schema: z.boolean(),
-	postgresType: DataTypes.BOOLEAN,
+	postgresType: 'boolean',
 });
 
 export const integer = propType({
 	name: 'integer',
 	schema: z.number().int(),
-	postgresType: DataTypes.INTEGER,
+	postgresType: 'integer',
 });
 
 export const double = propType({
 	name: 'double',
 	schema: z.number(),
-	postgresType: DataTypes.DOUBLE,
+	postgresType: 'double',
 });
 
-export const oneOf = <T extends string, U extends readonly [T, ...T[]]>(strings: U) => {
+export const oneOf = <T extends string, U extends [T, ...T[]]>(
+	values: U,
+	labels?: Record<T, string>,
+): FacetPropType<z.ZodEnum<U>, { values: U; labels?: Record<T, string> }> => {
 	return propType({
-		schema: z.enum(strings),
-		postgresType: DataTypes.STRING,
+		identity: oneOf,
+		schema: z.enum(values),
+		postgresType: 'string',
+		extension: { values, labels },
 	});
 };
 
 export const arrayOf = <PropType extends FacetPropType>(type: PropType) => {
 	return propType({
 		schema: z.array(type.schema),
-		postgresType: DataTypes.JSONB,
+		postgresType: 'jsonb',
 	});
 };

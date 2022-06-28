@@ -1,12 +1,11 @@
 import { z } from 'zod';
-import { DataTypes } from 'sequelize';
 
 import { propType, prop, facet } from '../lib';
 
 const nodeLabel = propType({
 	name: 'nodeLabel',
 	schema: z.object({ enabled: z.boolean(), label: z.string() }),
-	postgresType: DataTypes.JSONB,
+	postgresType: 'jsonb',
 });
 
 export const NodeLabels = facet({

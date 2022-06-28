@@ -4,3 +4,5 @@ export type FacetBinding = {
 	pubId: null | string;
 	id: string;
 };
+
+export type PostgresDatatype = 'text' | 'boolean' | 'integer' | 'double' | 'string' | 'jsonb';

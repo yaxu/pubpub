@@ -3,9 +3,9 @@ import { InputGroup } from '@blueprintjs/core';
 
 import { primitives } from 'facets';
 
-import { propTypeEditor } from '../propType';
+import { propTypeEditor } from './_propType';
 
-export const string = propTypeEditor(primitives.string, (props) => {
+export const String = propTypeEditor(primitives.string, (props) => {
 	const { value, onUpdateValue } = props;
 	return (
 		<InputGroup value={value ?? undefined} onChange={(e) => onUpdateValue(e.target.value)} />

@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { FacetPropType, NullableTypeOfPropType } from 'facets';
+import { FacetProp, FacetPropType, NullableTypeOfPropType } from 'facets';
 
 export type RenderFn<PropType extends FacetPropType> = (
 	props: RenderProps<PropType>,
 ) => React.ReactElement;
 
 export type RenderProps<PropType extends FacetPropType> = {
+	prop: FacetProp<PropType>;
+	propType: PropType;
 	value: NullableTypeOfPropType<PropType>;
 	onUpdateValue: (update: NullableTypeOfPropType<PropType>) => unknown;
 	isValueLocal: boolean;

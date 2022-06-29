@@ -46,7 +46,7 @@ type PropCascadeResult<Prop extends FacetProp> = {
 }[Prop['cascade']['strategy']];
 
 export type FacetPropCascadeResult<Prop extends FacetProp> = {
-	result: PropCascadeResult<Prop>;
+	value: PropCascadeResult<Prop>;
 	contributions: WithScope<PropCascadeContribution<Prop>>[];
 };
 
@@ -55,7 +55,7 @@ export type FacetCascadedType<Def extends FacetDefinition> = {
 };
 
 export type FacetCascadeResult<Def extends FacetDefinition> = {
-	result: FacetCascadedType<Def>;
+	value: FacetCascadedType<Def>;
 	props: { [K in keyof Def['props']]: FacetPropCascadeResult<Def['props'][K]> };
 };
 
@@ -72,10 +72,10 @@ function cascadeProp<Prop extends FacetProp>(
 	if (strategy === 'overwrite') {
 		type PropWithCascade = Prop & { cascade: { strategy: 'overwrite' } };
 		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
-		const result: PropCascadeResult<PropWithCascade> = sources
+		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
 			.reduce((a, b) => b ?? a, null);
-		return { contributions, result };
+		return { contributions, value };
 	}
 	if (strategy === 'extend') {
 		type PropWithCascade = Prop & { cascade: { strategy: 'extend' } };
@@ -87,10 +87,10 @@ function cascadeProp<Prop extends FacetProp>(
 				};
 			},
 		);
-		const result: PropCascadeResult<PropWithCascade> = sources
+		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => (s.value || []) as any[])
 			.reduce((a, b) => [...a, ...b], []);
-		return { contributions, result };
+		return { contributions, value };
 	}
 	throw new FacetCascadeNotImplError(strategy);
 }
@@ -109,8 +109,8 @@ export function cascade<Def extends FacetDefinition>(
 			...propInstances,
 		]);
 	}) as FacetCascadeResult<Def>['props'];
-	const result = mapFacet(def, (key) => {
-		return props[key].result;
+	const value = mapFacet(def, (key) => {
+		return props[key].value;
 	}) as FacetCascadedType<Def>;
-	return { props, result };
+	return { props, value };
 }

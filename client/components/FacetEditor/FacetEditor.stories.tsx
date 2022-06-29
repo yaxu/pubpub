@@ -27,7 +27,7 @@ const cascadedPubTheme = cascade(PubHeaderTheme, [
 	},
 ]);
 
-storiesOf('components/FacetEditor', module).add('default', () => (
+storiesOf('components/facets/FacetEditor', module).add('default', () => (
 	<FacetEditor
 		facetDefinition={PubHeaderTheme}
 		cascadeResult={cascadedPubTheme}

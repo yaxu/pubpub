@@ -12,7 +12,7 @@ type FacetPropTypeOptions<
 	identity?: any;
 	schema: Schema;
 	postgresType: PostgresDatatype;
-	extension: Extension;
+	extension?: Extension;
 };
 
 export type FacetPropType<
@@ -20,6 +20,7 @@ export type FacetPropType<
 	Extension = AnyExtension,
 > = FacetPropTypeOptions<Schema, Extension> & {
 	__facetPropType: true;
+	extension: Extension;
 };
 
 export type TypeOfPropType<PropType extends FacetPropType> = TypeOf<PropType['schema']>;
@@ -30,5 +31,9 @@ export type NullableTypeOfPropType<PropType extends FacetPropType> =
 export const propType = <Schema extends ZodSchema, Extension extends AnyExtension>(
 	options: FacetPropTypeOptions<Schema, Extension>,
 ): FacetPropType<Schema, Extension> => {
-	return { ...options, __facetPropType: true };
+	return {
+		...options,
+		extension: options.extension || ({} as Extension),
+		__facetPropType: true,
+	};
 };

@@ -1,6 +1,6 @@
 import { FacetPropType } from 'facets';
 
-import { RenderFn, PropTypeEditor } from './types';
+import { PropTypeEditorRenderFn, PropTypeEditorDefinition } from '../types';
 
 type ReturnsFacetPropType = (...args: any[]) => FacetPropType;
 type EditorArgument = FacetPropType | ReturnsFacetPropType;
@@ -11,7 +11,7 @@ type ExtractFacetPropType<Arg extends EditorArgument> = Arg extends ReturnsFacet
 
 export function propTypeEditor<Arg extends EditorArgument>(
 	arg: Arg,
-	renderFn: RenderFn<ExtractFacetPropType<Arg>>,
-): PropTypeEditor<ExtractFacetPropType<Arg>> {
+	renderFn: PropTypeEditorRenderFn<ExtractFacetPropType<Arg>>,
+): PropTypeEditorDefinition<ExtractFacetPropType<Arg>> {
 	return { propType: arg as any, renderFn };
 }

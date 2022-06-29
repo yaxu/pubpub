@@ -18,7 +18,7 @@ export type CanonicalizedFacet = JSON & {
 export function canonicalizeFacetPropType<P extends FacetPropType>(propType: P): CanonicalizedProp {
 	const { postgresType, schema, name } = propType;
 	return {
-		postgresType: postgresType.key,
+		postgresType,
 		schema: zodToJsonSchema(schema, name) as JSON,
 	};
 }

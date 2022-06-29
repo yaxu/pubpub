@@ -1,0 +1,28 @@
+$gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
+
+.facet-editor-component {
+    width: 400px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--community-accent-dark);
+    background: #fefefe;
+    box-shadow: $gentle-shadow;
+
+    .top-bar {
+        background-color: var(--community-accent-dark);
+        padding: 6px;
+        color: white;
+        .name {
+            font-weight: bold;
+        }
+    }
+
+    .prop-editors {
+        > * {
+            padding: 10px;
+        }
+        > :not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+    }
+}

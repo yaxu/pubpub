@@ -1,0 +1,16 @@
+.facet-prop-editor-skeleton-component {
+    .label {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .controls {
+        display: flex;
+        > .reset-button {
+            margin-right: 4px;
+        }
+        > .editor-container {
+            flex-grow: 1;
+        }
+    }
+}

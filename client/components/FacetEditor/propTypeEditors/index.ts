@@ -1,2 +1,2 @@
 export { OneOf } from './OneOf';
-export { String as st } from './String';
+export { String } from './String';

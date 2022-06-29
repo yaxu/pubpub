@@ -13,11 +13,9 @@ type ComponentProps<Prop extends FacetProp> = {
 function FacetPropEditor<Prop extends FacetProp>(props: ComponentProps<Prop>) {
 	const { facetProp, cascadeResult } = props;
 	const { label, propType, cascade } = facetProp;
-	console.log({FacetPropTypeEditor, ahhh: true})
 	return (
 		<div className="facet-prop-editor-component">
 			<div className="label">{label}</div>
-			honk
 			<FacetPropTypeEditor
 				isValueLocal
 				prop={facetProp}

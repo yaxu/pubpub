@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 
 import { FacetPropType } from 'facets';
 
-import { RenderProps, RenderFn, PropTypeEditor } from './types';
-import { st, OneOf } from './propTypeEditors';
+import { RenderProps, RenderFn, PropTypeEditor } from './propTypeEditors/types';
+import { String, OneOf } from './propTypeEditors';
 
 type ComponentProps<PropType extends FacetPropType> = {
 	propType: PropType;
@@ -18,7 +18,7 @@ const registerPropTypeEditors = (editors: PropTypeEditor<any>[]) => {
 	return registry;
 };
 
-const propTypeEditors = registerPropTypeEditors([st, OneOf]);
+const propTypeEditors = registerPropTypeEditors([String, OneOf]);
 
 const getEditorComponentForPropType = (propType: FacetPropType) => {
 	const valueFromEditors = propTypeEditors.get(propType.identity ?? propType);
@@ -30,9 +30,7 @@ const getEditorComponentForPropType = (propType: FacetPropType) => {
 
 const FacetPropTypeEditor = <PropType extends FacetPropType>(props: ComponentProps<PropType>) => {
 	const { propType } = props;
-	console.log('hello,');
 	const Editor = useMemo(() => getEditorComponentForPropType(propType), [propType]);
-	console.log({ Editor });
 	return <Editor {...props} />;
 };
 

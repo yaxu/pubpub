@@ -11,15 +11,26 @@ type Props = {
 	onReset: Callback;
 };
 
+const arrow = (
+	<div className="arrow-container">
+		<div className="arrow">
+			<div className="arrow-bend" />
+			<div className="arrow-tip" />
+			<div className="arrow-bauble" />
+		</div>
+	</div>
+);
+
 function FacetPropEditorSkeleton(props: Props) {
 	const { children, label, onReset } = props;
 	return (
 		<div className="facet-prop-editor-skeleton-component">
-			<div className="label">{label}</div>
-			<div className="controls">
-				<Button icon="reset" className="reset-button" onClick={onReset} />
-				<div className="editor-container">{children}</div>
+			<div className="inheritance-container">
+				{arrow}
+				<div className="inheritance-controls">from community</div>
 			</div>
+			<div className="label">{label}</div>
+			<div className="controls-container">{children}</div>
 		</div>
 	);
 }

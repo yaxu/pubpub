@@ -1,16 +1,70 @@
+@use 'sass:math';
+@import 'styles/typography.scss';
+
+$margin: 15px;
+$padding: 12px;
+$border-width: 1px;
+
+$arrow-width: 10px;
+$arrow-height: 20px;
+$arrow-tip-size: 7px;
+$arrow-bauble-size: 18px;
+$arrow-border: 2px solid currentColor;
+$arrow-mask-gradient: linear-gradient(to bottom, transparent, black);
+$arrow-rotated-offset: 0.5 * (math.sqrt(2) * $arrow-tip-size);
+
 .facet-prop-editor-skeleton-component {
+    margin: $margin;
+    padding: $padding;
+    padding-top: 0;
+    border: $border-width solid var(--community-accent-dark);
+    border-radius: 2px;
+
+    .inheritance-container {
+        display: inline-block;
+        border-radius: 3px;
+        padding: 4px 10px;
+        transform: translateY(-50%);
+        margin-bottom: -10px;
+        overflow: hidden;
+        background-color: var(--community-accent-dark);
+        color: white;
+        .arrow-container {
+            position: absolute;
+            bottom: 0;
+            .arrow {
+                position: relative;
+                transform: translateY(calc(#{0 - $arrow-rotated-offset} - 0.5em + 1px));
+                .arrow-bend {
+                    top: 0;
+                    left: 0;
+                    width: $arrow-width;
+                    height: $arrow-height;
+                    border-bottom-left-radius: 4px;
+                    border-left: $arrow-border;
+                    border-bottom: $arrow-border;
+                    mask-image: $arrow-mask-gradient;
+                }
+                .arrow-tip {
+                    position: absolute;
+                    transform: translateY(#{-0.5 * ($arrow-tip-size + $border-width)})
+                        translateX(#{$arrow-width - $arrow-tip-size}) rotate(45deg);
+                    border-top: $arrow-border;
+                    border-right: $arrow-border;
+                    width: $arrow-tip-size;
+                    height: $arrow-tip-size;
+                }
+            }
+        }
+        .inheritance-controls {
+            font-size: 11px;
+            margin-left: 5 + $arrow-width;
+            @include subheading;
+        }
+    }
+
     .label {
         font-weight: bold;
         margin-bottom: 4px;
-    }
-
-    .controls {
-        display: flex;
-        > .reset-button {
-            margin-right: 4px;
-        }
-        > .editor-container {
-            flex-grow: 1;
-        }
     }
 }

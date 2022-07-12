@@ -1,34 +1,33 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import { intrinsics, createFacetInstance, cascade } from 'facets';
+import { createFacetInstance, cascade } from 'facets';
+import { PubHeaderTheme } from 'facets/intrinsics';
 import { communityData, pubData } from 'utils/storybook/data';
 
-import FacetEditor from './FacetEditor';
-
-const { PubHeaderTheme } = intrinsics;
+import PubHeaderThemeEditor from './PubHeaderThemeEditor';
 
 const cascadedPubTheme = cascade(PubHeaderTheme, [
 	{
 		scope: { kind: 'community', id: communityData.id },
 		value: createFacetInstance(PubHeaderTheme, {
-			theme: 'light',
-			backgroundColor: '#333',
+			textStyle: 'light',
+			backgroundColor: 'robinseggblue',
 			backgroundImage: null,
 		}),
 	},
 	{
 		scope: { kind: 'pub', id: pubData.id },
 		value: createFacetInstance(PubHeaderTheme, {
-			theme: 'dark',
-			backgroundColor: 'robinseggblue',
+			textStyle: 'dark',
+			backgroundColor: null,
 			backgroundImage: 'https://assets.pubpub.org/eys4nqr0/11528828519590.jpg',
 		}),
 	},
 ]);
 
 storiesOf('components/facets/FacetEditor', module).add('default', () => (
-	<FacetEditor
+	<PubHeaderThemeEditor
 		facetDefinition={PubHeaderTheme}
 		cascadeResult={cascadedPubTheme}
 		currentScope={{ kind: 'pub', id: pubData.id }}

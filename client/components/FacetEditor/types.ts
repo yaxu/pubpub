@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { FacetProp, FacetPropType, NullableTypeOfPropType } from 'facets';
+import {
+	CascadedFacetType,
+	FacetDefinition,
+	FacetProp,
+	FacetPropType,
+	NullableTypeOfPropType,
+} from 'facets';
 
 type RenderFn<Props> = (props: Props) => React.ReactElement;
 
@@ -14,9 +20,17 @@ export type PropTypeEditorRenderProps<PropType extends FacetPropType> = {
 	value: NullableTypeOfPropType<PropType>;
 	onUpdateValue: (update: NullableTypeOfPropType<PropType>) => unknown;
 	isValueLocal: boolean;
+	facetValue: any;
 };
 
 export type PropTypeEditorDefinition<PropType extends FacetPropType> = {
 	propType: PropType;
 	renderFn: PropTypeEditorRenderFn<PropType>;
+};
+
+export type FacetPropEditorProps<
+	Def extends FacetDefinition,
+	PropName extends keyof Def['props'],
+> = PropTypeEditorRenderProps<Def['props'][PropName]['propType']> & {
+	facetValue: CascadedFacetType<Def>;
 };

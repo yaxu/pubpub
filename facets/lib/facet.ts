@@ -10,6 +10,7 @@ type FacetPropsDefinitionTypeOf<Props extends FacetProps, FallbackValue = never>
 export type FacetOptions<Name extends string, Props extends FacetProps> = {
 	name: Name;
 	props: Props;
+	label?: string;
 };
 
 export type FacetDefinition<

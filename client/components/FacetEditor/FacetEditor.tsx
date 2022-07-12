@@ -29,39 +29,48 @@ type Props<Def extends FacetDefinition> = {
 
 function FacetEditor<Def extends FacetDefinition>(props: Props<Def>) {
 	const { facetDefinition, cascadeResult, currentScope, propEditors } = props;
-	const { props: cascadedProps } = cascadeResult;
-	const { name } = facetDefinition;
+	const { props: cascadedProps, value: facetValue } = cascadeResult;
+	const { name, label } = facetDefinition;
 
 	const renderPropEditor = useCallback(
 		(key, prop: FacetProp) => {
 			const { propType } = prop;
 			const PropEditor = propEditors?.[key] ?? DefaultFacetPropEditor;
 			const propCascadeResult = cascadedProps[key];
-			const { value } = propCascadeResult;
+			const { value, contributions } = propCascadeResult;
+
+			const isValueLocal =
+				contributions[contributions.length - 1].scope.id === currentScope.id;
 
 			const renderProps: PropTypeEditorRenderProps<any> = {
 				value,
 				prop,
 				propType,
 				onUpdateValue: () => {},
-				isValueLocal: true,
+				isValueLocal,
+				facetValue,
 			};
 
 			return (
-				<FacetPropEditorSkeleton label={prop.label ?? key} onReset={() => {}}>
+				<FacetPropEditorSkeleton
+					label={prop.label ?? key}
+					onReset={() => {}}
+					isValueLocal={isValueLocal}
+				>
 					<PropEditor key={key} {...renderProps} />
 				</FacetPropEditorSkeleton>
 			);
 		},
-		[propEditors, cascadedProps],
+		[propEditors, cascadedProps, currentScope],
 	);
 
 	const propEditorsByName = mapFacet(facetDefinition, renderPropEditor);
 
 	return (
 		<div className="facet-editor-component">
-			<div className="top-bar">
-				<div className="name">{name}</div>
+			<div className="gradient-bullshit-container" />
+			<div className="title-area">
+				<div className="name">{label ?? name}</div>
 			</div>
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
 		</div>

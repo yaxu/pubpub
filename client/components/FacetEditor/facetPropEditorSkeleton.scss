@@ -1,8 +1,11 @@
 @use 'sass:math';
+
 @import 'styles/typography.scss';
 
+@import './facetEditor.scss';
+
 $margin: 15px;
-$padding: 12px;
+$padding: 10px;
 $border-width: 1px;
 
 $arrow-width: 10px;
@@ -13,25 +16,32 @@ $arrow-border: 2px solid currentColor;
 $arrow-mask-gradient: linear-gradient(to bottom, transparent, black);
 $arrow-rotated-offset: 0.5 * (math.sqrt(2) * $arrow-tip-size);
 
+$inherited-accent-color: #ddd;
+$local-accent-color: var(--community-accent-dark-faded-40);
+$accent-color: var(--accent-color);
+
 .facet-prop-editor-skeleton-component {
+    --accent-color: #{$inherited-accent-color};
+
+    &.local-value {
+        --accent-color: #{$local-accent-color};
+        box-shadow: $gentle-shadow;
+        background: white;
+    }
+
     margin: $margin;
     padding: $padding;
-    padding-top: 0;
-    border: $border-width solid var(--community-accent-dark);
-    border-radius: 2px;
+    border: $border-width solid var(--accent-color);
 
     .inheritance-container {
         display: inline-block;
         border-radius: 3px;
         padding: 4px 10px;
-        transform: translateY(-50%);
-        margin-bottom: -10px;
         overflow: hidden;
-        background-color: var(--community-accent-dark);
+        background-color: #ddd;
         color: white;
         .arrow-container {
             position: absolute;
-            bottom: 0;
             .arrow {
                 position: relative;
                 transform: translateY(calc(#{0 - $arrow-rotated-offset} - 0.5em + 1px));
@@ -64,7 +74,8 @@ $arrow-rotated-offset: 0.5 * (math.sqrt(2) * $arrow-tip-size);
     }
 
     .label {
+        margin-bottom: $padding;
         font-weight: bold;
-        margin-bottom: 4px;
+        // @include subheading;
     }
 }

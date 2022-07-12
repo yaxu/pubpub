@@ -6,8 +6,13 @@ import { primitives } from 'facets';
 import { propTypeEditor } from './_propType';
 
 export const String = propTypeEditor(primitives.string, (props) => {
-	const { value, onUpdateValue } = props;
+	const { value, onUpdateValue, isValueLocal } = props;
+
 	return (
-		<InputGroup value={value ?? undefined} onChange={(e) => onUpdateValue(e.target.value)} />
+		<InputGroup
+			value={(isValueLocal && value) || undefined}
+			placeholder={(!isValueLocal && value) || undefined}
+			onChange={(e) => onUpdateValue(e.target.value)}
+		/>
 	);
 });

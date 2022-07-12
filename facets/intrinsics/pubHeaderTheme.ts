@@ -1,12 +1,13 @@
 import { prop, facet, string, oneOf } from '../lib';
 
-const headerTheme = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
+const textStyle = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
 
 export const PubHeaderTheme = facet({
 	name: 'PubHeaderTheme',
+	label: 'Pub header theme',
 	props: {
-		backgroundImage: prop(string, { rootValue: null }),
-		backgroundColor: prop(string, { rootValue: 'community' }),
-		theme: prop(headerTheme, { rootValue: 'light' }),
+		backgroundImage: prop(string, { label: 'Background image', rootValue: null }),
+		backgroundColor: prop(string, { label: 'Background color', rootValue: 'community' }),
+		textStyle: prop(textStyle, { label: 'Text style', rootValue: 'light' }),
 	},
 });

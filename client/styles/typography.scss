@@ -74,6 +74,6 @@ sup {
 }
 
 @mixin subheading {
-	text-transform: uppercase;
+	font-variant: small-caps;
 	letter-spacing: 0.03em;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
-import Color from 'color';
 
 import {
 	Header,
@@ -12,7 +11,6 @@ import {
 	SkipLink,
 	MobileAware,
 } from 'components';
-import { Community } from 'types';
 import { PageContext } from 'utils/hooks';
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 
@@ -30,19 +28,6 @@ type Props = {
 	chunkName: string;
 	initialData: any;
 	viewData: any;
-};
-
-const renderCssVariablesStyle = (community: Community) => {
-	const { accentColorDark } = community;
-	const accentColorDarkFaded = Color(accentColorDark).fade(0.95).rgb().string();
-	return (
-		<style type="text/css">
-			{`:root { 
-				--community-accent-dark: ${accentColorDark};
-				--community-accent-dark-faded: ${accentColorDarkFaded};
-			}`}
-		</style>
-	);
 };
 
 const App = (props: Props) => {
@@ -64,7 +49,6 @@ const App = (props: Props) => {
 	return (
 		<PageContext.Provider value={pageContextProps}>
 			<RKProvider>
-				{renderCssVariablesStyle(communityData)}
 				<div id="app" className={classNames({ dashboard: isDashboard })}>
 					<AccentStyle communityData={communityData} isNavHidden={!showNav} />
 					{(locationData.isDuqDuq || locationData.isQubQub) && (

@@ -11,7 +11,7 @@ import { mapFacet } from './map';
 
 export type FacetSourceScope =
 	| { kind: 'community' | 'collection' | 'pub'; id: string }
-	| { root: true };
+	| { root: true; kind: 'root'; id: null };
 
 export type WithScope<T> = {
 	scope: FacetSourceScope;
@@ -71,7 +71,9 @@ function cascadeProp<Prop extends FacetProp>(
 	}
 	if (strategy === 'overwrite') {
 		type PropWithCascade = Prop & { cascade: { strategy: 'overwrite' } };
-		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources;
+		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.filter(
+			(s) => s.value !== null,
+		);
 		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
 			.reduce((a, b) => b ?? a, null);
@@ -79,13 +81,8 @@ function cascadeProp<Prop extends FacetProp>(
 	}
 	if (strategy === 'extend') {
 		type PropWithCascade = Prop & { cascade: { strategy: 'extend' } };
-		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.map(
-			(source) => {
-				return {
-					scope: source.scope,
-					value: source.value ?? ([] as any[]),
-				};
-			},
+		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.filter(
+			(scope): scope is WithScope<TypeOfFacetProp<Prop>> => scope.value !== null,
 		);
 		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => (s.value || []) as any[])

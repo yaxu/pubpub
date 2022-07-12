@@ -1,17 +1,33 @@
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
+$community-gradient: linear-gradient(to bottom right, #fff, var(--community-accent-dark));
 
 .facet-editor-component {
     width: 400px;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid var(--community-accent-dark);
+    position: relative;
+    border: 1px solid #777;
     background: #fefefe;
     box-shadow: $gentle-shadow;
 
-    .top-bar {
-        background-color: var(--community-accent-dark);
-        padding: 6px;
-        color: white;
+    .gradient-bullshit-container {
+        opacity: 0.05;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        bottom: 0px;
+        background: $community-gradient;
+        filter: blur(30px);
+    }
+
+    .prop-editors {
+        position: relative;
+        z-index: 1;
+    }
+
+    .title-area {
+        position: relative;
+        z-index: 1;
+        margin: 15px;
+        font-size: 20px;
         .name {
             font-weight: bold;
         }

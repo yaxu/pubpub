@@ -31,7 +31,7 @@ const AccentStyle = function (props) {
 		minimalAction: baseMinimalAction,
 	} = generateColors(accentColorDark);
 
-	const accentColorDarkFaded40 = Color(accentColorDark).fade(0.4).rgb().string();
+	const accentColorDarkFaded30 = Color(accentColorDark).fade(0.3).rgb().string();
 	const accentColorDarkFaded = Color(accentColorDark).fade(0.95).rgb().string();
 
 	const headerAccentColor = generateColors(
@@ -56,7 +56,7 @@ const AccentStyle = function (props) {
 			<style type="text/css">
 				{`:root { 
 			--community-accent-dark: ${accentColorDark};
-			--community-accent-dark-faded-40: ${accentColorDarkFaded40};
+			--community-accent-dark-faded-30: ${accentColorDarkFaded30};
 			--community-accent-dark-faded: ${accentColorDarkFaded};
 		}`}
 			</style>

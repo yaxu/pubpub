@@ -15,7 +15,7 @@ export function createEmptyFacetInstance<
 
 export function createFacetInstance<Definition extends FacetDefinition>(
 	definition: Definition,
-	args: FacetInstanceType<Definition>,
+	args: Partial<FacetInstanceType<Definition>> = {},
 ): FacetInstanceType<Definition> {
 	return {
 		...createEmptyFacetInstance(definition),

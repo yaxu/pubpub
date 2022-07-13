@@ -23,6 +23,11 @@ export type FacetPropType<
 	extension: Extension;
 };
 
+export type PossiblyNullableTypeOfPropType<
+	PropType extends FacetPropType,
+	Nullable extends boolean = false,
+> = TypeOfPropType<PropType> | (Nullable extends true ? null : never);
+
 export type TypeOfPropType<PropType extends FacetPropType> = TypeOf<PropType['schema']>;
 
 export type NullableTypeOfPropType<PropType extends FacetPropType> =

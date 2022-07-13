@@ -5,7 +5,7 @@ import BackgroundColorPicker from './BackgroundColorPicker';
 import BackgroundImagePicker from './BackgroundImagePicker';
 import TextStylePicker from './TextStylePicker';
 
-export default createFacetEditor<typeof PubHeaderTheme>({
+export default createFacetEditor(PubHeaderTheme, {
 	backgroundImage: BackgroundImagePicker,
 	backgroundColor: BackgroundColorPicker,
 	textStyle: TextStylePicker,

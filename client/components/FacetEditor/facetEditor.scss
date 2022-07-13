@@ -15,7 +15,7 @@ $community-gradient: linear-gradient(to bottom right, #fff, var(--community-acce
         position: absolute;
         bottom: 0px;
         background: $community-gradient;
-        filter: blur(30px);
+        filter: blur(10px);
     }
 
     .prop-editors {

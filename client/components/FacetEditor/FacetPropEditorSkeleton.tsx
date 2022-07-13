@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import { Icon } from 'components';
 import { Callback } from 'types';
 
 require('./facetPropEditorSkeleton.scss');
@@ -24,6 +25,13 @@ const arrow = (
 
 function FacetPropEditorSkeleton(props: Props) {
 	const { children, label, isValueLocal } = props;
+
+	const inheritanceIcon = isValueLocal ? (
+		<Icon className="inheritance-icon reset-icon" iconSize={12} icon="reset" />
+	) : (
+		<Icon className="inheritance-icon" iconSize={16} icon="double-chevron-down" />
+	);
+
 	return (
 		<div
 			className={classNames(
@@ -31,11 +39,15 @@ function FacetPropEditorSkeleton(props: Props) {
 				isValueLocal && 'local-value',
 			)}
 		>
-			{/* <div className="inheritance-container">
-				{arrow}
-				<div className="inheritance-controls">from community</div>
-			</div> */}
-			<div className="label">{label}</div>
+			<div className="top-row">
+				<div className="triangle">{inheritanceIcon}</div>
+				<div className="label-group">
+					<div className="inheritance-info">
+						{isValueLocal ? 'Defined here' : 'Defined by this Community'}
+					</div>
+					<div className="prop-name">{label}</div>
+				</div>
+			</div>
 			<div className="controls-container">{children}</div>
 		</div>
 	);

@@ -1,14 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
-import {
-	cascade,
-	FacetCascadeResult,
-	FacetDefinition,
-	FacetProp,
-	FacetPropCascadeResult,
-	FacetSourceScope,
-	mapFacet,
-} from 'facets';
+import { FacetCascadeResult, FacetDefinition, FacetProp, FacetSourceScope, mapFacet } from 'facets';
 
 import { PropTypeEditorRenderFn, PropTypeEditorRenderProps } from './types';
 import DefaultFacetPropEditor from './DefaultFacetPropTypeEditor';
@@ -20,7 +12,7 @@ type PropEditors<Def extends FacetDefinition> = {
 	[K in keyof Def['props']]: PropTypeEditorRenderFn<Def['props'][K]['propType']>;
 };
 
-type Props<Def extends FacetDefinition> = {
+export type Props<Def extends FacetDefinition> = {
 	facetDefinition: Def;
 	cascadeResult: FacetCascadeResult<Def>;
 	currentScope: FacetSourceScope;

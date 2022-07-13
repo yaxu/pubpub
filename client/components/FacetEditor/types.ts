@@ -10,15 +10,12 @@ import {
 
 type RenderFn<Props> = (props: Props) => React.ReactElement;
 
-export type PropTypeEditorRenderFn<
+export type PropTypeEditorComponent<
 	PropType extends FacetPropType,
 	Nullable extends boolean = true,
-> = RenderFn<PropTypeEditorRenderProps<PropType, Nullable>>;
+> = RenderFn<PropTypeEditorProps<PropType, Nullable>>;
 
-export type PropTypeEditorRenderProps<
-	PropType extends FacetPropType,
-	Nullable extends boolean = true,
-> = {
+export type PropTypeEditorProps<PropType extends FacetPropType, Nullable extends boolean = true> = {
 	prop: FacetProp<PropType>;
 	propType: PropType;
 	value: PossiblyNullableTypeOfPropType<PropType, Nullable>;
@@ -29,13 +26,13 @@ export type PropTypeEditorRenderProps<
 
 export type PropTypeEditorDefinition<PropType extends FacetPropType> = {
 	propType: PropType;
-	renderFn: PropTypeEditorRenderFn<PropType>;
+	renderFn: PropTypeEditorComponent<PropType>;
 };
 
 export type FacetPropEditorProps<
 	Def extends FacetDefinition,
 	PropName extends keyof Def['props'],
 	Nullable extends boolean = true,
-> = PropTypeEditorRenderProps<Def['props'][PropName]['propType'], Nullable> & {
+> = PropTypeEditorProps<Def['props'][PropName]['propType'], Nullable> & {
 	facetValue: CascadedFacetType<Def>;
 };

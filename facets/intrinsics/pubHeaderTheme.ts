@@ -1,6 +1,6 @@
-import { prop, facet, string, oneOf } from '../lib';
+import { prop, facet, string, choice } from '../lib';
 
-const textStyle = oneOf(['dark', 'light', 'black-blocks', 'white-blocks']);
+const textStyle = choice(['dark', 'light', 'black-blocks', 'white-blocks']);
 
 export const PubHeaderTheme = facet({
 	name: 'PubHeaderTheme',

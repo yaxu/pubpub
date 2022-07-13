@@ -4,7 +4,6 @@ import * as types from 'types';
 import { FacetBinding } from 'server/models';
 import { flattenOnce, pruneFalsyValues } from 'utils/arrays';
 import {
-	ALL_INTRINSIC_FACETS,
 	cascade,
 	FacetCascadeResult,
 	FacetDefinition,

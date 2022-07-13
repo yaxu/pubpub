@@ -7,6 +7,8 @@ import { MenuButton } from './MenuButton';
 export type MenuSelectItem<Value> = {
 	value: Value;
 	label: React.ReactNode;
+	icon?: React.ReactNode;
+	rightElement?: React.ReactNode;
 };
 
 export type MenuSelectItems<Value> = MenuSelectItem<Value>[];
@@ -56,10 +58,11 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 			{items.map((item) => (
 				<MenuItem
 					key={item.value}
-					icon={showTickIcon && (item === selectedItem ? 'tick' : 'blank')}
+					icon={showTickIcon ? (item === selectedItem ? 'tick' : 'blank') : item.icon}
 					active={item === selectedItem}
 					onClick={() => onSelectValue(item.value)}
 					text={item.label}
+					rightElement={item.rightElement}
 				/>
 			))}
 		</MenuButton>

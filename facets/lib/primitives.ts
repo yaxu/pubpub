@@ -26,15 +26,14 @@ export const double = propType({
 	postgresType: 'double',
 });
 
-export const oneOf = <T extends string, U extends [T, ...T[]]>(
+export const choice = <T extends string, U extends [T, ...T[]]>(
 	values: U,
-	labels?: Record<T, string>,
-): FacetPropType<z.ZodEnum<U>, { values: U; labels?: Record<T, string> }> => {
+): FacetPropType<z.ZodEnum<U>, { values: U }> => {
 	return propType({
-		identity: oneOf,
+		identity: choice,
 		schema: z.enum(values),
 		postgresType: 'string',
-		extension: { values, labels },
+		extension: { values },
 	});
 };
 

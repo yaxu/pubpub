@@ -2,19 +2,15 @@ import React, { useMemo } from 'react';
 
 import { FacetPropType } from 'facets';
 
-import {
-	PropTypeEditorRenderProps,
-	PropTypeEditorRenderFn,
-	PropTypeEditorDefinition,
-} from './types';
+import { PropTypeEditorProps, PropTypeEditorComponent, PropTypeEditorDefinition } from './types';
 import { String, OneOf } from './propTypeEditors';
 
 type ComponentProps<PropType extends FacetPropType> = {
 	propType: PropType;
-} & PropTypeEditorRenderProps<PropType>;
+} & PropTypeEditorProps<PropType>;
 
 const registerPropTypeEditors = (editors: PropTypeEditorDefinition<any>[]) => {
-	const registry: Map<FacetPropType, PropTypeEditorRenderFn<any>> = new Map();
+	const registry: Map<FacetPropType, PropTypeEditorComponent<any>> = new Map();
 	editors.forEach((editor) => {
 		const { propType, renderFn } = editor;
 		registry.set(propType.identity ?? propType, renderFn);

@@ -1,6 +1,6 @@
-import { facet, prop, oneOf } from '../lib';
+import { facet, prop, choice } from '../lib';
 
-const citationStyleKind = oneOf([
+export const citationStyleKind = choice([
 	'acm-siggraph',
 	'american-anthro',
 	'apa',
@@ -16,7 +16,7 @@ const citationStyleKind = oneOf([
 	'ama',
 ]);
 
-const inlineCitationStyleKind = oneOf(['count', 'authorYear', 'author', 'label']);
+export const inlineCitationStyleKind = choice(['count', 'authorYear', 'author', 'label']);
 
 export const CitationStyle = facet({
 	name: 'CitationStyle',

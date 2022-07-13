@@ -3,16 +3,19 @@ import { InputGroup } from '@blueprintjs/core';
 
 import { primitives } from 'facets';
 
-import { propTypeEditor } from './_propType';
+import { PropTypeEditorProps } from '../types';
 
-export const String = propTypeEditor(primitives.string, (props) => {
-	const { value, onUpdateValue, isValueLocal } = props;
+type Props = PropTypeEditorProps<typeof primitives.string>;
 
-	return (
-		<InputGroup
-			value={(isValueLocal && value) || undefined}
-			placeholder={(!isValueLocal && value) || undefined}
-			onChange={(e) => onUpdateValue(e.target.value)}
-		/>
-	);
-});
+export const string = () => {
+	return (props: Props) => {
+		const { value, onUpdateValue, isValueLocal } = props;
+		return (
+			<InputGroup
+				value={(isValueLocal && value) || undefined}
+				placeholder={(!isValueLocal && value) || undefined}
+				onChange={(e) => onUpdateValue(e.target.value)}
+			/>
+		);
+	};
+};

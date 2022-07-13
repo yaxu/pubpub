@@ -1,5 +1,6 @@
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 $community-gradient: linear-gradient(to bottom right, #fff, var(--community-accent-dark));
+$spacing: 15px;
 
 .facet-editor-component {
     width: 400px;
@@ -7,8 +8,9 @@ $community-gradient: linear-gradient(to bottom right, #fff, var(--community-acce
     border: 1px solid #777;
     background: #fefefe;
     box-shadow: $gentle-shadow;
+    padding: $spacing;
 
-    .gradient-bullshit-container {
+    .gradient {
         opacity: 0.05;
         width: 100%;
         height: 100%;
@@ -18,18 +20,31 @@ $community-gradient: linear-gradient(to bottom right, #fff, var(--community-acce
         filter: blur(10px);
     }
 
-    .prop-editors {
+    > :not(.gradient) {
         position: relative;
         z-index: 1;
     }
 
     .title-area {
-        position: relative;
-        z-index: 1;
-        margin: 15px;
         font-size: 20px;
         .name {
             font-weight: bold;
+        }
+    }
+
+    .description {
+        summary {
+            font-style: normal;
+            user-select: none;
+        }
+        margin-top: $spacing;
+        font-size: 14px;
+        font-style: italic;
+    }
+
+    .prop-editors {
+        > * {
+            margin-top: $spacing;
         }
     }
 }

@@ -5,9 +5,9 @@ import { createFacetInstance, cascade } from 'facets';
 import { NodeLabels, PubHeaderTheme, CitationStyle } from 'facets/intrinsics';
 import { communityData, pubData } from 'utils/storybook/data';
 
-import PubHeaderThemeEditor from './PubHeaderThemeEditor';
-import NodeLabelsEditor from './NodeLabelsEditor';
-import FacetEditor from './FacetEditor';
+import PubHeaderThemeEditor from './intrinsics/PubHeaderThemeEditor';
+import NodeLabelsEditor from './intrinsics/NodeLabelsEditor';
+import CitationStyleEditor from './intrinsics/CitationStyleEditor';
 
 const cascadedPubTheme = cascade(PubHeaderTheme, [
 	{
@@ -72,8 +72,7 @@ storiesOf('components/FacetEditor', module).add('NodeLabels', () => (
 ));
 
 storiesOf('components/FacetEditor', module).add('CitationStyle', () => (
-	<FacetEditor
-		facetDefinition={CitationStyle}
+	<CitationStyleEditor
 		cascadeResult={cascadedCitationStyle}
 		currentScope={{ kind: 'pub', id: pubData.id }}
 	/>

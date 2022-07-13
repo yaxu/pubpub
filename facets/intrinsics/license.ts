@@ -1,6 +1,6 @@
-import { oneOf, prop, facet, integer } from '../lib';
+import { choice, prop, facet, integer } from '../lib';
 
-const licenseKind = oneOf(['cc-zero', 'cc-by-nd', 'copyright']);
+const licenseKind = choice(['cc-zero', 'cc-by-nd', 'copyright']);
 
 export const License = facet({
 	name: 'License',

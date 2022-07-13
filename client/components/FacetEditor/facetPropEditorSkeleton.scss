@@ -4,19 +4,8 @@
 
 @import './facetEditor.scss';
 
-$margin: 15px;
-$padding: 10px;
 $border-width: 1px;
-
 $inheritance-triangle-size: 35px;
-
-$arrow-width: 10px;
-$arrow-height: 20px;
-$arrow-tip-size: 7px;
-$arrow-bauble-size: 18px;
-$arrow-border: 2px solid currentColor;
-$arrow-mask-gradient: linear-gradient(to bottom, transparent, black);
-$arrow-rotated-offset: 0.5 * (math.sqrt(2) * $arrow-tip-size);
 
 $inherited-accent-color: #bbb;
 $local-accent-color: var(--community-accent-dark-faded-30);
@@ -31,7 +20,6 @@ $accent-color: var(--accent-color);
         background: white;
     }
 
-    margin: $margin;
     border: $border-width solid var(--accent-color);
     position: relative;
 
@@ -67,13 +55,10 @@ $accent-color: var(--accent-color);
                 font-size: 10px;
                 color: var(--accent-color);
             }
-            .prop-name {
-                font-weight: bold;
-            }
         }
     }
 
     .controls-container {
-        padding: $padding;
+        padding: $spacing;
     }
 }

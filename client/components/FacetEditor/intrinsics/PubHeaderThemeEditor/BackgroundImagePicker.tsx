@@ -3,7 +3,7 @@ import React from 'react';
 import { intrinsics } from 'facets';
 import { ImageUpload } from 'components';
 
-import { FacetPropEditorProps } from '../types';
+import { FacetPropEditorProps } from '../../types';
 
 require('./backgroundColorPicker.scss');
 

@@ -1,2 +1,2 @@
-export { OneOf } from './OneOf';
-export { String } from './String';
+export { choice } from './choice';
+export { string } from './string';

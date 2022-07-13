@@ -3,7 +3,7 @@ import React from 'react';
 import { PubHeaderTheme } from 'facets/intrinsics';
 import { usePageContext } from 'utils/hooks';
 
-import { FacetPropEditorProps } from '../types';
+import { FacetPropEditorProps } from '../../types';
 import TextStyleChoice from './TextStyleChoice';
 
 require('./textStylePicker.scss');

@@ -5,7 +5,7 @@ import { ColorInput } from 'components';
 import { calculateBackgroundColor } from 'utils/colors';
 import { usePageContext } from 'utils/hooks';
 
-import { FacetPropEditorProps } from '../types';
+import { FacetPropEditorProps } from '../../types';
 import BackgroundColorChoice from './BackgroundColorChoice';
 
 require('./backgroundColorPicker.scss');

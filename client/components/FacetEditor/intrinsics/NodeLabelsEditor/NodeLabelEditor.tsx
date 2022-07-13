@@ -3,7 +3,7 @@ import { Checkbox, InputGroup, Tooltip } from '@blueprintjs/core';
 
 import { NodeLabels } from 'facets/intrinsics';
 
-import { FacetPropEditorProps } from '../types';
+import { FacetPropEditorProps } from '../../types';
 
 require('./nodeLabelEditor.scss');
 

@@ -1,4 +1,4 @@
-import { FacetPropCascade } from './cascade';
+import { AvailableCascadeStrategyForPropType } from './cascade';
 import { FacetPropType, NullableTypeOfPropType, TypeOfPropType } from './propType';
 
 type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
@@ -22,7 +22,7 @@ export type FacetPropOptions<
 	// `rootValue`, this value will actually be stored on a facet instance.
 	defaultValue?: DefaultValue;
 	// Explains how this prop should cascade from higher to lower scopes.
-	cascade?: FacetPropCascade<PropType>;
+	cascade?: AvailableCascadeStrategyForPropType<PropType>;
 	// A human-readable label for this prop
 	label?: string;
 };
@@ -37,7 +37,7 @@ export type FacetProp<
 		// Plus the provided propType.
 		propType: PropType;
 		// Plus a non-nullable cascade strategy with a default value applied.
-		cascade: FacetPropCascade<PropType>;
+		cascade: AvailableCascadeStrategyForPropType<PropType>;
 	};
 
 export type RootValueOfFacetProp<Prop extends FacetProp> = Prop['rootValue'];
@@ -62,10 +62,7 @@ export const prop = <
 	propType: PropType,
 	options: FacetPropOptions<PropType, RootValue>,
 ): FacetProp<PropType, RootValue> => {
-	const cascade: FacetPropCascade<PropType> = options.cascade ?? {
-		strategy: 'overwrite',
-		direction: 'desc',
-	};
+	const cascade: AvailableCascadeStrategyForPropType<PropType> = options.cascade ?? 'overwrite';
 	return {
 		...options,
 		propType,

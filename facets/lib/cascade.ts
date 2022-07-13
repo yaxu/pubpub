@@ -11,16 +11,14 @@ import { mapFacet } from './map';
 
 export type FacetSourceScope =
 	| { kind: 'community' | 'collection' | 'pub'; id: string }
-	| { root: true; kind: 'root'; id: null };
+	| { kind: 'root'; id?: null };
 
 export type WithScope<T> = {
 	scope: FacetSourceScope;
 	value: T;
 };
 
-type FacetPropCascadeDirection = 'asc' | 'desc';
-
-type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
+export type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
 	// Any prop type can use the `overwrite` strategy
 	| 'overwrite'
 	// Only props that are objects can object-merge during cascade" {...a, ...b}
@@ -28,22 +26,17 @@ type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
 	// Only props that are arrays can array-merge during cascasde: [...a, ...b]
 	| (TypeOfPropType<PropType> extends any[] ? 'extend' : never);
 
-export type FacetPropCascade<PropType extends FacetPropType> = {
-	strategy: AvailableCascadeStrategyForPropType<PropType>;
-	direction: FacetPropCascadeDirection;
-};
-
 type PropCascadeContribution<Prop extends FacetProp> = {
 	overwrite: NullableTypeOfFacetProp<Prop>;
 	extend: TypeOfFacetProp<Prop> & any[];
 	merge: Partial<TypeOfFacetProp<Prop>>;
-}[Prop['cascade']['strategy']];
+}[Prop['cascade']];
 
 type PropCascadeResult<Prop extends FacetProp> = {
 	overwrite: CascadedTypeOfFacetProp<Prop>;
 	extend: TypeOfFacetProp<Prop> & any[];
 	merge: Partial<TypeOfFacetProp<Prop>>;
-}[Prop['cascade']['strategy']];
+}[Prop['cascade']];
 
 export type FacetPropCascadeResult<Prop extends FacetProp> = {
 	value: PropCascadeResult<Prop>;
@@ -63,14 +56,9 @@ function cascadeProp<Prop extends FacetProp>(
 	prop: Prop,
 	sources: WithScope<NullableTypeOfFacetProp<Prop>>[],
 ): FacetPropCascadeResult<Prop> {
-	const {
-		cascade: { strategy, direction },
-	} = prop;
-	if (direction === 'asc') {
-		sources = sources.concat().reverse();
-	}
-	if (strategy === 'overwrite') {
-		type PropWithCascade = Prop & { cascade: { strategy: 'overwrite' } };
+	const { cascade: cascadeStrategy } = prop;
+	if (cascadeStrategy === 'overwrite') {
+		type PropWithCascade = Prop & { cascade: 'overwrite' };
 		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.filter(
 			(s) => s.value !== null,
 		);
@@ -79,8 +67,8 @@ function cascadeProp<Prop extends FacetProp>(
 			.reduce((a, b) => b ?? a, null);
 		return { contributions, value };
 	}
-	if (strategy === 'extend') {
-		type PropWithCascade = Prop & { cascade: { strategy: 'extend' } };
+	if (cascadeStrategy === 'extend') {
+		type PropWithCascade = Prop & { cascade: 'extend' };
 		const contributions: WithScope<PropCascadeContribution<PropWithCascade>>[] = sources.filter(
 			(scope): scope is WithScope<TypeOfFacetProp<Prop>> => scope.value !== null,
 		);
@@ -89,7 +77,7 @@ function cascadeProp<Prop extends FacetProp>(
 			.reduce((a, b) => [...a, ...b], []);
 		return { contributions, value };
 	}
-	throw new FacetCascadeNotImplError(strategy);
+	throw new FacetCascadeNotImplError(cascadeStrategy);
 }
 
 export function cascade<Def extends FacetDefinition>(
@@ -102,7 +90,7 @@ export function cascade<Def extends FacetDefinition>(
 			return { scope, value: value[key] };
 		});
 		return cascadeProp(prop, [
-			{ scope: { root: true as const }, value: prop.rootValue },
+			{ scope: { kind: 'root' }, value: prop.rootValue },
 			...propInstances,
 		]);
 	}) as FacetCascadeResult<Def>['props'];

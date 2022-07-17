@@ -6,9 +6,9 @@ import {
 import { citationStyles, citationInlineStyles } from 'utils/citations';
 
 import { createFacetEditor } from '../../createFacetEditor';
-import { choice } from '../../propTypeEditors';
+import { dropdown } from '../../propTypeEditors';
 
-const CitationStyleChoice = choice<typeof citationStyleKind>({
+const CitationStyleDropdown = dropdown<typeof citationStyleKind>({
 	items: (() => {
 		const items = {};
 		citationStyles.forEach((style) => {
@@ -18,7 +18,7 @@ const CitationStyleChoice = choice<typeof citationStyleKind>({
 	})(),
 });
 
-const InlineCitationStyleChoice = choice<typeof inlineCitationStyleKind>({
+const InlineCitationStyleDropdown = dropdown<typeof inlineCitationStyleKind>({
 	items: (() => {
 		const items = {};
 		citationInlineStyles.forEach((style) => {
@@ -30,7 +30,7 @@ const InlineCitationStyleChoice = choice<typeof inlineCitationStyleKind>({
 
 export default createFacetEditor(CitationStyle, {
 	propEditors: {
-		citationStyle: CitationStyleChoice,
-		inlineCitationStyle: InlineCitationStyleChoice,
+		citationStyle: CitationStyleDropdown,
+		inlineCitationStyle: InlineCitationStyleDropdown,
 	},
 });

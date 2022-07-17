@@ -43,7 +43,11 @@ export const updateFacetsForScope = async (scope: Scope, update: UpdateFacetsQue
 	await Promise.all(
 		Object.entries(update).map(async ([facetName, facetUpdate]) => {
 			const facet = intrinsics[facetName];
-			const parsedUpdate = parsePartialFacetInstance(facet, facetUpdate as any);
+			const { valid: parsedUpdate } = parsePartialFacetInstance(
+				facet,
+				facetUpdate as any,
+				true,
+			);
 			await updateFacetForScope(scope, facet, parsedUpdate);
 		}),
 	);

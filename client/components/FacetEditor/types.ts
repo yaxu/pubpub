@@ -2,9 +2,12 @@ import React from 'react';
 
 import {
 	CascadedFacetType,
+	FacetCascadeResult,
 	FacetDefinition,
+	FacetInstanceType,
 	FacetProp,
 	FacetPropType,
+	FacetSourceScope,
 	PossiblyNullableTypeOfPropType,
 } from 'facets';
 
@@ -29,6 +32,10 @@ export type PropTypeEditorDefinition<PropType extends FacetPropType> = {
 	renderFn: PropTypeEditorComponent<PropType>;
 };
 
+export type PropEditors<Def extends FacetDefinition> = {
+	[K in keyof Def['props']]: PropTypeEditorComponent<Def['props'][K]['propType']>;
+};
+
 export type FacetPropEditorProps<
 	Def extends FacetDefinition,
 	PropName extends keyof Def['props'],
@@ -36,3 +43,26 @@ export type FacetPropEditorProps<
 > = PropTypeEditorProps<Def['props'][PropName]['propType'], Nullable> & {
 	facetValue: CascadedFacetType<Def>;
 };
+
+export type GenericFacetEditorProps<Def extends FacetDefinition> = {
+	facetDefinition: Def;
+	cascadeResult: FacetCascadeResult<Def>;
+	currentScope: FacetSourceScope;
+	propEditors: Partial<PropEditors<Def>>;
+	description?: React.ReactNode;
+	onUpdateValue: (patch: Partial<FacetInstanceType<Def>>) => unknown;
+};
+
+export type FacetEditorCreationOptions<Def extends FacetDefinition> = Pick<
+	GenericFacetEditorProps<Def>,
+	'propEditors' | 'description'
+>;
+
+export type SpecificFacetEditorProps<Def extends FacetDefinition> = Omit<
+	GenericFacetEditorProps<Def>,
+	'propEditors' | 'description' | 'facetDefinition'
+>;
+
+export type FacetEditorComponent<Def extends FacetDefinition = FacetDefinition> = React.FC<
+	SpecificFacetEditorProps<Def>
+>;

@@ -48,6 +48,7 @@ module.exports = {
 					resolve(__dirname, '../'),
 					resolve(__dirname, '../../utils'),
 					resolve(__dirname, '../../types'),
+					resolve(__dirname, '../../facets'),
 				],
 				loader: 'ts-loader',
 				options: { configFile: resolve(__dirname, '../../tsconfig.client.json') },

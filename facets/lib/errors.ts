@@ -13,8 +13,12 @@ export class FacetDoesNotExistError extends FacetsError {
 }
 
 export class FacetParseError extends FacetsError {
-	constructor(facet: FacetDefinition, propName: string, propValue: any) {
-		super(`Error when parsing ${facet.name} instance: invalid ${propName} = ${propValue}.`);
+	constructor(facet: FacetDefinition, propNames: string | string[], propValue?: string) {
+		super(
+			`Error when parsing ${facet.name} instance: invalid ${propNames}${
+				propValue ? ' = ' + propValue : ''
+			}`,
+		);
 	}
 }
 

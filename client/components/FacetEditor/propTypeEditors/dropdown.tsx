@@ -29,7 +29,7 @@ const getMenuItems = <PropType extends ChoicePropType>(
 	});
 };
 
-export const choice = <PropType extends ChoicePropType>(
+export const dropdown = <PropType extends ChoicePropType>(
 	options: Options<PropType>,
 ): PropTypeEditorComponent<PropType> => {
 	const { items } = options;

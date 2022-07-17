@@ -5,4 +5,4 @@ export type FacetBinding = {
 	id: string;
 };
 
-export type PostgresDatatype = 'text' | 'boolean' | 'integer' | 'double' | 'string' | 'jsonb';
+export type PostgresDatatype = 'text' | 'boolean' | 'integer' | 'double' | 'varchar' | 'jsonb';

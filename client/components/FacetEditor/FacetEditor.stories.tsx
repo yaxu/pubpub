@@ -2,16 +2,20 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 
 import { createFacetInstance, cascade } from 'facets';
-import { NodeLabels, PubHeaderTheme, CitationStyle } from 'facets/intrinsics';
+import { NodeLabels, PubHeaderTheme, CitationStyle, PubEdgeDisplay } from 'facets/intrinsics';
 import { communityData, pubData } from 'utils/storybook/data';
 
-import PubHeaderThemeEditor from './intrinsics/PubHeaderThemeEditor';
-import NodeLabelsEditor from './intrinsics/NodeLabelsEditor';
-import CitationStyleEditor from './intrinsics/CitationStyleEditor';
+import {
+	CitationStyleEditor,
+	NodeLabelsEditor,
+	PubEdgeDisplayEditor,
+	PubHeaderThemeEditor,
+} from './intrinsics';
 
 const cascadedPubTheme = cascade(PubHeaderTheme, [
 	{
 		scope: { kind: 'community', id: communityData.id },
+		facetBindingId: null,
 		value: createFacetInstance(PubHeaderTheme, {
 			textStyle: 'light',
 			backgroundColor: '#acd413aa',
@@ -20,6 +24,7 @@ const cascadedPubTheme = cascade(PubHeaderTheme, [
 	},
 	{
 		scope: { kind: 'pub', id: pubData.id },
+		facetBindingId: null,
 		value: createFacetInstance(PubHeaderTheme, {
 			textStyle: 'light',
 			backgroundColor: null,
@@ -31,10 +36,12 @@ const cascadedPubTheme = cascade(PubHeaderTheme, [
 const cascadedNodeLabels = cascade(NodeLabels, [
 	{
 		scope: { kind: 'community', id: communityData.id },
+		facetBindingId: null,
 		value: createFacetInstance(NodeLabels),
 	},
 	{
 		scope: { kind: 'pub', id: pubData.id },
+		facetBindingId: null,
 		value: createFacetInstance(NodeLabels, {
 			image: {
 				enabled: true,
@@ -47,19 +54,30 @@ const cascadedNodeLabels = cascade(NodeLabels, [
 const cascadedCitationStyle = cascade(CitationStyle, [
 	{
 		scope: { kind: 'community', id: communityData.id },
+		facetBindingId: null,
 		value: createFacetInstance(CitationStyle),
 	},
 	{
 		scope: { kind: 'pub', id: pubData.id },
+		facetBindingId: null,
 		value: createFacetInstance(CitationStyle, {
 			inlineCitationStyle: 'authorYear',
 		}),
 	},
 ]);
 
+const cascadedPubEdgeDisplay = cascade(PubEdgeDisplay, [
+	{
+		scope: { kind: 'community', id: communityData.id },
+		facetBindingId: null,
+		value: createFacetInstance(PubEdgeDisplay),
+	},
+]);
+
 storiesOf('components/FacetEditor', module).add('PubHeaderTheme', () => (
 	<PubHeaderThemeEditor
 		cascadeResult={cascadedPubTheme}
+		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
 	/>
 ));
@@ -67,6 +85,7 @@ storiesOf('components/FacetEditor', module).add('PubHeaderTheme', () => (
 storiesOf('components/FacetEditor', module).add('NodeLabels', () => (
 	<NodeLabelsEditor
 		cascadeResult={cascadedNodeLabels}
+		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
 	/>
 ));
@@ -74,6 +93,15 @@ storiesOf('components/FacetEditor', module).add('NodeLabels', () => (
 storiesOf('components/FacetEditor', module).add('CitationStyle', () => (
 	<CitationStyleEditor
 		cascadeResult={cascadedCitationStyle}
+		onUpdateValue={() => {}}
+		currentScope={{ kind: 'pub', id: pubData.id }}
+	/>
+));
+
+storiesOf('components/FacetEditor', module).add('PubEdgeDisplay', () => (
+	<PubEdgeDisplayEditor
+		cascadeResult={cascadedPubEdgeDisplay}
+		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
 	/>
 ));

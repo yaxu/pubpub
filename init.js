@@ -17,7 +17,7 @@ const main = async () => {
 		require('newrelic');
 	}
 
-	setupLocalDatabase();
+	await setupLocalDatabase();
 
 	const loadServer = () => {
 		return require('./dist/server/server/server').startServer();

@@ -7,7 +7,7 @@ import { PropTypeEditorProps } from '../types';
 
 type Props = PropTypeEditorProps<typeof primitives.string>;
 
-export const string = () => {
+export const text = () => {
 	return (props: Props) => {
 		const { value, onUpdateValue, isValueLocal } = props;
 		return (

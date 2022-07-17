@@ -1,78 +1,55 @@
 import React, { useCallback } from 'react';
 
-import { FacetCascadeResult, FacetDefinition, FacetProp, FacetSourceScope, mapFacet } from 'facets';
+import { FacetInstanceType, IntrinsicFacetDefinition, Intrinsics } from 'facets';
+import { useFacets } from 'client/utils/useFacets';
 
-import { PropTypeEditorComponent, PropTypeEditorProps } from './types';
-import FacetPropEditorSkeleton from './FacetPropEditorSkeleton';
+import {
+	CitationStyleEditor,
+	PubEdgeDisplayEditor,
+	PubHeaderThemeEditor,
+	NodeLabelsEditor,
+} from './intrinsics';
+import { FacetEditorComponent, SpecificFacetEditorProps } from './types';
 
-require('./facetEditor.scss');
+type Props<Def extends IntrinsicFacetDefinition> = {
+	facetName: Def['name'];
+} & Omit<SpecificFacetEditorProps<Def>, 'currentScope' | 'cascadeResult' | 'onUpdateValue'>;
 
-export type PropEditors<Def extends FacetDefinition> = {
-	[K in keyof Def['props']]: PropTypeEditorComponent<Def['props'][K]['propType']>;
+const editorsForIntrinsicFacets: Partial<{
+	[K in keyof Intrinsics]: FacetEditorComponent<Intrinsics[K]>;
+}> = {
+	CitationStyle: CitationStyleEditor,
+	PubEdgeDisplay: PubEdgeDisplayEditor,
+	PubHeaderTheme: PubHeaderThemeEditor,
+	NodeLabels: NodeLabelsEditor,
 };
 
-export type Props<Def extends FacetDefinition> = {
-	facetDefinition: Def;
-	cascadeResult: FacetCascadeResult<Def>;
-	currentScope: FacetSourceScope;
-	propEditors: Partial<PropEditors<Def>>;
-	description?: React.ReactNode;
-};
+function FacetEditor<Def extends IntrinsicFacetDefinition>(props: Props<Def>) {
+	const { facetName: name, ...editorProps } = props;
+	const Editor: undefined | FacetEditorComponent<any> = editorsForIntrinsicFacets[name];
+	const { currentScope, facets, updateFacet } = useFacets();
+	const { cascadeResult } = facets[name]!;
 
-function FacetEditor<Def extends FacetDefinition>(props: Props<Def>) {
-	const { facetDefinition, cascadeResult, currentScope, propEditors, description } = props;
-	const { props: cascadedProps, value: facetValue } = cascadeResult;
-	const { name, label } = facetDefinition;
-
-	const renderPropEditor = useCallback(
-		(key, prop: FacetProp) => {
-			const { propType } = prop;
-			const PropEditor: PropTypeEditorComponent<any> = propEditors[key]!;
-			const propCascadeResult = cascadedProps[key];
-			const { value, contributions } = propCascadeResult;
-
-			const isValueLocal =
-				contributions[contributions.length - 1].scope.id === currentScope.id;
-
-			const renderProps: PropTypeEditorProps<any> = {
-				value,
-				prop,
-				propType,
-				onUpdateValue: () => {},
-				isValueLocal,
-				facetValue,
-			};
-
-			return (
-				<FacetPropEditorSkeleton
-					label={prop.label ?? key}
-					onReset={() => {}}
-					isValueLocal={isValueLocal}
-				>
-					<PropEditor key={key} {...renderProps} />
-				</FacetPropEditorSkeleton>
-			);
+	const updateThisFacet = useCallback(
+		(patch: Partial<FacetInstanceType<Def>>) => {
+			updateFacet(name, patch);
 		},
-		[propEditors, cascadedProps, currentScope, facetValue],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[name, updateFacet],
 	);
 
-	const propEditorsByName = mapFacet(facetDefinition, renderPropEditor);
+	if (Editor) {
+		return (
+			<Editor
+				{...editorProps}
+				onUpdateValue={updateThisFacet}
+				cascadeResult={cascadeResult}
+				currentScope={currentScope}
+			/>
+		);
+	}
 
-	return (
-		<div className="facet-editor-component">
-			<div className="gradient" />
-			<div className="title-area">
-				<div className="name">{label ?? name}</div>
-			</div>
-			{description && (
-				<details className="description">
-					<summary>Description</summary>
-					{description}
-				</details>
-			)}
-			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
-		</div>
-	);
+	return null;
 }
 
 export default FacetEditor;

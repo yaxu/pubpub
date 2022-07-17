@@ -1,9 +1,9 @@
-import { z, ZodEnum } from 'zod';
+import { z } from 'zod';
 
 import { FacetPropType, propType } from './propType';
 
 export const string = propType({
-	name: 'string',
+	name: 'varchar',
 	schema: z.string(),
 	postgresType: 'text',
 });
@@ -32,7 +32,7 @@ export const choice = <T extends string, U extends [T, ...T[]]>(
 	return propType({
 		identity: choice,
 		schema: z.enum(values),
-		postgresType: 'string',
+		postgresType: 'varchar',
 		extension: { values },
 	});
 };

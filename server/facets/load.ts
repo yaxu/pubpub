@@ -20,9 +20,10 @@ export const loadFacetInstancesForBindingIds = async <Def extends FacetDefinitio
 			instances,
 			'facetBindingId',
 		);
-		return mapObject(instancesByBindingId, (instance) =>
-			parseFacetInstance(facetDefinition, instance.toJSON()),
-		);
+		return mapObject(instancesByBindingId, (instance) => {
+			const { valid } = parseFacetInstance(facetDefinition, instance.toJSON(), true);
+			return valid;
+		});
 	}
 	throw new FacetDoesNotExistError(facetDefinition.name);
 };

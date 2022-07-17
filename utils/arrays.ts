@@ -1,4 +1,4 @@
-import { IdIndex, WithId } from 'types';
+import { Falsy, IdIndex, WithId } from 'types';
 
 export const intersperse = <P, Q>(
 	arr: P[],
@@ -80,7 +80,8 @@ export const arraysHaveSameElements = <T>(first: T[], second: T[]) => {
 	return first.every((el) => second.includes(el)) && second.every((el) => first.includes(el));
 };
 
-export const pruneFalsyValues = <T>(arr: T[]): T[] => arr.filter(Boolean);
+export const pruneFalsyValues = <T>(arr: T[]): Exclude<T, Falsy>[] =>
+	arr.filter(Boolean) as Exclude<T, Falsy>[];
 
 export const bucketBy = <T>(arr: T[], getKey: (t: T) => string): Record<string, T[]> => {
 	const buckets: Record<string, T[]> = {};

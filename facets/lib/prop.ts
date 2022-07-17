@@ -1,7 +1,16 @@
-import { AvailableCascadeStrategyForPropType } from './cascade';
 import { FacetPropType, NullableTypeOfPropType, TypeOfPropType } from './propType';
 
 type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
+
+export type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> =
+	// Any prop type can use the `overwrite` strategy
+	| 'overwrite'
+	// Only props that are objects can object-merge during cascade" {...a, ...b}
+	| (TypeOfPropType<PropType> extends Record<string, any> ? 'merge' : never)
+	// Only props that are arrays can array-merge during cascasde: [...a, ...b]
+	| (TypeOfPropType<PropType> extends any[] ? 'extend' : never);
+
+export type CascadeStrategy = 'overwrite' | 'merge' | 'extend';
 
 export type FacetPropOptions<
 	// The PropType of the prop.
@@ -37,7 +46,7 @@ export type FacetProp<
 		// Plus the provided propType.
 		propType: PropType;
 		// Plus a non-nullable cascade strategy with a default value applied.
-		cascade: AvailableCascadeStrategyForPropType<PropType>;
+		cascade: CascadeStrategy;
 	};
 
 export type RootValueOfFacetProp<Prop extends FacetProp> = Prop['rootValue'];

@@ -7,13 +7,16 @@ import {
 	cascade,
 	FacetCascadeResult,
 	FacetDefinition,
-	FacetInstanceType,
-	IntrinsicFacetDefinition,
 	IntrinsicFacetName,
+	IntrinsicFacetDefinition,
+	FacetInstanceType,
 	Intrinsics,
 	mapFacetDefinitions,
 	mapFacetDefinitionsToCascadedInstances,
+	ALL_INTRINSIC_FACETS,
+	FacetInstanceStack,
 } from 'facets';
+import { CascadedFacetsByKind } from 'facets/types/fetch';
 import { mapObject } from 'utils/objects';
 import { ResolvedScopeIds, resolveScopeIds, ScopeIdsByKind, ScopeStack } from './resolveScopeIds';
 import {
@@ -22,19 +25,22 @@ import {
 	ByScopeKind,
 	Scope,
 	createByScopeKind,
-	getScopeKindAndId,
+	getSourceScope,
 } from './scopes';
 import { loadFacetInstancesForBindingIds } from './load';
 
-type ValidFacetName = IntrinsicFacetName;
-
-type ByFacetKind<T> = types.Writeable<{ [K in keyof Intrinsics]?: T }>;
-
 type FacetBindings = ByScopeKind<Record<string, types.FacetBinding[]>>;
 
-type CascadedFacetsByKind = types.Writeable<{
-	[K in keyof Intrinsics]?: FacetInstanceType<Intrinsics[K]>;
-}>;
+type CascadedFacetsByScopeId<FacetNames extends IntrinsicFacetName> = Record<
+	string,
+	types.DefinitelyHas<CascadedFacetsByKind, FacetNames>
+>;
+
+type CascadedFacetsForScopes<FacetNames extends IntrinsicFacetName> = ByScopeKind<
+	CascadedFacetsByScopeId<FacetNames>
+>;
+
+type ByFacetKind<T> = types.Writeable<{ [K in keyof Intrinsics]?: T }>;
 
 type FacetInstancesByBindingId<Def extends FacetDefinition> = Record<
 	string,
@@ -43,31 +49,31 @@ type FacetInstancesByBindingId<Def extends FacetDefinition> = Record<
 
 type FacetInstances = ByFacetKind<FacetInstancesByBindingId<IntrinsicFacetDefinition>>;
 
-type CascadedFacetsByScopeId<FacetNames extends ValidFacetName> = Record<
-	string,
-	types.DefinitelyHas<CascadedFacetsByKind, FacetNames>
->;
-
-type CascadedFacetsForScopes<FacetNames extends ValidFacetName> = ByScopeKind<
-	CascadedFacetsByScopeId<FacetNames>
->;
-
 const cascadeSingleFacetForScopeStack = <Def extends FacetDefinition>(
-	stack: ScopeStack,
+	scopeStack: ScopeStack,
 	def: Def,
 	bindings: FacetBindings,
 	instances: FacetInstancesByBindingId<Def>,
 ): FacetCascadeResult<Def> => {
-	const matchingInstancesWithScopes = flattenOnce(
-		stack.map((scope) => {
+	const instanceStack: FacetInstanceStack<Def> = flattenOnce(
+		scopeStack.map((scope) => {
 			const bindingsForScope = bindings[scope.kind][scope.id];
-			const matchingInstances = pruneFalsyValues(
-				bindingsForScope.map((binding) => instances[binding.id]),
+			return pruneFalsyValues(
+				bindingsForScope.map((binding) => {
+					const boundInstance = instances[binding.id];
+					if (boundInstance) {
+						return {
+							scope,
+							value: boundInstance,
+							facetBindingId: binding.id,
+						};
+					}
+					return null;
+				}),
 			);
-			return matchingInstances.map((value) => ({ scope, value }));
 		}),
 	);
-	return cascade(def, matchingInstancesWithScopes);
+	return cascade(def, instanceStack);
 };
 
 const cascadeFacetsForScopeStack = (
@@ -121,7 +127,7 @@ const getFacetBindingsForResolvedScopeIds = async (
 	return { facetBindings, facetBindingIds };
 };
 
-const getFacetInstancesForBindingIds = async <FacetNames extends ValidFacetName>(
+const getFacetInstancesForBindingIds = async <FacetNames extends IntrinsicFacetName>(
 	facetBindingIds: string[],
 	facetNames: FacetNames[],
 ): Promise<types.DefinitelyHas<FacetInstances, FacetNames>> => {
@@ -142,7 +148,7 @@ const getFacetInstancesForBindingIds = async <FacetNames extends ValidFacetName>
 	return facetInstances as types.DefinitelyHas<FacetInstances, FacetNames>;
 };
 
-const fetchFacetsForResolvedScopeIds = async <FacetNames extends ValidFacetName>(
+const fetchFacetsForResolvedScopeIds = async <FacetNames extends IntrinsicFacetName>(
 	resolvedScopeIds: ResolvedScopeIds,
 	facetNames: FacetNames[],
 ): Promise<CascadedFacetsForScopes<FacetNames>> => {
@@ -159,20 +165,20 @@ const fetchFacetsForResolvedScopeIds = async <FacetNames extends ValidFacetName>
 	return cascadedFacets as CascadedFacetsForScopes<FacetNames>;
 };
 
-export const fetchFacetsForScopeIds = async <FacetNames extends ValidFacetName>(
+export const fetchFacetsForScopeIds = async <FacetNames extends IntrinsicFacetName>(
 	requestedScopes: ScopeIdsByKind,
 	facetNames?: FacetNames[],
-) => {
+): Promise<CascadedFacetsForScopes<FacetNames>> => {
 	const resolvedScopeIds = await resolveScopeIds(requestedScopes);
 	return fetchFacetsForResolvedScopeIds(resolvedScopeIds, facetNames ?? ALL_INTRINSIC_FACETS);
 };
 
-export const fetchFacetsForScope = async <FacetNames extends ValidFacetName>(
+export const fetchFacetsForScope = async <FacetNames extends IntrinsicFacetName>(
 	scope: Scope,
 	facetNames?: FacetNames[],
-) => {
+): Promise<types.DefinitelyHas<CascadedFacetsByKind, FacetNames>> => {
 	const scopeIds = createByScopeKind<string[]>(() => []);
-	const { kind, id } = getScopeKindAndId(scope);
+	const { kind, id } = getSourceScope(scope);
 	scopeIds[kind].push(id);
 	const fetchResult = await fetchFacetsForScopeIds(scopeIds, facetNames);
 	return fetchResult[kind][id];

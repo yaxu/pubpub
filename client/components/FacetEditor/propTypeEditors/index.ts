@@ -1,2 +1,3 @@
-export { choice } from './choice';
-export { string } from './string';
+export { dropdown } from './dropdown';
+export { text } from './text';
+export { radio } from './radio';

@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Button } from 'reakit/Button';
 
 import { Icon } from 'components';
 import { Callback } from 'types';
@@ -13,18 +14,8 @@ type Props = {
 	isValueLocal: boolean;
 };
 
-const arrow = (
-	<div className="arrow-container">
-		<div className="arrow">
-			<div className="arrow-bend" />
-			<div className="arrow-tip" />
-			<div className="arrow-bauble" />
-		</div>
-	</div>
-);
-
 function FacetPropEditorSkeleton(props: Props) {
-	const { children, label, isValueLocal } = props;
+	const { children, label, isValueLocal, onReset } = props;
 
 	const inheritanceIcon = isValueLocal ? (
 		<Icon className="inheritance-icon reset-icon" iconSize={12} icon="reset" />
@@ -40,7 +31,9 @@ function FacetPropEditorSkeleton(props: Props) {
 			)}
 		>
 			<div className="top-row">
-				<div className="triangle">{inheritanceIcon}</div>
+				<Button className="triangle" as="div" onClick={onReset}>
+					{inheritanceIcon}
+				</Button>
 				<div className="label-group">
 					<div className="inheritance-info">
 						{isValueLocal ? 'Defined here' : 'Defined by this Community'}

@@ -40,7 +40,7 @@ export const ingestFacets = (sequelize: Sequelize) => {
 				id: (sequelize as any).idType,
 				facetBindingId: { type: DataTypes.UUID, allowNull: false },
 			},
-			{ tableName: `Facet_${name}` },
+			{ tableName: name },
 		) as any;
 		FacetModel.belongsTo(FacetBinding, {
 			foreignKey: 'facetBindingId',

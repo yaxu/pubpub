@@ -25,7 +25,7 @@ const getFacetSourceScope = (scope: ScopeId): FacetSourceScope => {
 
 const DashboardFacets = (props: Props) => {
 	const { facets } = props;
-	const { persistFacets, isPersisting } = useFacets();
+	const { persistFacets, isPersisting, hasPersistableChanges: hasPendingChanges } = useFacets();
 
 	const facetEditors = Object.entries(facets).map(([facetName]) => {
 		return <FacetEditor key={facetName} facetName={facetName as any} />;
@@ -36,7 +36,12 @@ const DashboardFacets = (props: Props) => {
 			title="Facets"
 			className="dashboard-facets-container"
 			controls={
-				<Button intent="primary" onClick={persistFacets} loading={isPersisting}>
+				<Button
+					intent="primary"
+					onClick={persistFacets}
+					loading={isPersisting}
+					disabled={!hasPendingChanges}
+				>
 					Save Changes
 				</Button>
 			}

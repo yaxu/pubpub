@@ -19,10 +19,11 @@ function createInitialFacetState<Def extends FacetDefinition>(
 	return {
 		facetDefinition,
 		persistedCascadeResult: initialCascadeResult,
-		pendingChanges: {},
 		cascadeResult: initialCascadeResult,
+		persistableChanges: {},
 		invalidProps: {},
-		isValid: true,
+		hasInvalidChanges: true,
+		hasPersistableChanges: false,
 	};
 }
 
@@ -32,5 +33,10 @@ export function createInitialState(options: CreateStateOptions): FacetsState {
 		const initialCascadeResult = initialCascadeResults[facetDefinition.name];
 		return createInitialFacetState(facetDefinition, initialCascadeResult);
 	});
-	return { currentScope, facets, isPersisting: false };
+	return {
+		currentScope,
+		facets,
+		isPersisting: false,
+		hasPersistableChanges: false,
+	};
 }

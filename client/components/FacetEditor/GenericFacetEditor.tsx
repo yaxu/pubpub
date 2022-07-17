@@ -1,11 +1,41 @@
 import React, { useCallback } from 'react';
 
-import { FacetDefinition, FacetProp, mapFacet } from 'facets';
+import {
+	FacetDefinition,
+	FacetProp,
+	FacetPropCascadeResult,
+	FacetSourceScope,
+	mapFacet,
+	FacetCascadeNotImplError,
+} from 'facets';
 
-import { GenericFacetEditorProps, PropTypeEditorComponent, PropTypeEditorProps } from './types';
+import {
+	FacetPropSourceInfo,
+	GenericFacetEditorProps,
+	PropTypeEditorComponent,
+	PropTypeEditorProps,
+} from './types';
 import FacetPropEditorSkeleton from './FacetPropEditorSkeleton';
 
 require('./facetEditor.scss');
+
+function getPropSourceInfo<Prop extends FacetProp>(
+	prop: Prop,
+	currentScope: FacetSourceScope,
+	cascadeResult: FacetPropCascadeResult<Prop>,
+): FacetPropSourceInfo {
+	const { sources } = cascadeResult;
+	const contributingScopes = sources.filter((s) => s.value !== null).map((s) => s.scope);
+	const lowestContributingScope = contributingScopes[contributingScopes.length - 1];
+	const isValueLocal = lowestContributingScope?.id === currentScope.id;
+	if (prop.cascade === 'overwrite') {
+		return {
+			isValueLocal,
+			contributingScopes: [lowestContributingScope],
+		};
+	}
+	throw new FacetCascadeNotImplError(prop.cascade);
+}
 
 function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEditorProps<Def>) {
 	const {
@@ -24,27 +54,25 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 			const { propType } = prop;
 			const PropEditor: PropTypeEditorComponent<any> = propEditors[key]!;
 			const propCascadeResult = cascadedProps[key];
-			const { value, contributions } = propCascadeResult;
+			const { value } = propCascadeResult;
 
-			const isValueLocal =
-				contributions[contributions.length - 1]?.scope.id === currentScope.id;
-
-			const updateProp = (newValue) => onUpdateValue({ [key]: newValue } as any);
+			const propSourceInfo = getPropSourceInfo(prop, currentScope, propCascadeResult);
+			const onUpdatePropValue = (newValue) => onUpdateValue({ [key]: newValue } as any);
 
 			const renderProps: PropTypeEditorProps<any> = {
 				value,
 				prop,
 				propType,
-				onUpdateValue: updateProp,
-				isValueLocal,
 				facetValue,
+				propSourceInfo,
+				onUpdateValue: onUpdatePropValue,
 			};
 
 			return (
 				<FacetPropEditorSkeleton
 					label={prop.label}
-					onReset={() => updateProp(null)}
-					isValueLocal={isValueLocal}
+					onReset={() => onUpdatePropValue(null)}
+					propSourceInfo={propSourceInfo}
 				>
 					<PropEditor key={key} {...renderProps} />
 				</FacetPropEditorSkeleton>

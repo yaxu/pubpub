@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
 	CascadedFacetType,
+	CascadeStrategy,
 	FacetCascadeResult,
 	FacetDefinition,
 	FacetInstanceType,
@@ -23,7 +24,7 @@ export type PropTypeEditorProps<PropType extends FacetPropType, Nullable extends
 	propType: PropType;
 	value: PossiblyNullableTypeOfPropType<PropType, Nullable>;
 	onUpdateValue: (update: PossiblyNullableTypeOfPropType<PropType, Nullable>) => unknown;
-	isValueLocal: boolean;
+	propSourceInfo: FacetPropSourceInfo;
 	facetValue: any;
 };
 
@@ -66,3 +67,8 @@ export type SpecificFacetEditorProps<Def extends FacetDefinition> = Omit<
 export type FacetEditorComponent<Def extends FacetDefinition = FacetDefinition> = React.FC<
 	SpecificFacetEditorProps<Def>
 >;
+
+export type FacetPropSourceInfo = {
+	isValueLocal: boolean;
+	contributingScopes: FacetSourceScope[];
+};

@@ -34,7 +34,7 @@ app.get(
 					viewData={{ facets, scopeId: scope }}
 					headerComponents={generateMetaComponents({
 						initialData,
-						title: `Pages · ${initialData.scopeData.elements.activeTarget.title}`,
+						title: `Facets · ${initialData.scopeData.elements.activeTarget.title}`,
 						unlisted: true,
 					})}
 				/>,

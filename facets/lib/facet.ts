@@ -63,7 +63,7 @@ export type PropCascadeResult<Prop extends FacetProp> = {
 
 export type FacetPropCascadeResult<Prop extends FacetProp> = {
 	value: PropCascadeResult<Prop>;
-	contributions: WithFacetSource<PropCascadeContribution<Prop>>[];
+	sources: WithFacetSource<PropCascadeContribution<Prop>>[];
 };
 
 export type FacetCascadedType<Def extends FacetDefinition> = {

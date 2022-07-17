@@ -9,7 +9,11 @@ type Props = PropTypeEditorProps<typeof primitives.string>;
 
 export const text = () => {
 	return (props: Props) => {
-		const { value, onUpdateValue, isValueLocal } = props;
+		const {
+			value,
+			onUpdateValue,
+			propSourceInfo: { isValueLocal },
+		} = props;
 		return (
 			<InputGroup
 				value={(isValueLocal && value) || undefined}

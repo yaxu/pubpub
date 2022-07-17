@@ -5,16 +5,18 @@ import { bindActionsToStore } from './actions';
 export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 	facetDefinition: Def;
 	persistedCascadeResult: FacetCascadeResult<Def>;
-	pendingChanges: Partial<FacetInstanceType<Def>>;
 	cascadeResult: FacetCascadeResult<Def>;
+	persistableChanges: Partial<FacetInstanceType<Def>>;
 	invalidProps: Partial<Record<keyof FacetInstanceType<Def>, true>>;
-	isValid: boolean;
+	hasInvalidChanges: boolean;
+	hasPersistableChanges: boolean;
 };
 
 export type FacetsState = {
 	currentScope: FacetSourceScope;
 	facets: Partial<Record<string, FacetState>>;
 	isPersisting: boolean;
+	hasPersistableChanges: boolean;
 };
 
 export type FacetsStore = FacetsState & ReturnType<typeof bindActionsToStore>;

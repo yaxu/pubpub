@@ -1,4 +1,4 @@
-import type { FacetProp, TypeOfFacetProp, NullableTypeOfFacetProp } from './prop';
+import type { FacetProp, NullableTypeOfFacetProp } from './prop';
 import type {
 	FacetDefinition,
 	FacetCascadedType,
@@ -19,23 +19,23 @@ function cascadeProp<Prop extends FacetProp>(
 	const { cascade: cascadeStrategy } = prop;
 	if (cascadeStrategy === 'overwrite') {
 		type PropWithCascade = Prop & { cascade: 'overwrite' };
-		const contributions: WithFacetSource<PropCascadeContribution<PropWithCascade>>[] =
-			sources.filter((s) => s.value !== null);
 		const value: PropCascadeResult<PropWithCascade> = sources
 			.map((s) => s.value)
 			.reduce((a, b) => b ?? a, null);
-		return { contributions, value };
+		return {
+			sources: sources as WithFacetSource<PropCascadeContribution<PropWithCascade>>[],
+			value,
+		};
 	}
 	if (cascadeStrategy === 'extend') {
 		type PropWithCascade = Prop & { cascade: 'extend' };
-		const contributions: WithFacetSource<PropCascadeContribution<PropWithCascade>>[] =
-			sources.filter(
-				(scope): scope is WithFacetSource<TypeOfFacetProp<Prop>> => scope.value !== null,
-			);
 		const value: PropCascadeResult<PropWithCascade> = sources
-			.map((s) => (s.value || []) as any[])
+			.map((s) => (s.value ?? []) as any[])
 			.reduce((a, b) => [...a, ...b], []);
-		return { contributions, value };
+		return {
+			sources: sources as WithFacetSource<PropCascadeContribution<PropWithCascade>>[],
+			value,
+		};
 	}
 	throw new FacetCascadeNotImplError(cascadeStrategy);
 }

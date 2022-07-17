@@ -4,6 +4,8 @@ import { Button } from 'reakit/Button';
 
 import { Icon } from 'components';
 import { Callback } from 'types';
+import { capitalize } from 'utils/strings';
+import { FacetPropSourceInfo } from './types';
 
 require('./facetPropEditorSkeleton.scss');
 
@@ -11,17 +13,37 @@ type Props = {
 	children: React.ReactNode;
 	label: React.ReactNode;
 	onReset: Callback;
-	isValueLocal: boolean;
+	propSourceInfo: FacetPropSourceInfo;
 };
 
-function FacetPropEditorSkeleton(props: Props) {
-	const { children, label, isValueLocal, onReset } = props;
+function getLabelForContributingScope(sourceInfo: FacetPropSourceInfo): string {
+	const { contributingScopes, isValueLocal } = sourceInfo;
+	const lowestContributingScope = contributingScopes[contributingScopes.length - 1];
+	if (isValueLocal) {
+		return 'Defined here';
+	}
+	if (lowestContributingScope) {
+		const { kind } = lowestContributingScope;
+		if (kind === 'root') {
+			return 'PubPub default';
+		}
+		const scopeKind = capitalize(kind);
+		return `Defined by ${scopeKind}`;
+	}
+	return 'unknown';
+}
 
+function FacetPropEditorSkeleton(props: Props) {
+	const { children, label, propSourceInfo, onReset } = props;
+
+	const { isValueLocal } = propSourceInfo;
 	const inheritanceIcon = isValueLocal ? (
 		<Icon className="inheritance-icon reset-icon" iconSize={12} icon="reset" />
 	) : (
 		<Icon className="inheritance-icon" iconSize={16} icon="double-chevron-down" />
 	);
+
+	const inheritanceLabel = getLabelForContributingScope(propSourceInfo);
 
 	return (
 		<div
@@ -35,9 +57,7 @@ function FacetPropEditorSkeleton(props: Props) {
 					{inheritanceIcon}
 				</Button>
 				<div className="label-group">
-					<div className="inheritance-info">
-						{isValueLocal ? 'Defined here' : 'Defined by this Community'}
-					</div>
+					<div className="inheritance-info">{inheritanceLabel}</div>
 					<div className="prop-name">{label}</div>
 				</div>
 			</div>

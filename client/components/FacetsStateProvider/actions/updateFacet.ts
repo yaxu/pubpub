@@ -38,7 +38,7 @@ function applyPatchToStack<Def extends FacetDefinition>(
 	return [...stack, { scope, facetBindingId: null, value: createFacetInstance(def, patch) }];
 }
 
-function getNextInvalidProps(
+function getInvalidProps(
 	previous: Record<string, any>,
 	nextInvalid: Record<string, any>,
 	nextValid: Record<string, any>,
@@ -50,7 +50,7 @@ function getNextInvalidProps(
 	return next;
 }
 
-function getNextPendingChanges<Def extends FacetDefinition>(
+function getPersistableChanges<Def extends FacetDefinition>(
 	persistedCascadeResult: FacetCascadeResult<Def>,
 	nextCascadeResult: FacetCascadeResult<Def>,
 ) {
@@ -72,6 +72,16 @@ function getNextPendingChanges<Def extends FacetDefinition>(
 	return pendingChanges;
 }
 
+function getCascadeResultForPatch<Def extends FacetDefinition>(
+	def: Def,
+	stack: FacetInstanceStack<Def>,
+	scope: FacetSourceScope,
+	patch: Partial<FacetInstanceType<Def>>,
+): FacetCascadeResult<Def> {
+	const nextStack = applyPatchToStack(def, stack, patch, scope);
+	return cascade(def, nextStack);
+}
+
 export function updateFacet<FacetName extends IntrinsicFacetName>(
 	get: GetState<FacetsState>,
 	set: SetState<FacetsState>,
@@ -90,15 +100,21 @@ export function updateFacet<FacetName extends IntrinsicFacetName>(
 		invalidProps: prevInvalidProps,
 	} = facetState;
 	const { valid, invalid } = parsePartialFacetInstance(facetDefinition, patch);
-	const nextStack = applyPatchToStack(facetDefinition, stack, patch, currentScope);
-	const cascadeResult = cascade(facetDefinition, nextStack);
-	const invalidProps = getNextInvalidProps(prevInvalidProps, invalid, valid);
-	const persistableChanges = getNextPendingChanges(persistedCascadeResult, cascadeResult);
+	const cascadeResult = getCascadeResultForPatch(facetDefinition, stack, currentScope, valid);
+	const latestAndPossiblyInvalidCascadeResult = getCascadeResultForPatch(
+		facetDefinition,
+		stack,
+		currentScope,
+		patch,
+	);
+	const invalidProps = getInvalidProps(prevInvalidProps, invalid, valid);
+	const persistableChanges = getPersistableChanges(persistedCascadeResult, cascadeResult);
 	const hasPersistableChanges = Object.keys(persistableChanges).length > 0;
 	const hasInvalidChanges = Object.keys(invalidProps).length === 0;
 	const nextFacetState: FacetState = {
 		...facetState,
 		cascadeResult,
+		latestAndPossiblyInvalidCascadeResult,
 		invalidProps,
 		persistableChanges,
 		hasPersistableChanges,

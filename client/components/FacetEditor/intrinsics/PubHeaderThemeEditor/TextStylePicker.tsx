@@ -11,12 +11,13 @@ require('./textStylePicker.scss');
 type Props = FacetPropEditorProps<typeof PubHeaderTheme, 'textStyle'>;
 
 const TextStylePicker = (props: Props) => {
-	const { value, onUpdateValue } = props;
+	const { value, onUpdateValue, facetValue } = props;
 	const { communityData } = usePageContext();
 
 	return (
 		<div className="text-style-picker-component">
 			<TextStyleChoice
+				pubHeaderTheme={facetValue}
 				communityData={communityData}
 				label="Light"
 				className="light"
@@ -24,6 +25,7 @@ const TextStylePicker = (props: Props) => {
 				selected={!value || value === 'light'}
 			/>
 			<TextStyleChoice
+				pubHeaderTheme={facetValue}
 				communityData={communityData}
 				label="Dark"
 				className="dark"
@@ -31,6 +33,7 @@ const TextStylePicker = (props: Props) => {
 				selected={value === 'dark'}
 			/>
 			<TextStyleChoice
+				pubHeaderTheme={facetValue}
 				communityData={communityData}
 				label="White Blocks"
 				className="white-blocks"
@@ -38,6 +41,7 @@ const TextStylePicker = (props: Props) => {
 				selected={value === 'white-blocks'}
 			/>
 			<TextStyleChoice
+				pubHeaderTheme={facetValue}
 				communityData={communityData}
 				label="Black Blocks"
 				className="black-blocks"

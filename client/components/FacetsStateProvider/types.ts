@@ -12,6 +12,7 @@ export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 	facetDefinition: Def;
 	persistedCascadeResult: FacetCascadeResult<Def>;
 	cascadeResult: FacetCascadeResult<Def>;
+	latestAndPossiblyInvalidCascadeResult: FacetCascadeResult<Def>;
 	persistableChanges: Partial<FacetInstanceType<Def>>;
 	invalidProps: Partial<Record<keyof FacetInstanceType<Def>, true>>;
 	hasInvalidChanges: boolean;

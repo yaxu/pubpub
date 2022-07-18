@@ -1,3 +1,3 @@
 export { default } from './FacetsStateProvider';
-export { FacetsState } from './types';
+export { FacetsState, FacetState } from './types';
 export { FacetsContext } from './context';

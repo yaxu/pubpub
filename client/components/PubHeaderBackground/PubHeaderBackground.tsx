@@ -2,8 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { calculateBackgroundColor } from 'utils/colors';
-import { useFacetsQuery } from 'client/utils/useFacets';
 import { Pub } from 'types';
+import { FacetCascadedType, PubHeaderTheme } from 'facets';
 
 require('./pubHeaderBackground.scss');
 
@@ -13,10 +13,21 @@ type Props = {
 	communityData: {
 		accentColorDark?: string;
 	};
-	pubData?: Pub;
 	blur?: boolean;
 	style?: any;
 	safetyLayer?: 'enabled' | 'full-height';
+} & ({ pubData: Pub } | { pubHeaderTheme: FacetCascadedType<typeof PubHeaderTheme> });
+
+const getPubHeaderTheme = (props: Props) => {
+	if ('pubHeaderTheme' in props) {
+		return props.pubHeaderTheme;
+	}
+	const { pubData } = props;
+	return {
+		textStyle: pubData.headerStyle,
+		backgroundColor: pubData.headerBackgroundColor ?? 'light',
+		backgroundImage: pubData.headerBackgroundImage,
+	};
 };
 
 const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>) => {
@@ -24,27 +35,12 @@ const PubHeaderBackground = React.forwardRef((props: Props, ref: React.Ref<any>)
 		children = null,
 		className = '',
 		communityData,
-		pubData,
 		blur = false,
 		style = {},
 		safetyLayer = null,
 	} = props;
 
-	const { textStyle, backgroundColor, backgroundImage } = useFacetsQuery(
-		({ PubHeaderTheme }) => PubHeaderTheme.cascadeResult.value,
-		{
-			prefer: (doNotPrefer) => {
-				if (pubData) {
-					return {
-						textStyle: pubData.headerStyle,
-						backgroundColor: pubData.headerBackgroundColor ?? 'light',
-						backgroundImage: pubData.headerBackgroundImage ?? null,
-					};
-				}
-				return doNotPrefer;
-			},
-		},
-	);
+	const { textStyle, backgroundColor, backgroundImage } = getPubHeaderTheme(props);
 
 	const effectiveBackgroundColor = calculateBackgroundColor(
 		backgroundColor,

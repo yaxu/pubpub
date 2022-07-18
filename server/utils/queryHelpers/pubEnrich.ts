@@ -66,9 +66,13 @@ export const getPubFirebaseToken = async (pubData: SanitizedPubData, initialData
 };
 
 export const getPubCitations = async (pubData, initialData, initialDoc) => {
+	const {
+		communityData,
+		scopeData: { facets },
+	} = initialData;
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
-		getStructuredCitationsForPub(pubData, initialDoc),
-		generateCitationHtml(pubData, initialData.communityData),
+		getStructuredCitationsForPub(facets?.CitationStyle.value, initialDoc),
+		generateCitationHtml(pubData, communityData),
 	]);
 
 	return {

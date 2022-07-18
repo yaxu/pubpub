@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { Button } from 'reakit';
 
 import { PubHeaderBackground } from 'components';
+import { CascadedFacetType, PubHeaderTheme } from 'facets';
 
 type Props = {
 	className?: string;
@@ -11,10 +12,19 @@ type Props = {
 	onClick: (...args: any[]) => any;
 	selected?: boolean;
 	style?: any;
+	pubHeaderTheme: CascadedFacetType<typeof PubHeaderTheme>;
 };
 
 const TextStyleChoice = React.forwardRef((props: Props, ref) => {
-	const { label, className, onClick, selected = false, style = {}, communityData } = props;
+	const {
+		label,
+		className,
+		onClick,
+		selected = false,
+		style = {},
+		communityData,
+		pubHeaderTheme,
+	} = props;
 
 	return (
 		// @ts-expect-error ts-migrate(2769) FIXME: No overload matches this call.
@@ -29,6 +39,7 @@ const TextStyleChoice = React.forwardRef((props: Props, ref) => {
 				blur={true}
 				className={classNames('example', className, 'selectable', selected && 'selected')}
 				style={style || {}}
+				pubHeaderTheme={pubHeaderTheme}
 			>
 				<div className="example-text">Aa</div>
 			</PubHeaderBackground>

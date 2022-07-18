@@ -29,12 +29,16 @@ $accent-color: var(--accent-color);
         align-items: center;
         margin-bottom: 0;
         font-weight: 600;
-        .triangle {
+        .inheritance-triangle {
             width: 0;
             height: 0;
             border-style: solid;
             border-width: $inheritance-triangle-size $inheritance-triangle-size 0 0;
             border-color: var(--accent-color) transparent transparent transparent;
+
+            &:not(:disabled) {
+                cursor: pointer;
+            }
 
             .inheritance-icon {
                 color: white;

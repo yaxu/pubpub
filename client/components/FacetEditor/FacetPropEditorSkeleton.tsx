@@ -53,7 +53,12 @@ function FacetPropEditorSkeleton(props: Props) {
 			)}
 		>
 			<div className="top-row">
-				<Button className="triangle" as="div" onClick={onReset}>
+				<Button
+					className="inheritance-triangle"
+					as="div"
+					onClick={onReset}
+					disabled={!isValueLocal}
+				>
 					{inheritanceIcon}
 				</Button>
 				<div className="label-group">

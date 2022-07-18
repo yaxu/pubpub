@@ -76,7 +76,6 @@ const PubHeader = (props: Props) => {
 	return (
 		<PubHeaderBackground
 			className={classNames('pub-header-component', showingDetails && 'showing-details')}
-			pubData={pubData}
 			communityData={communityData}
 			ref={headerRef}
 			style={fixedHeight && showingDetails ? { height: fixedHeight } : {}}

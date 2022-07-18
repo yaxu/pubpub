@@ -39,6 +39,7 @@ export type PubGetOptions = {
 	getMembers?: boolean;
 	getCommunity?: boolean;
 	getExports?: boolean;
+	getFacets?: boolean;
 	getEdges?: 'all' | 'approved-only';
 	getDraft?: boolean;
 	getDiscussions?: boolean;

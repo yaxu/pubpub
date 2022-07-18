@@ -121,7 +121,6 @@ const PubOverview = (props: Props) => {
 		<DashboardFrame className="pub-overview-component" title="Overview">
 			<PubHeaderBackground
 				className="pub-header-component"
-				pubData={pubData}
 				communityData={communityData}
 				safetyLayer="full-height"
 			>

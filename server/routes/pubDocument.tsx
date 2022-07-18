@@ -27,6 +27,8 @@ import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
 
+const getInitialDataForPub = (req) => getInitialData(req, { includeFacets: true });
+
 const renderPubDocument = (res, pubData, initialData, customScripts) => {
 	const {
 		communityData: { id: communityId },
@@ -130,7 +132,7 @@ app.get('/pub/:pubSlug/release/:releaseNumber', speedLimiter, async (req, res, n
 	}
 	try {
 		const { releaseNumber: releaseNumberString, pubSlug } = req.params;
-		const initialData = await getInitialData(req);
+		const initialData = await getInitialDataForPub(req);
 		const customScripts = await getCustomScriptsForCommunity(initialData.communityData.id);
 		const releaseNumber = parseInt(releaseNumberString, 10);
 		if (Number.isNaN(releaseNumber) || releaseNumber < 1) {
@@ -154,7 +156,7 @@ app.get('/pub/:pubSlug/release-id/:releaseId', speedLimiter, async (req, res, ne
 		return next();
 	}
 	try {
-		const initialData = await getInitialData(req);
+		const initialData = await getInitialDataForPub(req);
 		const { pubSlug, releaseId } = req.params;
 		const pub = await getPub({ slug: pubSlug, communityId: initialData.communityData.id });
 		const releaseIndex = pub.releases.findIndex((release) => release.id === releaseId);
@@ -173,7 +175,7 @@ app.get('/pub/:pubSlug/discussion-id/:discussionId', async (req, res, next) => {
 		return next();
 	}
 	try {
-		const initialData = await getInitialData(req);
+		const initialData = await getInitialDataForPub(req);
 		const { pubSlug, discussionId } = req.params;
 		const pub = await getPub(
 			{ slug: pubSlug, communityId: initialData.communityData.id },
@@ -202,7 +204,7 @@ app.get(
 			return next();
 		}
 		try {
-			const initialData = await getInitialData(req);
+			const initialData = await getInitialDataForPub(req);
 			const { historyKey: historyKeyString, pubSlug } = req.params;
 			const { canViewDraft, canView } = initialData.scopeData.activePermissions;
 			const hasHistoryKey = historyKeyString !== undefined;

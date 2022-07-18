@@ -15,15 +15,16 @@ import {
 	mapFacetDefinitionsToCascadedInstances,
 	ALL_INTRINSIC_FACETS,
 	FacetInstanceStack,
+	FacetSourceScope,
 } from 'facets';
 import { CascadedFacetsByKind } from 'facets/types/fetch';
 import { mapObject } from 'utils/objects';
+
 import { ResolvedScopeIds, resolveScopeIds, ScopeIdsByKind, ScopeStack } from './resolveScopeIds';
 import {
 	mapByScopeKind,
 	getBindingKeyForScopeKind,
 	ByScopeKind,
-	Scope,
 	createByScopeKind,
 	getSourceScope,
 } from './scopes';
@@ -173,12 +174,19 @@ export const fetchFacetsForScopeIds = async <FacetNames extends IntrinsicFacetNa
 	return fetchFacetsForResolvedScopeIds(resolvedScopeIds, facetNames ?? ALL_INTRINSIC_FACETS);
 };
 
+const resolveFacetSourceScope = (scope: types.ScopeId | FacetSourceScope): FacetSourceScope => {
+	if ('kind' in scope) {
+		return scope;
+	}
+	return getSourceScope(scope);
+};
+
 export const fetchFacetsForScope = async <FacetNames extends IntrinsicFacetName>(
-	scope: Scope,
+	scope: types.ScopeId | FacetSourceScope,
 	facetNames?: FacetNames[],
 ): Promise<types.DefinitelyHas<CascadedFacetsByKind, FacetNames>> => {
+	const { kind, id } = resolveFacetSourceScope(scope);
 	const scopeIds = createByScopeKind<string[]>(() => []);
-	const { kind, id } = getSourceScope(scope);
 	scopeIds[kind].push(id);
 	const fetchResult = await fetchFacetsForScopeIds(scopeIds, facetNames);
 	return fetchResult[kind][id];

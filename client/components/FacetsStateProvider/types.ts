@@ -1,4 +1,10 @@
-import { FacetCascadeResult, FacetDefinition, FacetInstanceType, FacetSourceScope } from 'facets';
+import {
+	FacetCascadeResult,
+	FacetDefinition,
+	FacetInstanceType,
+	FacetSourceScope,
+	Intrinsics,
+} from 'facets';
 
 import { bindActionsToStore } from './actions';
 
@@ -14,7 +20,7 @@ export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 
 export type FacetsState = {
 	currentScope: FacetSourceScope;
-	facets: Partial<Record<string, FacetState>>;
+	facets: { [K in keyof Intrinsics]: FacetState<Intrinsics[K]> };
 	isPersisting: boolean;
 	hasPersistableChanges: boolean;
 };

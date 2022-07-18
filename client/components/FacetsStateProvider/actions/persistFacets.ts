@@ -19,7 +19,7 @@ function markFacetsAsPersisted(state: FacetsState['facets']): FacetsState['facet
 	return mapFacetDefinitions((definition, skip) => {
 		const facetState = state[definition.name];
 		return facetState ? markFacetAsPersisted(facetState) : skip;
-	});
+	}) as FacetsState['facets'];
 }
 
 export async function persistFacets(get: GetState<FacetsState>, set: SetState<FacetsState>) {

@@ -5,11 +5,12 @@ import {
 	CascadedFacetsByKind,
 	mapFacetDefinitions,
 } from 'facets';
+import { ScopeId } from 'types';
 import { FacetsState, FacetState } from './types';
 
 export type CreateStateOptions = {
-	currentScope: FacetSourceScope;
-	initialCascadeResults: CascadedFacetsByKind;
+	currentScope: FacetSourceScope | ScopeId;
+	cascadeResults: CascadedFacetsByKind;
 };
 
 function createInitialFacetState<Def extends FacetDefinition>(
@@ -27,16 +28,27 @@ function createInitialFacetState<Def extends FacetDefinition>(
 	};
 }
 
+const getFacetSourceScope = (scope: ScopeId): FacetSourceScope => {
+	if ('pubId' in scope) {
+		return { kind: 'pub', id: scope.pubId };
+	}
+	if ('collectionId' in scope) {
+		return { kind: 'collection', id: scope.collectionId };
+	}
+	return { kind: 'community', id: scope.communityId };
+};
+
 export function createInitialState(options: CreateStateOptions): FacetsState {
-	const { currentScope, initialCascadeResults } = options;
+	const { currentScope, cascadeResults } = options;
 	const facets = mapFacetDefinitions((facetDefinition): FacetState<typeof facetDefinition> => {
-		const initialCascadeResult = initialCascadeResults[facetDefinition.name];
-		return createInitialFacetState(facetDefinition, initialCascadeResult);
-	});
+		const cascadeResult: FacetCascadeResult<typeof facetDefinition> =
+			cascadeResults[facetDefinition.name];
+		return createInitialFacetState(facetDefinition, cascadeResult);
+	}) as FacetsState['facets'];
 	return {
-		currentScope,
 		facets,
 		isPersisting: false,
 		hasPersistableChanges: false,
+		currentScope: 'kind' in currentScope ? currentScope : getFacetSourceScope(currentScope),
 	};
 }

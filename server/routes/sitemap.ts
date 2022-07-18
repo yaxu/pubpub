@@ -141,7 +141,7 @@ app.get(
 			return res.sendStatus(404);
 		}
 
-		const { communityData } = await getInitialData(req, true);
+		const { communityData } = await getInitialData(req, { isDashboard: true });
 		const sitemapFileStream = await getSitemapIndex(
 			communityData,
 			sitemapIndexOrSitemapFilename,

@@ -1,4 +1,13 @@
-import { Collection, Community, ScopeId, DefinitelyHas, Member, MemberPermission, Pub } from 'types';
+import {
+	Collection,
+	Community,
+	ScopeId,
+	DefinitelyHas,
+	Member,
+	MemberPermission,
+	Pub,
+} from 'types';
+import { CascadedFacetsByKind } from 'facets';
 
 export type LoginData = {
 	id: string | null;
@@ -61,6 +70,7 @@ export type ScopeData = {
 	};
 	scope: ScopeId;
 	memberData: Member[];
+	facets?: CascadedFacetsByKind;
 };
 
 export type InitialCommunityData = DefinitelyHas<

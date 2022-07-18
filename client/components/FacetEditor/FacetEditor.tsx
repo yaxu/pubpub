@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { FacetInstanceType, IntrinsicFacetDefinition, Intrinsics } from 'facets';
-import { useFacets } from 'client/utils/useFacets';
+import { useFacetsState } from 'client/utils/useFacets';
 
 import {
 	CitationStyleEditor,
@@ -27,7 +27,7 @@ const editorsForIntrinsicFacets: Partial<{
 function FacetEditor<Def extends IntrinsicFacetDefinition>(props: Props<Def>) {
 	const { facetName: name, ...editorProps } = props;
 	const Editor: undefined | FacetEditorComponent<any> = editorsForIntrinsicFacets[name];
-	const { currentScope, facets, updateFacet } = useFacets();
+	const { currentScope, facets, updateFacet } = useFacetsState();
 	const { cascadeResult } = facets[name]!;
 
 	const updateThisFacet = useCallback(

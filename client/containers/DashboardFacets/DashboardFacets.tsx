@@ -1,31 +1,18 @@
 import React from 'react';
 import { Button } from '@blueprintjs/core';
 
-import { DashboardFrame, FacetEditor, FacetsStateProvider } from 'components';
-import { ScopeId } from 'types';
-import { FacetSourceScope, CascadedFacetsByKind } from 'facets';
-import { useFacets } from 'client/utils/useFacets';
+import { DashboardFrame, FacetEditor } from 'components';
+import { useFacetsState } from 'client/utils/useFacets';
 
 require('./dashboardFacets.scss');
 
-type Props = {
-	facets: CascadedFacetsByKind;
-	scopeId: ScopeId;
-};
-
-const getFacetSourceScope = (scope: ScopeId): FacetSourceScope => {
-	if ('pubId' in scope) {
-		return { kind: 'pub', id: scope.pubId };
-	}
-	if ('collectionId' in scope) {
-		return { kind: 'collection', id: scope.collectionId };
-	}
-	return { kind: 'community', id: scope.communityId };
-};
-
-const DashboardFacets = (props: Props) => {
-	const { facets } = props;
-	const { persistFacets, isPersisting, hasPersistableChanges: hasPendingChanges } = useFacets();
+const DashboardFacets = () => {
+	const {
+		persistFacets,
+		isPersisting,
+		hasPersistableChanges: hasPendingChanges,
+		facets,
+	} = useFacetsState();
 
 	const facetEditors = Object.entries(facets).map(([facetName]) => {
 		return <FacetEditor key={facetName} facetName={facetName as any} />;
@@ -51,14 +38,4 @@ const DashboardFacets = (props: Props) => {
 	);
 };
 
-const DashboardFacetsWrapper = (props: Props) => {
-	const { facets: initialCascadeResults, scopeId } = props;
-	const currentScope = getFacetSourceScope(scopeId);
-	return (
-		<FacetsStateProvider options={{ currentScope, initialCascadeResults }}>
-			<DashboardFacets {...props} />
-		</FacetsStateProvider>
-	);
-};
-
-export default DashboardFacetsWrapper;
+export default DashboardFacets;

@@ -9,6 +9,7 @@ import {
 	mapFacet,
 	FacetCascadeNotImplError,
 } from 'facets';
+import { SettingsSection } from 'components';
 
 import {
 	FacetPropSourceInfo,
@@ -46,10 +47,12 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 		facetDefinition,
 		onUpdateValue,
 		propEditors,
-		displayStyle,
+		displayStyle = 'settings',
+		selfContained,
 	} = props;
 	const { props: cascadedProps, value: facetValue } = cascadeResult;
 	const { name, label } = facetDefinition;
+	const isCompact = displayStyle === 'compact';
 
 	const renderPropEditor = useCallback(
 		(key, prop: FacetProp) => {
@@ -72,7 +75,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 
 			return (
 				<FacetPropEditorSkeleton
-					displayStyle={displayStyle}
+					displayStyle={selfContained ? 'compact' : displayStyle}
 					label={prop.label}
 					onReset={() => onUpdatePropValue(null)}
 					propSourceInfo={propSourceInfo}
@@ -81,35 +84,38 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 				</FacetPropEditorSkeleton>
 			);
 		},
-		[propEditors, cascadedProps, currentScope, facetValue, onUpdateValue, displayStyle],
+		[
+			propEditors,
+			cascadedProps,
+			currentScope,
+			facetValue,
+			onUpdateValue,
+			displayStyle,
+			selfContained,
+		],
 	);
 
 	const propEditorsByName = mapFacet(facetDefinition, renderPropEditor);
 
-	const descriptionNode =
-		displayStyle === 'settings' ? (
-			<div className="description">{description}</div>
-		) : (
-			<details className="description">
-				<summary>Description</summary>
-				{description}
-			</details>
-		);
+	const descriptionNode = isCompact ? (
+		<details className="description">
+			<summary>Description</summary>
+			{description}
+		</details>
+	) : (
+		<div className="description">{description}</div>
+	);
 
 	return (
-		<div
-			className={classNames(
-				'facet-editor-component',
-				displayStyle === 'settings' && 'settings-style',
-			)}
+		<SettingsSection
+			gradient
+			title={label ?? name}
+			compact={isCompact}
+			className={classNames('facet-editor-component', selfContained && 'self-contained')}
 		>
-			<div className="gradient" />
-			<div className="title-area">
-				<div className="name">{label ?? name}</div>
-			</div>
 			{description && descriptionNode}
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
-		</div>
+		</SettingsSection>
 	);
 }
 

@@ -1,43 +1,14 @@
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
 $gentler-shadow: 0 4px 2px -2px rgba(black, 0.05);
 
-$community-gradient: linear-gradient(to bottom right, #fff, var(--community-accent-dark));
 $spacing: 15px;
 
 .facet-editor-component {
-    width: 400px;
-    position: relative;
-    border: 1px solid #777;
-    box-shadow: $gentle-shadow;
-    padding: $spacing;
-
-    &.settings-style {
-        width: unset;
-        border: none;
-        box-shadow: none;
-        padding: $spacing 0;
-    }
-
-    .gradient {
-        opacity: 0.05;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        bottom: 0px;
-        background: $community-gradient;
-        filter: blur(30px);
-    }
-
-    > :not(.gradient) {
-        position: relative;
-        z-index: 1;
-    }
-
-    .title-area {
-        font-size: 20px;
-        .name {
-            font-weight: bold;
-        }
+    &.self-contained {
+        width: 400px;
+        border: 1px solid #777;
+        box-shadow: $gentle-shadow;
+        padding: $spacing;
     }
 
     .description {
@@ -45,12 +16,12 @@ $spacing: 15px;
             font-style: normal;
             user-select: none;
         }
-        margin-top: $spacing;
+        margin-bottom: $spacing;
         font-size: 14px;
     }
 
     .prop-editors {
-        > * {
+        > *:not(:first-child) {
             margin-top: $spacing;
         }
     }

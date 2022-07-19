@@ -79,6 +79,7 @@ storiesOf('components/FacetEditor', module).add('PubHeaderTheme', () => (
 		cascadeResult={cascadedPubTheme}
 		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
+		selfContained
 	/>
 ));
 
@@ -87,6 +88,7 @@ storiesOf('components/FacetEditor', module).add('NodeLabels', () => (
 		cascadeResult={cascadedNodeLabels}
 		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
+		selfContained
 	/>
 ));
 
@@ -95,6 +97,7 @@ storiesOf('components/FacetEditor', module).add('CitationStyle', () => (
 		cascadeResult={cascadedCitationStyle}
 		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
+		selfContained
 	/>
 ));
 
@@ -103,5 +106,6 @@ storiesOf('components/FacetEditor', module).add('PubEdgeDisplay', () => (
 		cascadeResult={cascadedPubEdgeDisplay}
 		onUpdateValue={() => {}}
 		currentScope={{ kind: 'pub', id: pubData.id }}
+		selfContained
 	/>
 ));

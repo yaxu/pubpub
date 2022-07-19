@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-
 import { slugifyString } from 'utils/strings';
 
 require('./settingsSection.scss');
@@ -10,12 +9,10 @@ type Props = {
 	title: React.ReactNode;
 	id?: string;
 	children: React.ReactNode;
-	compact?: boolean;
-	gradient?: boolean;
 };
 
 const SettingsSection = (props: Props) => {
-	const { className, title, id, children, gradient = false, compact = false } = props;
+	const { className, title, id, children } = props;
 	const [emphasized, setEmphasized] = useState(false);
 
 	useEffect(() => {
@@ -25,25 +22,18 @@ const SettingsSection = (props: Props) => {
 	}, [id]);
 
 	return (
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			id={id || slugifyString(title)}
-			role="none"
 			onClick={() => setEmphasized(false)}
 			className={classNames(
-				'settings-section-component',
-				compact && 'compact',
+				'settings-section-component-old',
 				emphasized && 'emphasized',
 				className,
 			)}
+			id={id || slugifyString(props.title)}
 		>
-			<div className="left-title">{title}</div>
-			<div className="content-area">
-				{gradient && <div className="gradient" />}
-				<div className="title-area">
-					<div className="title">{title}</div>
-				</div>
-				<div className="content">{children}</div>
-			</div>
+			<div className="title">{title}</div>
+			<div className="content">{children}</div>
 		</div>
 	);
 };

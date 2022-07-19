@@ -14,6 +14,7 @@ import {
 	PubAttributionEditor,
 	PubThemePicker,
 	PubCollectionsListing,
+	FacetEditor,
 } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
@@ -209,27 +210,11 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderTheme = () => {
-		return (
-			<SettingsSection title="Theme">
-				<PubThemePicker
-					updatePubData={updatePubData}
-					pubData={pubData}
-					communityData={communityData}
-				/>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="PubHeaderTheme" />;
 	};
 
 	const renderCitationChooser = () => {
-		return (
-			<SettingsSection title="Citation Style">
-				<CitationChooser
-					pubData={pubData}
-					communityId={communityData.id}
-					onSetCitations={(citationUpdate) => updatePersistedPubData(citationUpdate)}
-				/>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="CitationStyle" />;
 	};
 
 	const renderDoi = () => {
@@ -295,11 +280,11 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderNodeLabelEditor = () => {
-		return (
-			<SettingsSection title="Item Labels" id="block-labels">
-				<NodeLabelEditor pubData={persistedPubData} updatePubData={updatePubData} />
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="NodeLabels" />;
+	};
+
+	const renderConnectionsSettings = () => {
+		return <FacetEditor facetName="PubEdgeDisplay" />;
 	};
 
 	return (
@@ -316,6 +301,7 @@ const PubSettings = (props: Props) => {
 			{renderAttributions()}
 			{renderFormattedDownload()}
 			{renderCollections()}
+			{renderConnectionsSettings()}
 			{renderNodeLabelEditor()}
 			{renderDelete()}
 		</DashboardFrame>

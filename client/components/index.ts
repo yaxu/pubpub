@@ -89,6 +89,7 @@ export { default as ReferencesDropdown } from './ReferencesDropdown/ReferencesDr
 export { default as QueryListDropdown } from './QueryListDropdown/QueryListDropdown';
 export { default as ScopeDropdown } from './ScopeDropdown/ScopeDropdown';
 export { default as SettingsSection } from './SettingsSection/SettingsSection';
+export { default as SettingsSectionOld } from './SettingsSectionOld/SettingsSection';
 export { default as SharingCard } from './SharingCard/SharingCard';
 export { default as SimpleEditor } from './SimpleEditor/SimpleEditor';
 export { default as SliderInput } from './SliderInput/SliderInput';

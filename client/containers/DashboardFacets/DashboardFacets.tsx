@@ -15,7 +15,7 @@ const DashboardFacets = () => {
 	} = useFacetsState();
 
 	const facetEditors = Object.entries(facets).map(([facetName]) => {
-		return <FacetEditor key={facetName} facetName={facetName as any} />;
+		return <FacetEditor key={facetName} facetName={facetName as any} displayStyle="settings" />;
 	});
 
 	return (

@@ -31,7 +31,7 @@ const AccentStyle = function (props) {
 		minimalAction: baseMinimalAction,
 	} = generateColors(accentColorDark);
 
-	const accentColorDarkFaded30 = Color(accentColorDark).fade(0.3).rgb().string();
+	const accentColorDarkFaded30 = Color(accentColorDark).whiten(0.5).rgb().string();
 	const accentColorDarkFaded = Color(accentColorDark).fade(0.95).rgb().string();
 
 	const headerAccentColor = generateColors(

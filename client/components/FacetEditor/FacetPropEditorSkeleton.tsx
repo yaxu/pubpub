@@ -5,7 +5,7 @@ import { Button } from 'reakit/Button';
 import { Icon } from 'components';
 import { Callback } from 'types';
 import { capitalize } from 'utils/strings';
-import { FacetPropSourceInfo } from './types';
+import { FacetPropSourceInfo, FacetEditorDisplayStyle } from './types';
 
 require('./facetPropEditorSkeleton.scss');
 
@@ -14,6 +14,7 @@ type Props = {
 	label: React.ReactNode;
 	onReset: Callback;
 	propSourceInfo: FacetPropSourceInfo;
+	displayStyle: FacetEditorDisplayStyle;
 };
 
 function getLabelForContributingScope(sourceInfo: FacetPropSourceInfo): string {
@@ -34,7 +35,7 @@ function getLabelForContributingScope(sourceInfo: FacetPropSourceInfo): string {
 }
 
 function FacetPropEditorSkeleton(props: Props) {
-	const { children, label, propSourceInfo, onReset } = props;
+	const { children, label, propSourceInfo, onReset, displayStyle } = props;
 
 	const { isValueLocal } = propSourceInfo;
 	const inheritanceIcon = isValueLocal ? (
@@ -50,11 +51,12 @@ function FacetPropEditorSkeleton(props: Props) {
 			className={classNames(
 				'facet-prop-editor-skeleton-component',
 				isValueLocal && 'local-value',
+				displayStyle === 'settings' && 'settings-style',
 			)}
 		>
 			<div className="top-row">
 				<Button
-					className="inheritance-triangle"
+					className="inheritance-indicator"
 					as="div"
 					onClick={onReset}
 					disabled={!isValueLocal}

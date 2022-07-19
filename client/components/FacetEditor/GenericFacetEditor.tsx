@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 
 import {
 	FacetDefinition,
@@ -45,6 +46,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 		facetDefinition,
 		onUpdateValue,
 		propEditors,
+		displayStyle,
 	} = props;
 	const { props: cascadedProps, value: facetValue } = cascadeResult;
 	const { name, label } = facetDefinition;
@@ -70,6 +72,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 
 			return (
 				<FacetPropEditorSkeleton
+					displayStyle={displayStyle}
 					label={prop.label}
 					onReset={() => onUpdatePropValue(null)}
 					propSourceInfo={propSourceInfo}
@@ -78,23 +81,33 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 				</FacetPropEditorSkeleton>
 			);
 		},
-		[propEditors, cascadedProps, currentScope, facetValue, onUpdateValue],
+		[propEditors, cascadedProps, currentScope, facetValue, onUpdateValue, displayStyle],
 	);
 
 	const propEditorsByName = mapFacet(facetDefinition, renderPropEditor);
 
+	const descriptionNode =
+		displayStyle === 'settings' ? (
+			<div className="description">{description}</div>
+		) : (
+			<details className="description">
+				<summary>Description</summary>
+				{description}
+			</details>
+		);
+
 	return (
-		<div className="facet-editor-component">
+		<div
+			className={classNames(
+				'facet-editor-component',
+				displayStyle === 'settings' && 'settings-style',
+			)}
+		>
 			<div className="gradient" />
 			<div className="title-area">
 				<div className="name">{label ?? name}</div>
 			</div>
-			{description && (
-				<details className="description">
-					<summary>Description</summary>
-					{description}
-				</details>
-			)}
+			{description && descriptionNode}
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
 		</div>
 	);

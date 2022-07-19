@@ -8,6 +8,7 @@ $border-radius: 3px;
 	display: flex;
 	justify-content: space-between;
 	margin: 0 10px;
+	max-width: 350px;
 }
 
 @mixin selectable {

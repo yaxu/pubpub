@@ -50,6 +50,7 @@ export type GenericFacetEditorProps<Def extends FacetDefinition> = {
 	currentScope: FacetSourceScope;
 	propEditors: Partial<PropEditors<Def>>;
 	description?: React.ReactNode;
+	displayStyle: FacetEditorDisplayStyle;
 	onUpdateValue: (patch: Partial<FacetInstanceType<Def>>) => unknown;
 };
 
@@ -71,3 +72,5 @@ export type FacetPropSourceInfo = {
 	isValueLocal: boolean;
 	contributingScopes: FacetSourceScope[];
 };
+
+export type FacetEditorDisplayStyle = 'settings' | 'compact';

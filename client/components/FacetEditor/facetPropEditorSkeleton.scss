@@ -6,8 +6,12 @@
 
 $border-width: 1px;
 $inheritance-triangle-size: 32px;
+$inheritance-tab-size: 22px;
 
-$inherited-accent-color: #bbb;
+$settings-style-offset: 6px;
+$settings-style-padding: 8px 2px;
+
+$inherited-accent-color: #aaa;
 $local-accent-color: var(--community-accent-dark-faded-30);
 $accent-color: var(--accent-color);
 
@@ -24,12 +28,54 @@ $accent-color: var(--accent-color);
     border: $border-width solid var(--accent-color);
     position: relative;
 
+    &.settings-style {
+        border-radius: 4px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border: none;
+        border-left: 2px solid var(--accent-color);
+        transform: translateX(#{2 - $settings-style-offset});
+        padding-left: $settings-style-offset;
+
+        &.local-value {
+            box-shadow: $gentler-shadow;
+        }
+
+        .top-row {
+            .inheritance-indicator {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translateX(-100%);
+                width: $inheritance-tab-size;
+                height: $inheritance-tab-size * 1.5;
+                border: none;
+                border-top-left-radius: 6px;
+                border-bottom-left-radius: 6px;
+                background: var(--accent-color);
+
+                .inheritance-icon {
+                    z-index: 1;
+                    position: static;
+                }
+            }
+        }
+
+        .controls-container {
+            padding: $settings-style-padding;
+        }
+    }
+
     .top-row {
         display: flex;
         align-items: center;
         margin-bottom: 0;
         font-weight: 600;
-        .inheritance-triangle {
+
+        .inheritance-indicator {
             width: 0;
             height: 0;
             border-style: solid;

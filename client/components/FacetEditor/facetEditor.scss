@@ -1,4 +1,6 @@
 $gentle-shadow: 0 4px 2px -2px rgba(black, 0.1);
+$gentler-shadow: 0 4px 2px -2px rgba(black, 0.05);
+
 $community-gradient: linear-gradient(to bottom right, #fff, var(--community-accent-dark));
 $spacing: 15px;
 
@@ -6,9 +8,15 @@ $spacing: 15px;
     width: 400px;
     position: relative;
     border: 1px solid #777;
-    background: #fefefe;
     box-shadow: $gentle-shadow;
     padding: $spacing;
+
+    &.settings-style {
+        width: unset;
+        border: none;
+        box-shadow: none;
+        padding: $spacing 0;
+    }
 
     .gradient {
         opacity: 0.05;
@@ -17,7 +25,7 @@ $spacing: 15px;
         position: absolute;
         bottom: 0px;
         background: $community-gradient;
-        filter: blur(10px);
+        filter: blur(30px);
     }
 
     > :not(.gradient) {
@@ -39,7 +47,6 @@ $spacing: 15px;
         }
         margin-top: $spacing;
         font-size: 14px;
-        font-style: italic;
     }
 
     .prop-editors {

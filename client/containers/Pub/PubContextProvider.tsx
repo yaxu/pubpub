@@ -73,7 +73,9 @@ export const PubContextProvider = (props: Props) => {
 		editorChangeObject: collabData.editorChangeObject,
 	});
 	const pubBodyState = usePubBodyState({ pubData, collabData, historyData, submissionState });
-	const { citationStyle, inlineCitationStyle } = useFacetsQuery((F) => F.CitationStyle);
+	const { citationStyle, inlineCitationStyle } = useFacetsQuery((F) => F.CitationStyle, {
+		fallback: () => ({ citationStyle: 'apa', inlineCitationStyle: 'count' }),
+	});
 
 	const { current: noteManager } = useLazyRef(
 		() =>

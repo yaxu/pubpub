@@ -11,15 +11,6 @@ $spacing: 15px;
         padding: $spacing;
     }
 
-    .description {
-        summary {
-            font-style: normal;
-            user-select: none;
-        }
-        margin-bottom: $spacing;
-        font-size: 14px;
-    }
-
     .prop-editors {
         > *:not(:first-child) {
             margin-top: $spacing;

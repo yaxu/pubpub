@@ -12,10 +12,23 @@ type Props = {
 	children: React.ReactNode;
 	compact?: boolean;
 	gradient?: boolean;
+	showTitle?: boolean;
+	description?: React.ReactNode;
+	collapseDescription?: boolean;
 };
 
 const SettingsSection = (props: Props) => {
-	const { className, title, id, children, gradient = false, compact = false } = props;
+	const {
+		className,
+		title,
+		id,
+		children,
+		gradient = false,
+		compact = false,
+		showTitle = true,
+		description,
+		collapseDescription = false,
+	} = props;
 	const [emphasized, setEmphasized] = useState(false);
 
 	useEffect(() => {
@@ -23,6 +36,17 @@ const SettingsSection = (props: Props) => {
 			setEmphasized(true);
 		}
 	}, [id]);
+
+	const descriptionNode =
+		description &&
+		(collapseDescription ? (
+			<details className="description">
+				<summary>Description</summary>
+				{description}
+			</details>
+		) : (
+			<div className="description">{description}</div>
+		));
 
 	return (
 		<div
@@ -36,13 +60,19 @@ const SettingsSection = (props: Props) => {
 				className,
 			)}
 		>
-			<div className="left-title">{title}</div>
 			<div className="content-area">
 				{gradient && <div className="gradient" />}
-				<div className="title-area">
-					<div className="title">{title}</div>
+				{showTitle && (
+					<div className="title-area">
+						<div className="title">{title}</div>
+					</div>
+				)}
+				<div className="content">
+					<>
+						{descriptionNode}
+						{children}
+					</>
 				</div>
-				<div className="content">{children}</div>
 			</div>
 		</div>
 	);

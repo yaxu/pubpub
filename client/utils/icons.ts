@@ -14,7 +14,8 @@ export type PubPubIconName =
 	| 'collection'
 	| 'pub'
 	| 'community'
-	| 'facets';
+	| 'facets'
+	| 'contributor';
 
 export const pubPubIcons: Record<PubPubIconName, IconName> = {
 	overview: 'home2',
@@ -31,4 +32,5 @@ export const pubPubIcons: Record<PubPubIconName, IconName> = {
 	pub: 'pubDoc',
 	community: 'office',
 	facets: 'gem',
+	contributor: 'user',
 };

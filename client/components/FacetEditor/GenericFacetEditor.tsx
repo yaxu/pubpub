@@ -97,23 +97,15 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 
 	const propEditorsByName = mapFacet(facetDefinition, renderPropEditor);
 
-	const descriptionNode = isCompact ? (
-		<details className="description">
-			<summary>Description</summary>
-			{description}
-		</details>
-	) : (
-		<div className="description">{description}</div>
-	);
-
 	return (
 		<SettingsSection
 			gradient
 			title={label ?? name}
 			compact={isCompact}
 			className={classNames('facet-editor-component', selfContained && 'self-contained')}
+			description={description}
+			collapseDescription={selfContained}
 		>
-			{description && descriptionNode}
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
 		</SettingsSection>
 	);

@@ -26,6 +26,7 @@ import DeletePub from './DeletePub';
 import Doi from './Doi';
 import CitationChooser from './CitationChooser';
 import NodeLabelEditor from './NodeLabelEditor';
+import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {
@@ -108,7 +109,7 @@ const PubSettings = (props: Props) => {
 	const renderDetails = () => {
 		return (
 			<React.Fragment>
-				<SettingsSection title="Details">
+				<SettingsSection title="Details" showTitle={false}>
 					<InputField
 						label="Title"
 						value={pubData.title}
@@ -219,7 +220,7 @@ const PubSettings = (props: Props) => {
 
 	const renderDoi = () => {
 		return (
-			<SettingsSection title="DOI">
+			<SettingsSection title="DOI" showTitle={false}>
 				<Doi
 					pubData={persistedPubData}
 					communityData={communityData}
@@ -232,7 +233,7 @@ const PubSettings = (props: Props) => {
 
 	const renderAttributions = () => {
 		return (
-			<SettingsSection title="Attributions">
+			<SettingsSection title="Attributions" showTitle={false}>
 				<PubAttributionEditor
 					pubData={pubData}
 					communityData={communityData}
@@ -245,7 +246,15 @@ const PubSettings = (props: Props) => {
 
 	const renderFormattedDownload = () => {
 		return (
-			<SettingsSection title="Download">
+			<SettingsSection
+				title="Download"
+				description={
+					<>
+						You can add a file that users can download for this Pub, in addition to the
+						ones that PubPub automatically generates.
+					</>
+				}
+			>
 				<DownloadChooser
 					pubData={pubData}
 					communityId={communityData.id}
@@ -257,7 +266,7 @@ const PubSettings = (props: Props) => {
 
 	const renderCollections = () => {
 		return (
-			<SettingsSection title="Collections">
+			<SettingsSection title="Collections" showTitle={false}>
 				<PubCollectionsListing
 					pub={pubData}
 					allCollections={communityData.collections}
@@ -287,24 +296,44 @@ const PubSettings = (props: Props) => {
 		return <FacetEditor facetName="PubEdgeDisplay" />;
 	};
 
-	return (
-		<DashboardFrame
-			className="pub-settings-container"
-			title="Settings"
-			controls={renderControls()}
-		>
-			{renderDetails()}
-			{renderLicense()}
-			{renderTheme()}
-			{renderCitationChooser()}
-			{renderDoi()}
-			{renderAttributions()}
-			{renderFormattedDownload()}
-			{renderCollections()}
-			{renderConnectionsSettings()}
-			{renderNodeLabelEditor()}
-			{renderDelete()}
-		</DashboardFrame>
-	);
+	const tabs: Subtab[] = [
+		{
+			id: 'general',
+			title: 'General',
+			icon: 'settings',
+			sections: [renderDetails, renderLicense, renderFormattedDownload, renderDelete],
+		},
+		{
+			id: 'look-and-feel',
+			title: 'Look and Feel',
+			icon: 'clean',
+			sections: [
+				renderTheme,
+				renderCitationChooser,
+				renderNodeLabelEditor,
+				renderConnectionsSettings,
+			],
+		},
+		{
+			id: 'contributors',
+			title: 'Contributors',
+			pubPubIcon: 'contributor',
+			sections: [renderAttributions],
+		},
+		{
+			id: 'collections',
+			title: 'Collections',
+			pubPubIcon: 'collection',
+			sections: [renderCollections],
+		},
+		{
+			id: 'doi',
+			title: 'DOI',
+			icon: 'upload',
+			sections: [renderDoi],
+		},
+	];
+
+	return <DashboardSettingsFrame tabs={tabs} id="pub-settings" />;
 };
 export default PubSettings;

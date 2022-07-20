@@ -1,15 +1,9 @@
 $community-gradient: linear-gradient(to bottom right, #fff, var(--community-accent-dark));
 
 .settings-section-component {
-	> .left-title {
-		display: none;
-		font-size: 16px;
-		font-weight: bold;
-	}
-
 	> .content-area {
 		position: relative;
-		
+
 		> .gradient {
 			z-index: -1;
 			opacity: 0.05;
@@ -27,39 +21,22 @@ $community-gradient: linear-gradient(to bottom right, #fff, var(--community-acce
 				font-weight: bold;
 			}
 		}
+		> .content {
+			> .description {
+				summary {
+					font-style: normal;
+					user-select: none;
+				}
+				margin-bottom: 15px;
+				font-size: 14px;
+			}
+		}
 	}
 
 	&.emphasized {
 		background: cornsilk;
 		& > .gradient {
 			display: none;
-		}
-	}
-}
-
-@supports (display: grid) {
-	@media only screen and (min-width: 1400px) {
-		.settings-section-component:not(.compact) {
-			display: grid;
-			grid-template-columns: 150px 1fr;
-			grid-template-areas: 'title content';
-			column-gap: 40px;
-			padding-top: 20px;
-
-			> .content-area > .title-area {
-				display: none;
-			}
-
-			> .left-title {
-				display: unset;
-				text-align: left;
-				grid-area: title;
-			}
-
-			> .content {
-				grid-area: content;
-				min-width: 0px;
-			}
 		}
 	}
 }

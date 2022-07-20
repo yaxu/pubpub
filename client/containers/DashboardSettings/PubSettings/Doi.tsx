@@ -381,7 +381,7 @@ class Doi extends Component<Props, State> {
 					{this.disabledDueToNoReleases() && (
 						<Callout intent="warning">
 							This Pub cannot be deposited to Crossref because it has no published
-							releases.
+							Releases.
 						</Callout>
 					)}
 					<AssignDoi

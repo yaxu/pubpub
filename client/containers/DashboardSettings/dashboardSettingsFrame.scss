@@ -1,0 +1,67 @@
+@import 'styles/mixins.scss';
+
+$icon-container-size: 32px;
+
+@mixin circle {
+    box-sizing: border-box;
+    width: $icon-container-size;
+    height: $icon-container-size;
+    border-radius: $icon-container-size;
+}
+
+.dashboard-settings-frame-component {
+    .bp3-tab-indicator-wrapper .bp3-tab-indicator {
+        background-color: var(--community-accent-dark);
+    }
+
+    .bp3-tab.dashboard-settings-frame-tab {
+        display: flex;
+        align-items: center;
+        padding-bottom: 6px;
+        .icon-container {
+            @include circle;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--community-accent-dark-faded);
+            color: rgb(42, 42, 42);
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            .background-circle {
+                @include circle;
+                position: absolute;
+                background-color: var(--community-accent-dark);
+                border: 1px solid var(--community-accent-dark);
+                transform: scale(0);
+            }
+            .bp3-icon {
+                opacity: 0.5;
+                position: relative;
+                z-index: 1;
+            }
+        }
+        &[aria-selected='true'] {
+            .icon-container {
+                color: white;
+                transition: 0.1s color ease-in-out, 0.1s opacity ease-in-out;
+                .background-circle {
+                    transform: scale(1);
+                    transition: 0.2s transform ease-in-out;
+                }
+                .bp3-icon {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .dashboard-settings-frame-tab-panel {
+        > * {
+            margin-bottom: 3em;
+            @include mobile {
+                margin-bottom: 2em;
+            }
+        }
+    }
+}

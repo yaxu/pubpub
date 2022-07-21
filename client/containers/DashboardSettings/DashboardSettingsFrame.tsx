@@ -125,6 +125,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				disabled={!hasChanges}
 				onClick={persist}
 				loading={isPersisting}
+				icon="tick"
 			>
 				Save changes
 			</Button>
@@ -171,7 +172,6 @@ const DashboardSettingsFrame = (props: Props) => {
 		<DashboardFrame
 			title="Settings"
 			className={classNames('dashboard-settings-frame-component', className)}
-			icon="cog"
 		>
 			<div className="dashboard-settings-frame-sticky-controls" ref={stickyControlsRef}>
 				<MobileAware

@@ -434,11 +434,11 @@ const CommunitySettings = () => {
 						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'string'.
 						label={
 							<span>
-								Public &apos;New Pub&apos; button
+								Public &apos;Create Pub&apos; button
 								<Tooltip
 									content={
 										<span>
-											Toggles &apos;New Pub&apos; button in header bar.
+											Toggles &apos;Create Pub&apos; button in header bar.
 											<br />
 											Button will always be available to community admins.
 										</span>

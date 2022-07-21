@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useBeforeUnload, useMountedState } from 'react-use';
+import { useBeforeUnload, useUpdateEffect } from 'react-use';
 import classNames from 'classnames';
 import { Button, Tab, Tabs } from '@blueprintjs/core';
 
 import { ScopeData } from 'types';
-import { DashboardFrame, Icon, IconName, PendingChangesProvider } from 'components';
+import { DashboardFrame, Icon, IconName, MobileAware, PendingChangesProvider } from 'components';
 import { PubPubIconName } from 'client/utils/icons';
 import { useFacetsState } from 'client/utils/useFacets';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { useSticky } from 'client/utils/useSticky';
+import { useViewport } from 'client/utils/useViewport';
 import AutosaveIndicator from './AutosaveIndicator';
 
 require('./dashboardSettingsFrame.scss');
@@ -55,6 +56,7 @@ const DashboardSettingsFrame = (props: Props) => {
 		hasChanges: hasNonFacetsChanges,
 		persist: persistNonFacets,
 	} = props;
+	const { isMobile } = useViewport();
 	const { pendingCount } = usePendingChanges();
 	const { locationData, scopeData } = usePageContext();
 	const { hasPersistableChanges: hasFacetsChanges, persistFacets } = useFacetsState();
@@ -82,10 +84,14 @@ const DashboardSettingsFrame = (props: Props) => {
 		window.history.replaceState({}, '', dashUrl);
 	}, [scopeData, currentTabId]);
 
+	useUpdateEffect(() => {
+		window.scrollTo({ top: 0 });
+	}, [currentTabId]);
+
 	useSticky({
 		target: stickyControlsRef.current!,
 		offset: breadcrumbsOffset,
-		isActive: mounted,
+		isActive: mounted && !isMobile,
 	});
 
 	const persist = useCallback(async () => {
@@ -107,27 +113,6 @@ const DashboardSettingsFrame = (props: Props) => {
 		'You have unsaved changes. Are you sure you want to navigate away?',
 	);
 
-	const renderTab = (tab: Subtab) => {
-		const { id: tabId, title, ...iconProps } = tab;
-		return (
-			<Tab
-				id={tabId}
-				key={title}
-				className="dashboard-settings-frame-tab"
-				panelClassName="dashboard-settings-frame-tab-panel"
-				title={
-					<>
-						<div className="icon-container">
-							<div className="background-circle" />
-							<Icon iconSize={16} {...iconProps} />
-						</div>
-						{title}
-					</>
-				}
-			/>
-		);
-	};
-
 	const renderControls = () => {
 		const { hideSaveButton } = currentTab;
 		if (hideSaveButton) {
@@ -146,6 +131,42 @@ const DashboardSettingsFrame = (props: Props) => {
 		);
 	};
 
+	const renderTab = (tab: Subtab, tabsAreMobile: boolean) => {
+		const { id: tabId, title, ...iconProps } = tab;
+		return (
+			<Tab
+				id={tabId}
+				key={title}
+				className="dashboard-settings-frame-tab"
+				panelClassName="dashboard-settings-frame-tab-panel"
+				title={
+					<>
+						<div className="icon-container">
+							<div className="background-circle" />
+							<Icon iconSize={tabsAreMobile ? 12 : 16} {...iconProps} />
+						</div>
+						<div className="title">{title}</div>
+					</>
+				}
+			/>
+		);
+	};
+
+	const renderTabs = (isMobileClassName: string, tabsAreMobile: boolean) => {
+		return (
+			<Tabs
+				id={id}
+				vertical={!!tabsAreMobile}
+				large={!tabsAreMobile}
+				selectedTabId={currentTabId}
+				className={classNames('dashboard-settings-frame-tabs', isMobileClassName)}
+				onChange={(nextId: string) => setCurrentTabId(nextId)}
+			>
+				{tabs.map((tab) => renderTab(tab, tabsAreMobile))}
+			</Tabs>
+		);
+	};
+
 	return (
 		<DashboardFrame
 			title="Settings"
@@ -153,14 +174,10 @@ const DashboardSettingsFrame = (props: Props) => {
 			icon="cog"
 		>
 			<div className="dashboard-settings-frame-sticky-controls" ref={stickyControlsRef}>
-				<Tabs
-					large
-					id={id}
-					selectedTabId={currentTabId}
-					onChange={(nextId: string) => setCurrentTabId(nextId)}
-				>
-					{tabs.map(renderTab)}
-				</Tabs>
+				<MobileAware
+					desktop={(p) => renderTabs(p.className, false)}
+					mobile={(p) => renderTabs(p.className, true)}
+				/>
 				<div className="save-container">{renderControls()}</div>
 			</div>
 			<div className="dashboard-settings-frame-tab-panel">

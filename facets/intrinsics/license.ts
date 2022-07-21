@@ -25,8 +25,12 @@ const copyrightSelection = propType({
 export const License = facet({
 	name: 'License',
 	props: {
-		kind: prop(licenseKind, { rootValue: 'cc-by' as const }),
+		kind: prop(licenseKind, {
+			label: 'License kind',
+			rootValue: 'cc-by' as const,
+		}),
 		copyrightSelection: prop(copyrightSelection, {
+			label: 'Copyright year',
 			rootValue: { choice: 'infer-from-scope', year: null },
 		}),
 	},

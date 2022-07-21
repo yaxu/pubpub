@@ -32,7 +32,7 @@ const AutosaveIndicator = (props: Props) => {
 			transitionToStatus('saving');
 		} else {
 			transitionToStatus('saved');
-			pendingTransition.current = setTimeout(() => transitionToStatus('start'), 2000) as any;
+			pendingTransition.current = setTimeout(() => transitionToStatus('start'), 10000) as any;
 		}
 	}, [isSaving, transitionToStatus]);
 

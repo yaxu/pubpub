@@ -1,6 +1,7 @@
 @use 'sass:math';
 
 @import 'styles/typography.scss';
+@import 'styles/mixins.scss';
 
 @import './facetEditor.scss';
 
@@ -17,6 +18,7 @@ $accent-color: var(--accent-color);
 
 .facet-prop-editor-skeleton-component {
     --accent-color: #{$inherited-accent-color};
+    position: relative;
     transition: background 100ms ease-out, box-shadow 100ms ease-out, border 100ms ease-out;
 
     &.local-value {
@@ -27,44 +29,46 @@ $accent-color: var(--accent-color);
 
     border: $border-width solid var(--accent-color);
 
-    &.settings-style {
-        border-radius: 4px;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        border: none;
-        border-left: 2px solid var(--accent-color);
-        transform: translateX(#{2 - $settings-style-offset});
-        padding-left: $settings-style-offset;
+    @include desktop {
+        &.settings-style {
+            border-radius: 4px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border: none;
+            border-left: 2px solid var(--accent-color);
+            transform: translateX(#{2 - $settings-style-offset});
+            padding-left: $settings-style-offset;
 
-        &.local-value {
-            box-shadow: $gentler-shadow;
-        }
+            &.local-value {
+                box-shadow: $gentler-shadow;
+            }
 
-        .top-row {
-            .inheritance-indicator {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: absolute;
-                top: 0;
-                left: 0;
-                transform: translateX(-100%);
-                width: $inheritance-tab-size;
-                height: $inheritance-tab-size * 1.5;
-                border: none;
-                border-top-left-radius: 6px;
-                border-bottom-left-radius: 6px;
-                background: var(--accent-color);
+            .top-row {
+                .inheritance-indicator {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transform: translateX(-100%);
+                    width: $inheritance-tab-size;
+                    height: $inheritance-tab-size * 1.5;
+                    border: none;
+                    border-top-left-radius: 6px;
+                    border-bottom-left-radius: 6px;
+                    background: var(--accent-color);
 
-                .inheritance-icon {
-                    z-index: 1;
-                    position: static;
+                    .inheritance-icon {
+                        z-index: 1;
+                        position: static;
+                    }
                 }
             }
-        }
 
-        .controls-container {
-            padding: $settings-style-padding;
+            .controls-container {
+                padding: $settings-style-padding;
+            }
         }
     }
 

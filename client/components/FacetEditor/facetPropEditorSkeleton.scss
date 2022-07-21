@@ -26,7 +26,6 @@ $accent-color: var(--accent-color);
     }
 
     border: $border-width solid var(--accent-color);
-    position: relative;
 
     &.settings-style {
         border-radius: 4px;

@@ -75,6 +75,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 
 			return (
 				<FacetPropEditorSkeleton
+					key={key}
 					displayStyle={selfContained ? 'compact' : displayStyle}
 					label={prop.label}
 					onReset={() => onUpdatePropValue(null)}

@@ -8,6 +8,7 @@ import {
 	PubEdgeDisplayEditor,
 	PubHeaderThemeEditor,
 	NodeLabelsEditor,
+	LicenseEditor,
 } from './intrinsics';
 import { FacetEditorComponent, SpecificFacetEditorProps } from './types';
 
@@ -22,6 +23,7 @@ const editorsForIntrinsicFacets: Partial<{
 	PubEdgeDisplay: PubEdgeDisplayEditor,
 	PubHeaderTheme: PubHeaderThemeEditor,
 	NodeLabels: NodeLabelsEditor,
+	License: LicenseEditor,
 };
 
 function FacetEditor<Def extends IntrinsicFacetDefinition>(props: Props<Def>) {

@@ -22,7 +22,14 @@ const getSettingsData = async (pubSlug, initialData) => {
 };
 
 app.get(
-	['/dash/settings', '/dash/collection/:collectionSlug/settings', '/dash/pub/:pubSlug/settings'],
+	[
+		'/dash/settings',
+		'/dash/collection/:collectionSlug/settings',
+		'/dash/pub/:pubSlug/settings',
+		'/dash/settings/:subMode',
+		'/dash/collection/:collectionSlug/settings/:subMode',
+		'/dash/pub/:pubSlug/settings/:subMode',
+	],
 	async (req, res, next) => {
 		try {
 			if (!hostIsValid(req, 'community')) {
@@ -40,7 +47,7 @@ app.get(
 				<Html
 					chunkName="DashboardSettings"
 					initialData={initialData}
-					viewData={{ settingsData }}
+					viewData={{ settingsData, subMode: req.params.subMode }}
 					headerComponents={generateMetaComponents({
 						initialData,
 						title: `Settings · ${initialData.scopeData.elements.activeTarget.title}`,

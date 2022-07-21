@@ -1,5 +1,9 @@
+import { TypeOfFacetProp, License as LicenseFacet } from 'facets';
+
+export type LicenseKind = TypeOfFacetProp<typeof LicenseFacet['props']['kind']>;
+
 export type License = {
-	slug: string;
+	slug: LicenseKind;
 	full: string;
 	short: string;
 	version: string | null;

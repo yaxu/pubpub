@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { useBeforeUnload } from 'react-use';
+import React from 'react';
 import { Button, Tooltip } from '@blueprintjs/core';
 
 import {
 	Icon,
-	DashboardFrame,
 	DatePicker,
 	DownloadChooser,
 	SettingsSection,
@@ -12,7 +10,6 @@ import {
 	InputField,
 	LicenseSelect,
 	PubAttributionEditor,
-	PubThemePicker,
 	PubCollectionsListing,
 	FacetEditor,
 } from 'components';
@@ -21,11 +18,10 @@ import { slugifyString } from 'utils/strings';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
+import { usePersistableState } from 'client/utils/usePersistableState';
 
 import DeletePub from './DeletePub';
 import Doi from './Doi';
-import CitationChooser from './CitationChooser';
-import NodeLabelEditor from './NodeLabelEditor';
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
@@ -37,74 +33,27 @@ type Props = {
 const PubSettings = (props: Props) => {
 	const { settingsData } = props;
 	const { scopeData, communityData } = usePageContext();
+	const { pendingPromise } = usePendingChanges();
 	const {
 		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
-	const [persistedPubData, setPersistedPubData] = useState(settingsData.pubData);
-	const [pendingPubData, setPendingPubData] = useState({});
-	const [isPersisting, setIsPersisting] = useState(false);
-	const { pendingPromise } = usePendingChanges();
 
-	const hasPendingChanges = Object.keys(pendingPubData).length > 0;
-	const pubData = { ...persistedPubData, ...pendingPubData };
-	const description = pubData.description || '';
-
-	useBeforeUnload(
-		hasPendingChanges,
-		'You have unsaved changes to this Pub. Are you sure you want to navigate away?',
-	);
-
-	const updatePubData = (values) => {
-		setPendingPubData({ ...pendingPubData, ...values });
-	};
-
-	const updatePersistedPubData = (values) => {
-		setPersistedPubData({ ...persistedPubData, ...values });
-	};
-
-	const handleSaveChanges = () => {
-		setIsPersisting(true);
-		return pendingPromise(
-			apiFetch('/api/pubs', {
-				method: 'PUT',
-				body: JSON.stringify({
-					...pendingPubData,
-					pubId: pubData.id,
-					communityId: communityData.id,
-				}),
-			}),
-		)
-			.then(() => {
-				const nextPubData = { ...persistedPubData, ...pendingPubData };
-				setPendingPubData({});
-				setIsPersisting(false);
-				setPersistedPubData(nextPubData);
-				if (persistedPubData.slug !== nextPubData.slug) {
-					window.location.href = getDashUrl({
-						pubSlug: nextPubData.slug,
-						mode: 'settings',
-					});
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-				setIsPersisting(false);
+	const {
+		state: pubData,
+		hasChanges,
+		update: updatePubData,
+		updatePersistedState: updatePersistedPubData,
+		persistedState: persistedPubData,
+		persist,
+	} = usePersistableState(settingsData.pubData, async (update) => {
+		await pendingPromise(apiFetch.put('/api/pubs', { pubId: pubData.id, ...update }));
+		if (update.slug && update.slug !== settingsData.pubData.slug) {
+			window.location.href = getDashUrl({
+				pubSlug: update.slug,
+				mode: 'settings',
 			});
-	};
-
-	const renderControls = () => {
-		const canPersistChanges = hasPendingChanges && pubData.title && pubData.slug;
-		return (
-			<Button
-				type="button"
-				intent="primary"
-				text="Save Changes"
-				disabled={!canPersistChanges}
-				loading={isPersisting}
-				onClick={handleSaveChanges}
-			/>
-		);
-	};
+		}
+	});
 
 	const renderDetails = () => {
 		return (
@@ -141,7 +90,7 @@ const PubSettings = (props: Props) => {
 						placeholder="Enter description"
 						helperText={`${(pubData.description || '').length}/280 characters`}
 						isTextarea={true}
-						value={description}
+						value={pubData.description || ''}
 						onChange={(evt) =>
 							updatePubData({
 								description: evt.target.value.substring(0, 280).replace(/\n/g, ' '),
@@ -194,20 +143,7 @@ const PubSettings = (props: Props) => {
 	};
 
 	const renderLicense = () => {
-		return (
-			<SettingsSection title="License">
-				<LicenseSelect
-					persistSelections={false}
-					pubData={pubData}
-					// @ts-expect-error ts-migrate(2322) FIXME: Type '(license: any) => void' is not assignable to... Remove this comment to see the full error message
-					onSelect={(license) => updatePubData({ licenseSlug: license.slug })}
-				>
-					{({ title, icon }) => (
-						<Button icon={icon} text={title} rightIcon="caret-down" />
-					)}
-				</LicenseSelect>
-			</SettingsSection>
-		);
+		return <FacetEditor facetName="License" />;
 	};
 
 	const renderTheme = () => {
@@ -306,7 +242,7 @@ const PubSettings = (props: Props) => {
 		{
 			id: 'look-and-feel',
 			title: 'Look and Feel',
-			icon: 'clean',
+			icon: 'tint',
 			sections: [
 				renderTheme,
 				renderCitationChooser,
@@ -318,22 +254,32 @@ const PubSettings = (props: Props) => {
 			id: 'contributors',
 			title: 'Contributors',
 			pubPubIcon: 'contributor',
+			hideSaveButton: true,
 			sections: [renderAttributions],
 		},
 		{
 			id: 'collections',
 			title: 'Collections',
 			pubPubIcon: 'collection',
+			hideSaveButton: true,
 			sections: [renderCollections],
 		},
 		{
 			id: 'doi',
 			title: 'DOI',
-			icon: 'upload',
+			icon: 'barcode',
+			hideSaveButton: true,
 			sections: [renderDoi],
 		},
 	];
 
-	return <DashboardSettingsFrame tabs={tabs} id="pub-settings" />;
+	return (
+		<DashboardSettingsFrame
+			tabs={tabs}
+			id="pub-settings"
+			hasChanges={hasChanges}
+			persist={persist}
+		/>
+	);
 };
 export default PubSettings;

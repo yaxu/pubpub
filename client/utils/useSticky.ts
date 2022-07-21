@@ -36,7 +36,7 @@ export const useSticky = (options: Options) => {
 	const stickyInstanceRef = useRef<null | StickyBits>(null);
 
 	useEffect(() => {
-		if (isActive) {
+		if (isActive && target) {
 			stickyInstanceRef.current = stickybits(target, {
 				stickyBitStickyOffset: offset,
 				useStickyClasses: true,

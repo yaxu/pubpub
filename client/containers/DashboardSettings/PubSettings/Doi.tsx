@@ -310,7 +310,7 @@ class Doi extends Component<Props, State> {
 
 		return (
 			<>
-				{!pubData.doi && <p>A DOI can be set for each Pub by admins of this community.</p>}
+				{!pubData.doi && <p>A DOI can be set for this Pub by admins of this Community.</p>}
 				{pubData.doi &&
 					!pubData.crossrefDepositRecordId &&
 					!this.disabledDueToNoReleases() && (

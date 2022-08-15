@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBeforeUnload, useUpdateEffect } from 'react-use';
 import classNames from 'classnames';
-import { Button, Tab, Tabs } from '@blueprintjs/core';
+import { Button, Spinner, Tab, Tabs } from '@blueprintjs/core';
 
 import { ScopeData } from 'types';
 import { DashboardFrame, Icon, IconName, MobileAware, PendingChangesProvider } from 'components';
+import { Menu, MenuButton, MenuItem, MenuSelect } from 'components/Menu';
 import { PubPubIconName } from 'client/utils/icons';
 import { useFacetsState } from 'client/utils/useFacets';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -12,6 +13,7 @@ import { getDashUrl } from 'utils/dashboard';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
 import AutosaveIndicator from './AutosaveIndicator';
+import IconBullet from './IconBullet';
 
 require('./dashboardSettingsFrame.scss');
 
@@ -34,6 +36,8 @@ type Props = {
 
 // Global header + breadcrumbs - 1px top border of OverviewRowSkeleton
 const breadcrumbsOffset = 56 + 85 - 1;
+// Global header + top of the DashboardFrame
+const mobileOffset = 40 + 15;
 
 const getSettingsUrl = (scopeData: ScopeData, subMode: undefined | string) => {
 	const { activeTargetType, activeCollection, activePub } = scopeData.elements;
@@ -61,9 +65,11 @@ const DashboardSettingsFrame = (props: Props) => {
 	const { locationData, scopeData } = usePageContext();
 	const { hasPersistableChanges: hasFacetsChanges, persistFacets } = useFacetsState();
 	const [mounted, setMounted] = useState(false);
-	const [isPersisting, setIsPersisting] = useState(false);
+	const [isSavingManually, setIsSavingManually] = useState(false);
 	const stickyControlsRef = useRef<null | HTMLDivElement>(null);
 	const hasChanges = hasNonFacetsChanges || hasFacetsChanges;
+	const isSavingAutomatically = pendingCount > 0;
+
 
 	const [currentTabId, setCurrentTabId] = useState(() => {
 		const { subMode } = locationData.params;
@@ -76,6 +82,17 @@ const DashboardSettingsFrame = (props: Props) => {
 	const currentTab = useMemo(() => {
 		return tabs.find((tab) => tab.id === currentTabId)!;
 	}, [currentTabId, tabs]);
+
+	const tabsAsMenuItems = useMemo(() => {
+		return tabs.map((tab) => {
+			const { id: tabId, title, ...iconProps } = tab;
+			return {
+				value: tabId,
+				label: title,
+				icon: <IconBullet small selected={currentTabId === tab.id} {...iconProps} />,
+			};
+		});
+	}, [tabs, currentTabId]);
 
 	useEffect(() => setMounted(true), []);
 
@@ -90,12 +107,12 @@ const DashboardSettingsFrame = (props: Props) => {
 
 	useSticky({
 		target: stickyControlsRef.current!,
-		offset: breadcrumbsOffset,
-		isActive: mounted && !isMobile,
+		offset: isMobile ? mobileOffset : breadcrumbsOffset,
+		isActive: mounted,
 	});
 
 	const persist = useCallback(async () => {
-		setIsPersisting(true);
+		setIsSavingManually(true);
 		try {
 			await Promise.all([
 				hasFacetsChanges && persistFacets(),
@@ -104,7 +121,7 @@ const DashboardSettingsFrame = (props: Props) => {
 		} catch (_) {
 			// do nothing
 		} finally {
-			setIsPersisting(false);
+			setIsSavingManually(false);
 		}
 	}, [hasFacetsChanges, persistFacets, hasNonFacetsChanges, persistNonFacets]);
 
@@ -116,15 +133,14 @@ const DashboardSettingsFrame = (props: Props) => {
 	const renderControls = () => {
 		const { hideSaveButton } = currentTab;
 		if (hideSaveButton) {
-			const isSaving = pendingCount > 0;
-			return <AutosaveIndicator isSaving={isSaving} />;
+			return <AutosaveIndicator isSaving={isSavingAutomatically} />;
 		}
 		return (
 			<Button
 				intent="primary"
 				disabled={!hasChanges}
 				onClick={persist}
-				loading={isPersisting}
+				loading={isSavingManually}
 				icon="tick"
 			>
 				Save changes
@@ -132,7 +148,7 @@ const DashboardSettingsFrame = (props: Props) => {
 		);
 	};
 
-	const renderTab = (tab: Subtab, tabsAreMobile: boolean) => {
+	const renderTab = (tab: Subtab) => {
 		const { id: tabId, title, ...iconProps } = tab;
 		return (
 			<Tab
@@ -142,10 +158,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				panelClassName="dashboard-settings-frame-tab-panel"
 				title={
 					<>
-						<div className="icon-container">
-							<div className="background-circle" />
-							<Icon iconSize={tabsAreMobile ? 12 : 16} {...iconProps} />
-						</div>
+						<IconBullet selected={tabId === currentTabId} {...iconProps} />
 						<div className="title">{title}</div>
 					</>
 				}
@@ -153,18 +166,36 @@ const DashboardSettingsFrame = (props: Props) => {
 		);
 	};
 
-	const renderTabs = (isMobileClassName: string, tabsAreMobile: boolean) => {
+	const renderTabs = (isMobileClassName: string) => {
 		return (
 			<Tabs
 				id={id}
-				vertical={!!tabsAreMobile}
-				large={!tabsAreMobile}
+				large
 				selectedTabId={currentTabId}
 				className={classNames('dashboard-settings-frame-tabs', isMobileClassName)}
 				onChange={(nextId: string) => setCurrentTabId(nextId)}
 			>
-				{tabs.map((tab) => renderTab(tab, tabsAreMobile))}
+				{tabs.map((tab) => renderTab(tab))}
 			</Tabs>
+		);
+	};
+
+	const renderTabsMenu = (isMobileClassName: string) => {
+		return (
+			<MenuSelect
+				className="dashboard-settings-frame-component__tabs-menu"
+				aria-label="Settings section selector"
+				onSelectValue={setCurrentTabId}
+				items={tabsAsMenuItems}
+				value={currentTabId}
+				showTickIcon={false}
+				icon={<Icon iconSize={16} {...currentTab} />}
+				rightIcon={isSavingAutomatically ? <Spinner size={18} /> : 'caret-down'}
+				buttonProps={{
+					fill: true,
+					className: classNames('dashboard-settings-frame-menu', isMobileClassName),
+				}}
+			/>
 		);
 	};
 
@@ -175,8 +206,8 @@ const DashboardSettingsFrame = (props: Props) => {
 		>
 			<div className="dashboard-settings-frame-sticky-controls" ref={stickyControlsRef}>
 				<MobileAware
-					desktop={(p) => renderTabs(p.className, false)}
-					mobile={(p) => renderTabs(p.className, true)}
+					desktop={(p) => renderTabs(p.className)}
+					mobile={(p) => renderTabsMenu(p.className)}
 				/>
 				<div className="save-container">{renderControls()}</div>
 			</div>

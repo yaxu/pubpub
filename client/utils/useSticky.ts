@@ -37,12 +37,14 @@ export const useSticky = (options: Options) => {
 
 	useEffect(() => {
 		if (isActive && target) {
+			console.log('mounting sticky');
 			stickyInstanceRef.current = stickybits(target, {
 				stickyBitStickyOffset: offset,
 				useStickyClasses: true,
 			});
 			return () => {
 				try {
+					console.log('unmounting sticky');
 					stickyInstanceRef.current!.cleanup();
 				} catch (e) {
 					// Whatever

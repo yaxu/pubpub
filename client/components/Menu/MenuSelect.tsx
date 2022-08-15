@@ -22,9 +22,10 @@ type Props<Value> = {
 	items: MenuSelectItems<Value>;
 	onSelectValue: (value: Value) => unknown;
 	prefix?: React.ReactNode;
-	rightIcon?: string;
+	rightIcon?: IButtonProps['rightIcon'];
 	showTickIcon?: boolean;
 	value: null | Value;
+	className?: string;
 };
 
 export const MenuSelect = <Values extends number | string>(props: Props<Values>) => {
@@ -35,6 +36,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 		items,
 		onSelectValue,
 		buttonProps,
+		className,
 		showTickIcon = true,
 		prefix = null,
 		disabled = false,
@@ -54,6 +56,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 				</>
 			}
 			buttonProps={{ icon, rightIcon, outlined: true, ...buttonProps }}
+			className={className}
 		>
 			{items.map((item) => (
 				<MenuItem

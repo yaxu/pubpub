@@ -13,9 +13,10 @@ export type MenuSelectItem<Value> = {
 
 export type MenuSelectItems<Value> = MenuSelectItem<Value>[];
 
+type MenuButtonProps = React.ComponentProps<typeof MenuButton>;
+
 type Props<Value> = {
 	'aria-label': string;
-	buttonProps?: React.ComponentProps<typeof MenuButton>['buttonProps'];
 	defaultLabel?: React.ReactNode;
 	disabled?: boolean;
 	icon?: IButtonProps['icon'];
@@ -26,7 +27,7 @@ type Props<Value> = {
 	showTickIcon?: boolean;
 	value: null | Value;
 	className?: string;
-};
+} & Pick<MenuButtonProps, 'buttonProps' | 'placement'>;
 
 export const MenuSelect = <Values extends number | string>(props: Props<Values>) => {
 	const {
@@ -37,6 +38,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 		onSelectValue,
 		buttonProps,
 		className,
+		placement,
 		showTickIcon = true,
 		prefix = null,
 		disabled = false,
@@ -57,6 +59,7 @@ export const MenuSelect = <Values extends number | string>(props: Props<Values>)
 			}
 			buttonProps={{ icon, rightIcon, outlined: true, ...buttonProps }}
 			className={className}
+			placement={placement}
 		>
 			{items.map((item) => (
 				<MenuItem

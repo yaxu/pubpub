@@ -5,7 +5,7 @@ import { Button, Spinner, Tab, Tabs } from '@blueprintjs/core';
 
 import { ScopeData } from 'types';
 import { DashboardFrame, Icon, IconName, MobileAware, PendingChangesProvider } from 'components';
-import { Menu, MenuButton, MenuItem, MenuSelect } from 'components/Menu';
+import { MenuSelect } from 'components/Menu';
 import { PubPubIconName } from 'client/utils/icons';
 import { useFacetsState } from 'client/utils/useFacets';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -70,7 +70,6 @@ const DashboardSettingsFrame = (props: Props) => {
 	const hasChanges = hasNonFacetsChanges || hasFacetsChanges;
 	const isSavingAutomatically = pendingCount > 0;
 
-
 	const [currentTabId, setCurrentTabId] = useState(() => {
 		const { subMode } = locationData.params;
 		if (tabs.some((tab) => tab.id === subMode)) {
@@ -108,7 +107,7 @@ const DashboardSettingsFrame = (props: Props) => {
 	useSticky({
 		target: stickyControlsRef.current!,
 		offset: isMobile ? mobileOffset : breadcrumbsOffset,
-		isActive: mounted,
+		isActive: mounted && !isMobile,
 	});
 
 	const persist = useCallback(async () => {
@@ -183,6 +182,7 @@ const DashboardSettingsFrame = (props: Props) => {
 	const renderTabsMenu = (isMobileClassName: string) => {
 		return (
 			<MenuSelect
+				placement="top-start"
 				className="dashboard-settings-frame-component__tabs-menu"
 				aria-label="Settings section selector"
 				onSelectValue={setCurrentTabId}
@@ -190,7 +190,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				value={currentTabId}
 				showTickIcon={false}
 				icon={<Icon iconSize={16} {...currentTab} />}
-				rightIcon={isSavingAutomatically ? <Spinner size={18} /> : 'caret-down'}
+				rightIcon={isSavingAutomatically ? <Spinner size={18} /> : 'caret-up'}
 				buttonProps={{
 					fill: true,
 					className: classNames('dashboard-settings-frame-menu', isMobileClassName),

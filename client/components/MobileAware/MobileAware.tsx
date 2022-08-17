@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import classNames from 'classnames';
 
+import { ViewportSize } from 'types';
 import { useViewport } from 'client/utils/useViewport';
+
+import { ForceMobileAwareContext } from './forceMobileAwareContext';
 
 require('./mobileAware.scss');
 
@@ -14,17 +18,20 @@ type Props = {
 
 const componentPrefix = 'mobile-aware-component';
 
+
 const renderMobileOrDesktop = (
 	renderable: Renderable,
 	ref: React.Ref<unknown>,
 	isFirstMount: boolean,
-	isMobileViewport: null | boolean,
-	isMobileVersion: boolean,
+	currentViewportSize: ViewportSize,
+	forcedViewportSize: null | ViewportSize,
+	forViewportSize: ViewportSize,
 ) => {
 	if (!renderable) {
 		return null;
 	}
-	const matchesViewportSize = isMobileViewport === isMobileVersion;
+	const matchedViewportSize = forcedViewportSize || currentViewportSize;
+	const matchesViewportSize = forViewportSize === matchedViewportSize;
 	// During server-side rendering, isFirstMount is true, so we unconditionally render
 	// both the provided mobile and the desktop versions, and rely on CSS to show only the
 	// correct one. During the first client render, we already know what viewport size we have,
@@ -33,8 +40,14 @@ const renderMobileOrDesktop = (
 	if (!isFirstMount && !matchesViewportSize) {
 		return null;
 	}
+
+	const forViewportClassName = `${componentPrefix}__${forViewportSize}` as const;
+	const forcedViewportClassName = forcedViewportSize
+		? (`${componentPrefix}__force-${forcedViewportSize}` as const)
+		: null;
+
 	const renderProps: RenderProps = {
-		className: isMobileVersion ? `${componentPrefix}__mobile` : `${componentPrefix}__desktop`,
+		className: classNames(forViewportClassName, forcedViewportClassName),
 		...(matchesViewportSize ? { ref } : null),
 	};
 	if (typeof renderable === 'function') {
@@ -46,14 +59,15 @@ const renderMobileOrDesktop = (
 const MobileAware = React.forwardRef((props: Props, ref: React.Ref<unknown>) => {
 	const { mobile = null, desktop = null } = props;
 	const [isFirstMount, setIsFirstMount] = useState(true);
-	const { isMobile } = useViewport({ withEarlyMeasurement: true });
+	const { viewportSize } = useViewport({ withEarlyMeasurement: true });
+	const { force } = useContext(ForceMobileAwareContext);
 
 	useEffect(() => setIsFirstMount(false), []);
 
 	return (
 		<>
-			{renderMobileOrDesktop(mobile, ref, isFirstMount, isMobile, true)}
-			{renderMobileOrDesktop(desktop, ref, isFirstMount, isMobile, false)}
+			{renderMobileOrDesktop(mobile, ref, isFirstMount, viewportSize!, force, 'mobile')}
+			{renderMobileOrDesktop(desktop, ref, isFirstMount, viewportSize!, force, 'desktop')}
 		</>
 	);
 });

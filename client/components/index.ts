@@ -57,7 +57,7 @@ export {
 	MenuSelectItems,
 } from './Menu';
 export { default as MinimalEditor } from './MinimalEditor/MinimalEditor';
-export { default as MobileAware, MobileAwareRenderProps } from './MobileAware';
+export { default as MobileAware, MobileAwareRenderProps, ForceMobileAware } from './MobileAware';
 export { default as NavBar } from './NavBar/NavBar';
 export { default as OrderPicker } from './OrderPicker/OrderPicker';
 export { default as Overlay } from './Overlay/Overlay';

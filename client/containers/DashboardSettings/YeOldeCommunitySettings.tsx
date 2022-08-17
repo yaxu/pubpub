@@ -30,22 +30,6 @@ const CommunitySettings = () => {
 	const { scopeData, communityData } = usePageContext();
 
 	/* Export & Delete Mailto Props */
-	const exportEmailBody = `
-	Hello.
-	%0D%0A%0D%0A
-	I am writing to request an export of any PubPub community data associated with the community%20
-	${communityData.title} (${communityData.subdomain}).
-	`;
-
-	const deleteEmailBody = `
-	Hello.
-	%0D%0A%0D%0A
-	I am writing to request that the PubPub community ${communityData.title}%20
-	(${communityData.subdomain}), and all data associated with that community, be deleted.
-	%0D%0A%0D%0A
-	I affirm that I have the legal authority to request this on behalf of my community,%20
-	and understand that this action may be irreversible.
-	`;
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState(undefined);
@@ -165,15 +149,7 @@ const CommunitySettings = () => {
 				communityId: communityData.id,
 			}),
 		})
-			.then((nextCommunityData) => {
-				if (isDevelopment()) {
-					window.location.reload();
-				} else {
-					const communityPart = communityUrl(nextCommunityData);
-					const dashPart = getDashUrl({ mode: 'settings' });
-					window.location.href = communityPart + dashPart;
-				}
-			})
+			.then((nextCommunityData) => {})
 			.catch((err) => {
 				console.error(err);
 				setIsLoading(false);
@@ -204,44 +180,17 @@ const CommunitySettings = () => {
 			}
 		>
 			<SettingsSection title="Details">
-				<InputField
-					label="Title"
-					type="text"
-					isRequired={true}
-					value={title}
-					onChange={(evt) => {
-						setTitle(evt.target.value);
-					}}
-				/>
-				<InputField
-					label="Domain"
-					type="text"
-					isRequired={true}
-					value={subdomain}
-					onChange={(evt) => {
-						setSubdomain(slugifyString(evt.target.value));
-					}}
-				/>
-				<InputField
-					label="Description"
-					type="text"
-					isTextarea={true}
-					value={description}
-					onChange={(evt) => {
-						setDescription(evt.target.value.substring(0, 280).replace(/\n/g, ' '));
-					}}
-				/>
-				<InputField
-					htmlFor="journal-citation"
+				<ImageUpload
+					htmlFor="avatar-upload"
 					label={
 						<span>
-							Journal Citation
+							Preview
 							<Tooltip
 								content={
 									<span>
-										When filled out, this field will be used as the Journal
-										Title for Issue Collections in citations, PDF exports, and
-										Crossref deposits.
+										Used as default preview image for social sharing cards.
+										<br />
+										Recommended: 500*500px
 									</span>
 								}
 							>
@@ -249,84 +198,11 @@ const CommunitySettings = () => {
 							</Tooltip>
 						</span>
 					}
-					type="text"
-					value={citeAs}
-					onChange={(evt) => {
-						setCiteAs(evt.target.value);
+					defaultImage={avatar}
+					onNewImage={(val) => {
+						setAvatar(val);
 					}}
 				/>
-				<InputField
-					htmlFor="publisher"
-					label={
-						<span>
-							Publisher
-							<Tooltip
-								content={
-									<span>
-										When filled out, this field will be used as the Publisher
-										for Book and Conference Proceedings Collections in
-										citations, PDF exports, and Crossref deposits.
-									</span>
-								}
-							>
-								<Icon icon="info-sign" />
-							</Tooltip>
-						</span>
-					}
-					type="text"
-					value={publishAs}
-					onChange={(evt) => {
-						setPublishAs(evt.target.value);
-					}}
-				/>
-				<div className="row-wrapper">
-					<ImageUpload
-						htmlFor="favicon-upload"
-						label={
-							<span>
-								Favicon
-								<Tooltip
-									content={
-										<span>
-											Used for browser icons. Must be square.
-											<br />
-											Recommended: 50*50px
-										</span>
-									}
-								>
-									<Icon icon="info-sign" />
-								</Tooltip>
-							</span>
-						}
-						defaultImage={favicon}
-						onNewImage={(val) => {
-							setFavicon(val);
-						}}
-					/>
-					<ImageUpload
-						htmlFor="avatar-upload"
-						label={
-							<span>
-								Preview
-								<Tooltip
-									content={
-										<span>
-											Used as default preview image for social sharing cards.
-											<br />
-											Recommended: 500*500px
-										</span>
-									}
-								>
-									<Icon icon="info-sign" />
-								</Tooltip>
-							</span>
-						}
-						defaultImage={avatar}
-						onNewImage={(val) => {
-							setAvatar(val);
-						}}
-					/>
-				</div>
 				<div className="row-wrapper">
 					<InputField label="Dark Accent Color">
 						<ColorInput
@@ -428,56 +304,6 @@ const CommunitySettings = () => {
 							}}
 						/>
 					</ButtonGroup>
-				</InputField>
-				<InputField>
-					<Switch
-						// @ts-expect-error ts-migrate(2322) FIXME: Type 'Element' is not assignable to type 'string'.
-						label={
-							<span>
-								Public &apos;Create Pub&apos; button
-								<Tooltip
-									content={
-										<span>
-											Toggles &apos;Create Pub&apos; button in header bar.
-											<br />
-											Button will always be available to community admins.
-										</span>
-									}
-								>
-									<Icon icon="info-sign" />
-								</Tooltip>
-							</span>
-						}
-						checked={!hideCreatePubButton}
-						onChange={(evt) => {
-							// @ts-expect-error ts-migrate(2339) FIXME: Property 'checked' does not exist on type 'EventTa... Remove this comment to see the full error message
-							setHideCreatePubButton(!evt.target.checked);
-						}}
-					/>
-				</InputField>
-				<InputField
-					label="Default 'Create Pub' Collections"
-					wrapperClassName={hideCreatePubButton ? 'disable-block' : ''}
-				>
-					<CollectionMultiSelect
-						allCollections={communityData.collections as any}
-						selectedCollectionIds={defaultPubCollections || []}
-						onItemSelect={(newCollectionId) => {
-							const existingCollectionIds = defaultPubCollections || [];
-							const newCollectionIds = [...existingCollectionIds, newCollectionId];
-							setDefaultPubCollections(newCollectionIds);
-						}}
-						onRemove={(evt, collectionIndex) => {
-							const existingCollectionIds = defaultPubCollections || [];
-							const newCollectionIds = existingCollectionIds.filter(
-								(item, filterIndex) => {
-									return filterIndex !== collectionIndex;
-								},
-							);
-							setDefaultPubCollections(newCollectionIds);
-						}}
-						placeholder="Select Collections..."
-					/>
 				</InputField>
 			</SettingsSection>
 			<SettingsSection title="Navigation" id="navigation">
@@ -886,37 +712,6 @@ const CommunitySettings = () => {
 						}}
 					/>
 				</InputField>
-			</SettingsSection>
-			<SettingsSection title="Export & Delete">
-				<Card>
-					<h5>Data export</h5>
-					<p>
-						You can request an export of the data associated with your Community on
-						PubPub using the button below.
-					</p>
-					<AnchorButton
-						target="_blank"
-						href={`mailto:privacy@pubpub.org?subject=Community+data+export+request&body=${exportEmailBody.trim()}`}
-					>
-						Request data export
-					</AnchorButton>
-				</Card>
-				<Card>
-					<h5>Community deletion</h5>
-					<p>
-						You can request that we completely delete your PubPub community using the
-						button below. If you have published any notable Pubs, we may reserve the
-						right to continue to display them based on the academic research exception
-						to GDPR.
-					</p>
-					<AnchorButton
-						intent="danger"
-						target="_blank"
-						href={`mailto:privacy@pubpub.org?subject=Community+deletion+request&body=${deleteEmailBody.trim()}`}
-					>
-						Request community deletion
-					</AnchorButton>
-				</Card>
 			</SettingsSection>
 		</DashboardFrame>
 	);

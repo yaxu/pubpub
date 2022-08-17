@@ -1,6 +1,48 @@
 @import 'styles/variables.scss';
 @import 'styles/mixins.scss';
 
+@mixin mobile-styles {
+	.hide-on-mobile {
+		display: none !important;
+	}
+	.main {
+		.main-content {
+			.logo-wrapper {
+				text-overflow: ellipsis;
+				font-size: 18px;
+				letter-spacing: 0px;
+				max-width: 55%;
+				img {
+					height: 35px;
+					width: auto;
+					display: block;
+				}
+			}
+		}
+	}
+	.hero {
+		text-align: center;
+		.hero-content {
+			flex-direction: column;
+			.hero-copy {
+				.hero-title {
+					font-size: 45px;
+					line-height: 50px;
+				}
+			}
+			.hero-image {
+				max-width: 100%;
+				img {
+					width: auto;
+					max-width: 100%;
+					padding-left: 0;
+					padding-top: 2em;
+				}
+			}
+		}
+	}
+}
+
 .header-component {
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -17,11 +59,7 @@
 	}
 	.main {
 		&.gradient {
-			background-image: linear-gradient(
-				-180deg,
-				rgba(0, 0, 0, 0.7) 0%,
-				rgba(0, 0, 0, 0) 100%
-			);
+			background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
 			color: white;
 			a {
 				color: #fff;
@@ -120,48 +158,12 @@
 			}
 		}
 	}
-}
-
-@include mobile {
-	.header-component {
-		.hide-on-mobile {
-			display: none !important;
-		}
-		.main {
-			.main-content {
-				.logo-wrapper {
-					text-overflow: ellipsis;
-					font-size: 18px;
-					letter-spacing: 0px;
-					max-width: 55%;
-					img {
-						height: 35px;
-						width: auto;
-						display: block;
-					}
-				}
-			}
-		}
-		.hero {
-			text-align: center;
-			.hero-content {
-				flex-direction: column;
-				.hero-copy {
-					.hero-title {
-						font-size: 45px;
-						line-height: 50px;
-					}
-				}
-				.hero-image {
-					max-width: 100%;
-					img {
-						width: auto;
-						max-width: 100%;
-						padding-left: 0;
-						padding-top: 2em;
-					}
-				}
-			}
+	@include mobile {
+		@include mobile-styles();
+	}
+	@include desktop {
+		&.force-mobile {
+			@include mobile-styles();
 		}
 	}
 }

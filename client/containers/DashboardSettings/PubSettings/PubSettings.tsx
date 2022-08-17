@@ -8,7 +8,6 @@ import {
 	SettingsSection,
 	ImageUpload,
 	InputField,
-	LicenseSelect,
 	PubAttributionEditor,
 	PubCollectionsListing,
 	FacetEditor,
@@ -234,14 +233,14 @@ const PubSettings = (props: Props) => {
 
 	const tabs: Subtab[] = [
 		{
-			id: 'general',
-			title: 'General',
+			id: 'details',
+			title: 'Details',
 			icon: 'settings',
 			sections: [renderDetails, renderLicense, renderFormattedDownload, renderDelete],
 		},
 		{
 			id: 'look-and-feel',
-			title: 'Look and Feel',
+			title: 'Look & Feel',
 			icon: 'tint',
 			sections: [
 				renderTheme,

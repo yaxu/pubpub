@@ -3,9 +3,7 @@ import { useUpdateEffect } from 'react-use';
 
 import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { AttributionEditor, DashboardFrame, FacetEditor, SettingsSection } from 'components';
-
-// TODO(ian): this should probably be moved somewhere else, but not sure where yet
+import { AttributionEditor, FacetEditor, SettingsSection } from 'components';
 import { pruneFalsyValues } from 'utils/arrays';
 import { ALL_INTRINSIC_FACETS } from 'facets';
 import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
@@ -36,8 +34,8 @@ const CollectionSettings = () => {
 
 	const tabs: Subtab[] = pruneFalsyValues([
 		{
-			id: 'general',
-			title: 'General',
+			id: 'details',
+			title: 'Details',
 			icon: 'settings',
 			sections: [
 				<CollectionDetailsEditor

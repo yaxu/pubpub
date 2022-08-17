@@ -27,4 +27,5 @@ export * from './thread';
 export * from './userNotification';
 export * from './userSubscription';
 export * from './util';
+export * from './viewport';
 export * from './visibility';

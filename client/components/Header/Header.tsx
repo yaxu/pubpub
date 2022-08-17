@@ -9,15 +9,10 @@ import { getResizedUrl } from 'utils/images';
 
 require('./header.scss');
 
-type OwnProps = {
+type Props = {
 	previewContext?: any;
+	forceMobile?: boolean;
 };
-
-const defaultProps = {
-	previewContext: undefined,
-};
-
-type Props = OwnProps & typeof defaultProps;
 
 const Header = (props: Props) => {
 	const { locationData, communityData, loginData } = usePageContext(props.previewContext);
@@ -135,6 +130,7 @@ const Header = (props: Props) => {
 			className={classNames([
 				'header-component',
 				componentClasses,
+				props.forceMobile && 'force-mobile',
 				isPreview ? 'preview' : '',
 			])}
 			style={backgroundStyle}
@@ -205,5 +201,5 @@ const Header = (props: Props) => {
 		</header>
 	);
 };
-Header.defaultProps = defaultProps;
+
 export default Header;

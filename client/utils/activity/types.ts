@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { ActivityAssociations, ActivityItemKind, InsertableActivityItem, ScopeId, User } from 'types';
+import {
+	ActivityAssociations,
+	ActivityItemKind,
+	InsertableActivityItem,
+	ScopeId,
+	User,
+} from 'types';
 import { IconName } from 'components';
 
 // Information we'll pass around about the current render

@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 
 import { License } from 'facets';
 import { licenses } from 'utils/licenses';

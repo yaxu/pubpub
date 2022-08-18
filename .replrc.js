@@ -47,7 +47,6 @@ const context = {
 	scope,
 	addWorkerTask,
 	sendEmail,
-
 };
 
 module.exports = {

@@ -3,7 +3,11 @@ import React from 'react';
 import { FacetDefinition } from 'facets';
 
 import FacetEditor from './GenericFacetEditor';
-import { FacetEditorComponent, FacetEditorCreationOptions, SpecificFacetEditorProps } from './types';
+import {
+	FacetEditorComponent,
+	FacetEditorCreationOptions,
+	SpecificFacetEditorProps,
+} from './types';
 
 export function createFacetEditor<Def extends FacetDefinition>(
 	facetDefinition: Def,

@@ -18,7 +18,6 @@ type Props = {
 
 const componentPrefix = 'mobile-aware-component';
 
-
 const renderMobileOrDesktop = (
 	renderable: Renderable,
 	ref: React.Ref<unknown>,

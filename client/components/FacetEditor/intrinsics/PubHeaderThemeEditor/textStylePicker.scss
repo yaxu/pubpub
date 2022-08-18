@@ -1,9 +1,9 @@
-@import "./shared.scss";
+@import './shared.scss';
 
 .text-style-picker-component {
-    @include selection-row;
-    
-    .text-style-choice {
+	@include selection-row;
+
+	.text-style-choice {
 		@include selectable;
 		width: 50px;
 		display: flex;

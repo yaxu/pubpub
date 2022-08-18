@@ -57,7 +57,7 @@ const SocialSettings = (props: Props) => {
 				canClear
 				width={125}
 				htmlFor="avatar-upload"
-				helperText="Used as default preview image for social sharing cards"
+				helperText="Used as default preview image for social sharing cards."
 				label={
 					<LabelWithInfo
 						label="Social preview image"

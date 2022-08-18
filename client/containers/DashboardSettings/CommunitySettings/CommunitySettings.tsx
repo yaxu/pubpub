@@ -1,30 +1,41 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
-import { FacetEditor } from 'components';
+import { Community, PageContext } from 'types';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
-import { communityUrl } from 'utils/canonicalUrls';
-import { isDevelopment } from 'utils/environment';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
-import { mapFacetDefinitions } from 'facets';
-import { PageContext } from 'types';
 
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
-import ExportAndDeleteSettings from './ExportAndDeleteSettings';
-import PublicNewPubs from './PublicNewPubs';
+import CommunityAdminSettings from './CommunityAdminSettings';
+import PublicNewPubs from './PublicNewPubsSettings';
 import BasicSettings from './BasicSettings';
-import CommunitySettingsPreview from './CommunitySettingsPreview';
-import Layout from './Layout';
 import NavSettings from './NavSettings';
 import HeaderSettings from './HeaderSettings';
 import FooterSettings from './FooterSettings';
-import HomeBannerSettings from './HomeBannerSettings';
+import HomepageBannerSettings from './HomepageBannerSettings';
+import SocialSettings from './SocialSettings';
+import CommunityPubSettings from './CommunityPubSettings';
+
+const attributesRequiringRefresh = [
+	'subdomain',
+	'accentColorDark',
+	'accentColorLight',
+	'headerColorType',
+	'userHeaderTextAccent',
+	'title',
+];
+
+const mustRefreshAfterPersist = (oldCommunity: Community, update: Partial<Community>) => {
+	const newCommunity = { ...oldCommunity, ...update };
+	return attributesRequiringRefresh.some((attr) => newCommunity[attr] !== oldCommunity[attr]);
+};
 
 const CommunitySettings = () => {
 	const pageContext = usePageContext();
 	const { pendingPromise } = usePendingChanges();
-	const { communityData: initialCommunityData, locationData } = pageContext;
+	const { communityData: initialCommunityData } = pageContext;
+
 	const {
 		state: communityData,
 		hasChanges,
@@ -33,25 +44,34 @@ const CommunitySettings = () => {
 		persist,
 	} = usePersistableState(initialCommunityData, async (update) => {
 		await pendingPromise(
-			apiFetch.put('/api/communities', { communityId: communityData.id, ...update }),
+			apiFetch.put('/api/communities', {
+				...update,
+				communityId: communityData.id,
+			}),
 		);
-		if (update.subdomain && update.subdomain !== persistedCommunityData.subdomain) {
-			if (isDevelopment()) {
-				window.location.reload();
-			} else {
-				const communityPart = communityUrl({ ...communityData, ...update });
-				const dashPart = getDashUrl({ mode: 'settings' });
-				window.location.href = communityPart + dashPart;
-			}
+		if (mustRefreshAfterPersist(persistedCommunityData, update)) {
+			window.location.href = getDashUrl({ mode: 'settings' });
 		}
 	});
 
-	const renderPubFacets = () => {
-		const facetMap = mapFacetDefinitions((facet) => (
-			<FacetEditor facetName={facet.name as any} />
-		));
-		return Object.values(facetMap);
-	};
+	const previewContext: PageContext = useMemo(() => {
+		return {
+			...pageContext,
+			communityData: {
+				...pageContext.communityData,
+				...communityData,
+			},
+			locationData: {
+				...pageContext.locationData,
+				path: '/',
+				queryString: '',
+				params: {},
+			},
+			loginData: {
+				id: null,
+			},
+		};
+	}, [pageContext, communityData]);
 
 	const tabs: Subtab[] = [
 		{
@@ -63,7 +83,11 @@ const CommunitySettings = () => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				<ExportAndDeleteSettings />,
+				<SocialSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+				<CommunityAdminSettings />,
 			],
 		},
 		{
@@ -75,9 +99,10 @@ const CommunitySettings = () => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				<HomeBannerSettings
+				<HomepageBannerSettings
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
+					previewContext={previewContext}
 				/>,
 			],
 		},
@@ -89,6 +114,7 @@ const CommunitySettings = () => {
 				<NavSettings
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
+					previewContext={previewContext}
 				/>,
 			],
 		},
@@ -100,6 +126,7 @@ const CommunitySettings = () => {
 				<FooterSettings
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
+					previewContext={previewContext}
 				/>,
 			],
 		},
@@ -112,35 +139,10 @@ const CommunitySettings = () => {
 					communityData={communityData}
 					updateCommunityData={updateCommunityData}
 				/>,
-				renderPubFacets,
+				<CommunityPubSettings />,
 			],
 		},
 	];
-
-	const [currentTabId, setCurrentTabId] = useState(() => {
-		const { subMode } = locationData.params;
-		if (tabs.some((tab) => tab.id === subMode)) {
-			return subMode;
-		}
-		return tabs[0].id;
-	});
-
-	const previewContext: PageContext = {
-		...pageContext,
-		communityData: {
-			...pageContext.communityData,
-			...communityData,
-		},
-		locationData: {
-			...pageContext.locationData,
-			path: currentTabId === 'header' ? '/' : '/some-page',
-			queryString: '',
-			params: {},
-		},
-		loginData: {
-			id: null,
-		},
-	};
 
 	return (
 		<DashboardSettingsFrame
@@ -148,9 +150,6 @@ const CommunitySettings = () => {
 			tabs={tabs}
 			hasChanges={hasChanges}
 			persist={persist}
-			currentTabId={currentTabId}
-			onSelectTabId={setCurrentTabId}
-			preview={<CommunitySettingsPreview previewContext={previewContext} />}
 		/>
 	);
 };

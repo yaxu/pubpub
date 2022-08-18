@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useBeforeUnload, useUpdateEffect } from 'react-use';
-import classNames from 'classnames';
 import { Button, Spinner, Tab, Tabs } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { ScopeData } from 'types';
 import { DashboardFrame, Icon, IconName, MobileAware, PendingChangesProvider } from 'components';
@@ -12,6 +12,7 @@ import { usePageContext, usePendingChanges } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { useSticky } from 'client/utils/useSticky';
 import { useViewport } from 'client/utils/useViewport';
+
 import AutosaveIndicator from './AutosaveIndicator';
 import IconBullet from './IconBullet';
 
@@ -32,9 +33,6 @@ type Props = {
 	className?: string;
 	hasChanges: boolean;
 	persist: () => Promise<void>;
-	preview?: React.ReactNode;
-	currentTabId?: string;
-	onSelectTabId?: (tabId: string) => unknown;
 };
 
 // Global header + breadcrumbs - 1px top border of OverviewRowSkeleton
@@ -53,6 +51,7 @@ const getSettingsUrl = (scopeData: ScopeData, subMode: undefined | string) => {
 	if (activeTargetType === 'pub') {
 		return getDashUrl({ mode: 'settings', pubSlug: activePub!.slug, subMode });
 	}
+	return '';
 };
 
 const DashboardSettingsFrame = (props: Props) => {
@@ -62,9 +61,6 @@ const DashboardSettingsFrame = (props: Props) => {
 		className,
 		hasChanges: hasNonFacetsChanges,
 		persist: persistNonFacets,
-		preview,
-		currentTabId: currentTabIdFromProps,
-		onSelectTabId,
 	} = props;
 	const { isMobile } = useViewport();
 	const { pendingCount } = usePendingChanges();
@@ -76,15 +72,13 @@ const DashboardSettingsFrame = (props: Props) => {
 	const hasChanges = hasNonFacetsChanges || hasFacetsChanges;
 	const isSavingAutomatically = pendingCount > 0;
 
-	const [currentTabIdFromState, setCurrentTabId] = useState(() => {
+	const [currentTabId, setCurrentTabId] = useState(() => {
 		const { subMode } = locationData.params;
 		if (tabs.some((tab) => tab.id === subMode)) {
 			return subMode;
 		}
 		return tabs[0].id;
 	});
-
-	const currentTabId = currentTabIdFromProps || currentTabIdFromState;
 
 	const currentTab = useMemo(() => {
 		return tabs.find((tab) => tab.id === currentTabId)!;
@@ -131,14 +125,6 @@ const DashboardSettingsFrame = (props: Props) => {
 			setIsSavingManually(false);
 		}
 	}, [hasFacetsChanges, persistFacets, hasNonFacetsChanges, persistNonFacets]);
-
-	const handleSelectTabId = useCallback(
-		(tabId: string) => {
-			setCurrentTabId(tabId);
-			onSelectTabId?.(tabId);
-		},
-		[onSelectTabId],
-	);
 
 	useBeforeUnload(
 		hasChanges,
@@ -188,7 +174,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				large
 				selectedTabId={currentTabId}
 				className={classNames('dashboard-settings-frame-tabs', isMobileClassName)}
-				onChange={handleSelectTabId}
+				onChange={(tabId: string) => setCurrentTabId(tabId)}
 			>
 				{tabs.map((tab) => renderTab(tab))}
 			</Tabs>
@@ -215,22 +201,10 @@ const DashboardSettingsFrame = (props: Props) => {
 		);
 	};
 
-	const renderInner = () => {
-		const { sections } = currentTab;
-		const currentSections = sections.map((section) => {
-			const element = typeof section === 'function' ? section() : section;
-			return element;
-		});
-		if (preview) {
-			return (
-				<div className="split-pane">
-					<div className="sections">{currentSections}</div>
-					<div className="preview">{preview}</div>
-				</div>
-			);
-		}
-		return currentSections;
-	};
+	const currentSections = currentTab.sections.map((section) => {
+		const element = typeof section === 'function' ? section() : section;
+		return element;
+	});
 
 	return (
 		<DashboardFrame
@@ -244,7 +218,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				/>
 				<div className="save-container">{renderControls()}</div>
 			</div>
-			<div className="dashboard-settings-frame-tab-panel">{renderInner()}</div>
+			<div className="dashboard-settings-frame-tab-panel">{currentSections}</div>
 		</DashboardFrame>
 	);
 };

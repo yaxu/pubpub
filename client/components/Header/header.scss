@@ -161,9 +161,4 @@
 	@include mobile {
 		@include mobile-styles();
 	}
-	@include desktop {
-		&.force-mobile {
-			@include mobile-styles();
-		}
-	}
 }

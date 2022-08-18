@@ -49,6 +49,7 @@ export const radio = <T extends FacetPropType>(options: Options<T>) => {
 			<RadioGroup onChange={handleSelectNewValue} selectedValue={selectedRadioValue}>
 				{items.map((choice, index) => (
 					<Radio
+						key={choice.value}
 						label={choice.label}
 						value={index.toString()}
 						onClick={handleChooseAlreadySelectedValue}

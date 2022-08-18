@@ -11,7 +11,6 @@ require('./header.scss');
 
 type Props = {
 	previewContext?: any;
-	forceMobile?: boolean;
 };
 
 const Header = (props: Props) => {
@@ -130,7 +129,6 @@ const Header = (props: Props) => {
 			className={classNames([
 				'header-component',
 				componentClasses,
-				props.forceMobile && 'force-mobile',
 				isPreview ? 'preview' : '',
 			])}
 			style={backgroundStyle}

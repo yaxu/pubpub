@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
+import { Switch } from '@blueprintjs/core';
 
 import { CollectionMultiSelect, InputField, SettingsSection } from 'components';
 import { Callback, Community } from 'types';
-import { Switch } from '@blueprintjs/core';
 
 type Props = {
 	communityData: Community;

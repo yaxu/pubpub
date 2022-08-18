@@ -104,21 +104,6 @@ $mobile-sticky-controls-offset: 50px; // height of bottom menu
     .dashboard-settings-frame-tab-panel {
         margin-top: 2em;
 
-        .split-pane {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 375px;
-            grid-template-areas: 'sections preview';
-            column-gap: 2em;
-
-            > .sections {
-                grid-area: sections;
-            }
-
-            > .preview {
-                grid-area: preview;
-            }
-        }
-
         @include mobile {
             margin-top: 1em;
         }

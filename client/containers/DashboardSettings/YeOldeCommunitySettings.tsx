@@ -10,6 +10,7 @@ import {
 	InputField,
 	SettingsSection,
 	CollectionMultiSelect,
+	NavBuilder,
 	NavBar,
 	Footer,
 	DashboardFrame,
@@ -21,8 +22,6 @@ import { communityUrl } from 'utils/canonicalUrls';
 import { isDevelopment } from 'utils/environment';
 import { apiFetch } from 'client/utils/apiFetch';
 import { CommunityHeroButton } from 'types';
-
-import NavBuilder from './NavBuilder';
 
 require('./communitySettings.scss');
 
@@ -682,7 +681,6 @@ const CommunitySettings = () => {
 					}}
 					placeholder={communityUrl(communityData)}
 				/>
-
 				<InputField label="Footer Links">
 					<NavBuilder
 						initialNav={communityData.footerLinks || defaultFooterLinks}

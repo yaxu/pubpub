@@ -32,6 +32,9 @@ type Props = {
 	className?: string;
 	hasChanges: boolean;
 	persist: () => Promise<void>;
+	preview?: React.ReactNode;
+	currentTabId?: string;
+	onSelectTabId?: (tabId: string) => unknown;
 };
 
 // Global header + breadcrumbs - 1px top border of OverviewRowSkeleton
@@ -59,6 +62,9 @@ const DashboardSettingsFrame = (props: Props) => {
 		className,
 		hasChanges: hasNonFacetsChanges,
 		persist: persistNonFacets,
+		preview,
+		currentTabId: currentTabIdFromProps,
+		onSelectTabId,
 	} = props;
 	const { isMobile } = useViewport();
 	const { pendingCount } = usePendingChanges();
@@ -70,13 +76,15 @@ const DashboardSettingsFrame = (props: Props) => {
 	const hasChanges = hasNonFacetsChanges || hasFacetsChanges;
 	const isSavingAutomatically = pendingCount > 0;
 
-	const [currentTabId, setCurrentTabId] = useState(() => {
+	const [currentTabIdFromState, setCurrentTabId] = useState(() => {
 		const { subMode } = locationData.params;
 		if (tabs.some((tab) => tab.id === subMode)) {
 			return subMode;
 		}
 		return tabs[0].id;
 	});
+
+	const currentTabId = currentTabIdFromProps || currentTabIdFromState;
 
 	const currentTab = useMemo(() => {
 		return tabs.find((tab) => tab.id === currentTabId)!;
@@ -123,6 +131,14 @@ const DashboardSettingsFrame = (props: Props) => {
 			setIsSavingManually(false);
 		}
 	}, [hasFacetsChanges, persistFacets, hasNonFacetsChanges, persistNonFacets]);
+
+	const handleSelectTabId = useCallback(
+		(tabId: string) => {
+			setCurrentTabId(tabId);
+			onSelectTabId?.(tabId);
+		},
+		[onSelectTabId],
+	);
 
 	useBeforeUnload(
 		hasChanges,
@@ -172,7 +188,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				large
 				selectedTabId={currentTabId}
 				className={classNames('dashboard-settings-frame-tabs', isMobileClassName)}
-				onChange={(nextId: string) => setCurrentTabId(nextId)}
+				onChange={handleSelectTabId}
 			>
 				{tabs.map((tab) => renderTab(tab))}
 			</Tabs>
@@ -199,6 +215,23 @@ const DashboardSettingsFrame = (props: Props) => {
 		);
 	};
 
+	const renderInner = () => {
+		const { sections } = currentTab;
+		const currentSections = sections.map((section) => {
+			const element = typeof section === 'function' ? section() : section;
+			return element;
+		});
+		if (preview) {
+			return (
+				<div className="split-pane">
+					<div className="sections">{currentSections}</div>
+					<div className="preview">{preview}</div>
+				</div>
+			);
+		}
+		return currentSections;
+	};
+
 	return (
 		<DashboardFrame
 			title="Settings"
@@ -211,12 +244,7 @@ const DashboardSettingsFrame = (props: Props) => {
 				/>
 				<div className="save-container">{renderControls()}</div>
 			</div>
-			<div className="dashboard-settings-frame-tab-panel">
-				{currentTab.sections.map((section) => {
-					const element = typeof section === 'function' ? section() : section;
-					return element;
-				})}
-			</div>
+			<div className="dashboard-settings-frame-tab-panel">{renderInner()}</div>
 		</DashboardFrame>
 	);
 };

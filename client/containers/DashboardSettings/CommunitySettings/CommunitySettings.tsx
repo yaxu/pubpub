@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { FacetEditor } from 'components';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -8,16 +8,23 @@ import { isDevelopment } from 'utils/environment';
 import { apiFetch } from 'client/utils/apiFetch';
 import { usePersistableState } from 'client/utils/usePersistableState';
 import { mapFacetDefinitions } from 'facets';
+import { PageContext } from 'types';
 
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
-import ExportAndDelete from './ExportAndDelete';
+import ExportAndDeleteSettings from './ExportAndDeleteSettings';
 import PublicNewPubs from './PublicNewPubs';
-import Details from './Details';
+import BasicSettings from './BasicSettings';
 import CommunitySettingsPreview from './CommunitySettingsPreview';
+import Layout from './Layout';
+import NavSettings from './NavSettings';
+import HeaderSettings from './HeaderSettings';
+import FooterSettings from './FooterSettings';
+import HomeBannerSettings from './HomeBannerSettings';
 
 const CommunitySettings = () => {
-	const { communityData: initialCommunityData } = usePageContext();
+	const pageContext = usePageContext();
 	const { pendingPromise } = usePendingChanges();
+	const { communityData: initialCommunityData, locationData } = pageContext;
 	const {
 		state: communityData,
 		hasChanges,
@@ -52,19 +59,53 @@ const CommunitySettings = () => {
 			title: 'Details',
 			icon: 'settings',
 			sections: [
-				<Details communityData={communityData} updateCommunityData={updateCommunityData} />,
-				<ExportAndDelete />,
+				<BasicSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+				<ExportAndDeleteSettings />,
 			],
 		},
 		{
-			id: 'layout',
-			title: 'Layout',
-			pubPubIcon: 'layout',
-			sections: [<CommunitySettingsPreview communityData={communityData} />],
+			id: 'header',
+			title: 'Header',
+			icon: 'widget-header',
+			sections: [
+				<HeaderSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+				<HomeBannerSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+			],
+		},
+		{
+			id: 'navigation',
+			title: 'Navigation',
+			icon: 'link',
+			sections: [
+				<NavSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+			],
+		},
+		{
+			id: 'footer',
+			title: 'Footer',
+			icon: 'widget-footer',
+			sections: [
+				<FooterSettings
+					communityData={communityData}
+					updateCommunityData={updateCommunityData}
+				/>,
+			],
 		},
 		{
 			id: 'pub-settings',
-			title: 'Pub Settings',
+			title: 'Pubs',
 			pubPubIcon: 'pub',
 			sections: [
 				<PublicNewPubs
@@ -76,12 +117,40 @@ const CommunitySettings = () => {
 		},
 	];
 
+	const [currentTabId, setCurrentTabId] = useState(() => {
+		const { subMode } = locationData.params;
+		if (tabs.some((tab) => tab.id === subMode)) {
+			return subMode;
+		}
+		return tabs[0].id;
+	});
+
+	const previewContext: PageContext = {
+		...pageContext,
+		communityData: {
+			...pageContext.communityData,
+			...communityData,
+		},
+		locationData: {
+			...pageContext.locationData,
+			path: currentTabId === 'header' ? '/' : '/some-page',
+			queryString: '',
+			params: {},
+		},
+		loginData: {
+			id: null,
+		},
+	};
+
 	return (
 		<DashboardSettingsFrame
 			id="collection-settings"
 			tabs={tabs}
 			hasChanges={hasChanges}
 			persist={persist}
+			currentTabId={currentTabId}
+			onSelectTabId={setCurrentTabId}
+			preview={<CommunitySettingsPreview previewContext={previewContext} />}
 		/>
 	);
 };

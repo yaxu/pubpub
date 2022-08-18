@@ -60,20 +60,14 @@ const SettingsSection = (props: Props) => {
 				className,
 			)}
 		>
-			<div className="content-area">
-				{gradient && <div className="gradient" />}
-				{showTitle && (
-					<div className="title-area">
-						<div className="title">{title}</div>
-					</div>
-				)}
-				<div className="content">
-					<>
-						{descriptionNode}
-						{children}
-					</>
+			{gradient && <div className="gradient" />}
+			{showTitle && (
+				<div className="title-area">
+					<div className="title">{title}</div>
+					{descriptionNode}
 				</div>
-			</div>
+			)}
+			<div className="content">{children}</div>
 		</div>
 	);
 };

@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 
-import { intrinsics, FacetProp, FacetProps } from 'facets';
+import { intrinsics, FacetProp, FacetProps } from '../../facets';
 
 type Column = {
 	type: typeof DataTypes[keyof typeof DataTypes];

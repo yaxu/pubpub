@@ -71,7 +71,7 @@ export const setupTestDatabase = async (config = testDbConfig) => {
 	await exec(`dropdb --if-exists ${config.name}`);
 	await exec(`dropuser --if-exists ${config.username}`);
 	await exec(
-		`psql postgres -c "CREATE USER '${config.username}' WITH PASSWORD '${config.password}';"`,
+		`psql postgres -c "CREATE USER ${config.username} WITH PASSWORD '${config.password}';"`,
 	);
 	await exec(`createdb ${config.name} --no-password --owner ${config.username}`);
 	return createDbUrl(config);
@@ -81,10 +81,12 @@ export const startTestDatabaseServer = async () => {
 	if (!hasbin.all.sync(requiredBinaries)) {
 		throwBinariesWarning();
 	}
-	return spawn('pg_ctl', ['start', '-w'], {
+	const child = spawn('pg_ctl', ['start', '-w'], {
 		env: {
 			...process.env,
 			PGDATA: pgDataPath,
 		},
 	});
+	child.on('error', (err) => console.error(err));
+	return child;
 };

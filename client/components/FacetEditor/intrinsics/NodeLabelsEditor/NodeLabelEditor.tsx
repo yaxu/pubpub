@@ -11,7 +11,7 @@ type Props = FacetPropEditorProps<typeof NodeLabels, 'image', false>; // But cou
 
 const NodeLabelEditor = (props: Props) => {
 	const { value, onUpdateValue } = props;
-	const { enabled, label } = value;
+	const { enabled, text } = value;
 
 	const onToggle = useCallback(
 		(checked: boolean) => {
@@ -21,8 +21,8 @@ const NodeLabelEditor = (props: Props) => {
 	);
 
 	const onTextChange = useCallback(
-		(text: string) => {
-			onUpdateValue({ ...value, label: text });
+		(nextText: string) => {
+			onUpdateValue({ ...value, text: nextText });
 		},
 		[value, onUpdateValue],
 	);
@@ -40,7 +40,7 @@ const NodeLabelEditor = (props: Props) => {
 			<InputGroup
 				type="text"
 				onChange={(e) => onTextChange(e.target.value)}
-				value={label}
+				value={text}
 				disabled={!enabled}
 			/>
 		</div>

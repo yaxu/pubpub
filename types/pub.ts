@@ -100,7 +100,6 @@ export type Pub = {
 	outboundEdges?: OutboundEdge[];
 	pubEdgeListingDefaultsToCarousel?: boolean;
 	pubEdgeDescriptionVisible?: boolean;
-	nodeLabels?: NodeLabelMap;
 	draftId?: string;
 	draft?: Draft;
 	scopeSummaryId: null | string;

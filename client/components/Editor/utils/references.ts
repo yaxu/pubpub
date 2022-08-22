@@ -6,7 +6,7 @@ import { EditorState } from 'prosemirror-state';
 import { Pub } from 'types';
 
 import { referencesPluginKey } from '../plugins/references';
-import { NodeLabelMap, ReferenceableNodeType } from '../types';
+import { NodeLabel, NodeLabelMap, ReferenceableNodeType } from '../types';
 
 export type NodeReference = {
 	node: Node;
@@ -14,15 +14,22 @@ export type NodeReference = {
 	label: string;
 };
 
-const getReferenceableNodeType = (node): ReferenceableNodeType =>
-	node.type.name === 'math_display' ? 'block_equation' : node.type.name;
+const getReferenceableNodeType = (node: Node): ReferenceableNodeType => {
+	const {
+		type: { name: nodeType },
+	} = node;
+	if (nodeType === 'math_display' || nodeType === 'block_equation') {
+		return ReferenceableNodeType.Math;
+	}
+	return nodeType as ReferenceableNodeType;
+};
 
 export const nodeDefaults = {
 	[ReferenceableNodeType.Image]: { icon: 'media', text: 'Image' },
 	[ReferenceableNodeType.Video]: { icon: 'media', text: 'Video' },
 	[ReferenceableNodeType.Audio]: { icon: 'media', text: 'Audio' },
 	[ReferenceableNodeType.Table]: { icon: 'th', text: 'Table' },
-	[ReferenceableNodeType.BlockEquation]: { icon: 'function', text: 'Equation' },
+	[ReferenceableNodeType.Math]: { icon: 'function', text: 'Equation' },
 } as const;
 
 export const buildLabel = (node: Node, customBlockName?: string) => {
@@ -45,10 +52,24 @@ export const buildLabel = (node: Node, customBlockName?: string) => {
 	return null;
 };
 
-export const isNodeLabelEnabled = (node: Node, nodeLabels: NodeLabelMap) => {
-	const nodeType = getReferenceableNodeType(node);
-	const enabled = nodeLabels[nodeType]?.enabled;
-	return node.attrs.hideLabel || !enabled ? null : nodeType;
+type EnabledNodeLabelConfiguration = {
+	referenceableNodeType: ReferenceableNodeType;
+	nodeLabel: NodeLabel;
+};
+
+export const getEnabledNodeLabelConfiguration = (
+	node: Node,
+	nodeLabels: NodeLabelMap,
+): null | EnabledNodeLabelConfiguration => {
+	const showLabel = !node.attrs.hideLabel;
+	if (showLabel) {
+		const referenceableNodeType = getReferenceableNodeType(node);
+		const nodeLabel = nodeLabels[referenceableNodeType];
+		if (nodeLabel?.enabled) {
+			return { referenceableNodeType, nodeLabel };
+		}
+	}
+	return null;
 };
 
 export const getReferenceForNode = (
@@ -77,7 +98,7 @@ export const getReferenceForNode = (
 			reactedNode &&
 			typeof reactedNode.attrs.count === 'number' &&
 			label &&
-			isNodeLabelEnabled(node, nodeLabels)
+			getEnabledNodeLabelConfiguration(node, nodeLabels)
 		)
 	) {
 		return null;

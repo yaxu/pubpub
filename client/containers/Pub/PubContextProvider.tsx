@@ -43,7 +43,6 @@ export type PubContextType = {
 const shimPubContextProps = {
 	inPub: false,
 	pubData: {
-		nodeLabels: {} as NodeLabelMap | undefined,
 		slug: '',
 		releases: [],
 		releaseNumber: 0,

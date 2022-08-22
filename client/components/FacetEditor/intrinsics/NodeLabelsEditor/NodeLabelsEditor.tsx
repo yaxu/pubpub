@@ -21,6 +21,6 @@ export default createFacetEditor(NodeLabels, {
 		audio: NodeLabelEditor,
 		video: NodeLabelEditor,
 		table: NodeLabelEditor,
-		blockEquation: NodeLabelEditor,
+		math: NodeLabelEditor,
 	},
 });

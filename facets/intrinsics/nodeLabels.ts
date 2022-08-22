@@ -4,7 +4,7 @@ import { propType, prop, facet } from '../lib';
 
 const nodeLabel = propType({
 	name: 'nodeLabel',
-	schema: z.object({ enabled: z.boolean(), label: z.string() }),
+	schema: z.object({ enabled: z.boolean(), text: z.string() }),
 	postgresType: 'jsonb',
 });
 
@@ -14,23 +14,23 @@ export const NodeLabels = facet({
 	props: {
 		image: prop(nodeLabel, {
 			label: 'Images',
-			rootValue: { enabled: false, label: 'Image' },
+			rootValue: { enabled: false, text: 'Image' },
 		}),
 		video: prop(nodeLabel, {
 			label: 'Videos',
-			rootValue: { enabled: false, label: 'Video' },
+			rootValue: { enabled: false, text: 'Video' },
 		}),
 		audio: prop(nodeLabel, {
 			label: 'Audio',
-			rootValue: { enabled: false, label: 'Audio' },
+			rootValue: { enabled: false, text: 'Audio' },
 		}),
 		table: prop(nodeLabel, {
 			label: 'Tables',
-			rootValue: { enabled: false, label: 'Table' },
+			rootValue: { enabled: false, text: 'Table' },
 		}),
-		blockEquation: prop(nodeLabel, {
+		math: prop(nodeLabel, {
 			label: 'Math',
-			rootValue: { enabled: false, label: 'Equation' },
+			rootValue: { enabled: false, text: 'Equation' },
 		}),
 	},
 });

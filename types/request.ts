@@ -1,13 +1,15 @@
 import {
 	Collection,
 	Community,
-	ScopeId,
 	DefinitelyHas,
 	Member,
 	MemberPermission,
 	Pub,
+	ScopeId,
 } from 'types';
 import { CascadedFacetsByKind } from 'facets';
+
+import { UserDismissableKey } from 'utils/userDismissable';
 
 export type LoginData = {
 	id: string | null;
@@ -46,6 +48,8 @@ export type ScopeData = {
 		canEditDraft: boolean;
 		canManage: boolean;
 		canManageCommunity: boolean;
+		canEditCommunity: boolean;
+		canViewCommunity: boolean;
 		canView: boolean;
 		canViewDraft: boolean;
 		isSuperAdmin: boolean;
@@ -90,4 +94,5 @@ export type InitialData = {
 	communityData: InitialCommunityData;
 	featureFlags: Record<string, boolean>;
 	initialNotificationsData: InitialNotificationsData;
+	dismissedUserDismissables: Partial<Record<UserDismissableKey, true>>;
 };

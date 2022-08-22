@@ -1,6 +1,7 @@
 import {
 	About,
 	AdminDashboard,
+	Collection,
 	CommunityCreate,
 	CommunityServices,
 	DashboardActivity,
@@ -21,15 +22,14 @@ import {
 	DashboardSettings,
 	DashboardSubmissions,
 	DashboardSubmissionWorkflow,
-	Collection,
 	Explore,
 	Landing,
+	Legal,
 	Login,
 	NoMatch,
 	Page,
 	PasswordReset,
 	Pricing,
-	Legal,
 	Pub,
 	Search,
 	Signup,
@@ -47,6 +47,9 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: AdminDashboard,
 			hideNav: true,
 			hideFooter: true,
+		},
+		Collection: {
+			ActiveComponent: Collection,
 		},
 		CommunityCreate: {
 			ActiveComponent: CommunityCreate,
@@ -138,6 +141,10 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: Landing,
 			hideNav: true,
 		},
+		Legal: {
+			ActiveComponent: Legal,
+			hideNav: locationData.isBasePubPub,
+		},
 		Login: {
 			ActiveComponent: Login,
 			hideNav: true,
@@ -161,10 +168,6 @@ export default (viewData, locationData, chunkName) => {
 			hideNav: true,
 			hideFooter: true,
 		},
-		Legal: {
-			ActiveComponent: Legal,
-			hideNav: locationData.isBasePubPub,
-		},
 		Pub: {
 			ActiveComponent: Pub,
 		},
@@ -186,9 +189,6 @@ export default (viewData, locationData, chunkName) => {
 			ActiveComponent: UserCreate,
 			hideNav: locationData.isBasePubPub,
 			hideFooter: true,
-		},
-		Collection: {
-			ActiveComponent: Collection,
 		},
 	};
 	return paths[chunkName];

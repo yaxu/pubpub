@@ -19,6 +19,7 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		scopeData: initialScopeData,
 		featureFlags,
 		initialNotificationsData,
+		dismissedUserDismissables,
 	} = initialData;
 	const { pageData: initialPageData } = viewData;
 	const [loginData] = useState(initialLoginData);
@@ -41,8 +42,8 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		if (activeCollection) {
 			if (typeof next === 'function') {
 				// eslint-disable-next-line no-param-reassign
+				next = next(activeCollection);
 			}
-			next = next(activeCollection);
 			const nextCollection = {
 				...activeCollection,
 				...next,
@@ -76,5 +77,6 @@ export const usePageState = (initialData: InitialData, viewData: PossibleViewDat
 		featureFlags,
 		initialNotificationsData,
 		dashboardMenu,
+		dismissedUserDismissables,
 	};
 };

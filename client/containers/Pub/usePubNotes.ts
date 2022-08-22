@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import { citationFingerprintStripTags, getNotes } from 'components/Editor/utils';
-import { renderAndSortNotes } from '../../../utils/notes';
+import { getNotesByKindFromDoc } from 'components/Editor/utils';
+import { renderNotesForListing } from '../../../utils/notes';
 
 import { usePubContext } from './pubHooks';
 
@@ -14,13 +14,11 @@ export const usePubNotes = () => {
 	const { citationInlineStyleKind: citationInlineStyle } = noteManager;
 	const view = editorChangeObject!.view;
 
-	const { citations = [], footnotes = [] } = view
-		? getNotes(view.state.doc, citationFingerprintStripTags)
-		: {};
+	const { citations = [], footnotes = [] } = view ? getNotesByKindFromDoc(view.state.doc) : {};
 
 	const renderedNotes = useMemo(
 		() =>
-			renderAndSortNotes({
+			renderNotesForListing({
 				citations,
 				footnotes,
 				citationInlineStyle,

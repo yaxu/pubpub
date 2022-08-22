@@ -1,10 +1,11 @@
 import queryString from 'query-string';
 
 import * as types from 'types';
-import { isProd, isDuqDuq, isQubQub, getAppCommit } from 'utils/environment';
+import { isProd, isDuqDuq, isQubQub, getAppCommit, isDevelopment } from 'utils/environment';
 import { getFeatureFlagsForUserAndCommunity } from 'server/featureFlag/queries';
 import { UserNotification } from 'server/models';
 
+import { getDismissedUserDismissables } from 'server/userDismissable/queries';
 import { getScope, getCommunity, sanitizeCommunity } from './queryHelpers';
 
 const getNotificationData = async (
@@ -47,6 +48,8 @@ export const getInitialData = async (
 		gdprConsent: user.gdprConsent,
 	};
 
+	const shouldForceBasePubPub = !!(isDevelopment() && process.env.FORCE_BASE_PUBPUB);
+
 	/* Gather location data */
 	const locationData = {
 		hostname: req.hostname,
@@ -55,7 +58,7 @@ export const getInitialData = async (
 		query: req.query,
 		queryString: req.query ? `?${queryString.stringify(req.query)}` : '',
 		isDashboard,
-		isBasePubPub: hostname === 'www.pubpub.org',
+		isBasePubPub: shouldForceBasePubPub || hostname === 'www.pubpub.org',
 		isProd: isProd(),
 		isDuqDuq: isDuqDuq(),
 		isQubQub: isQubQub(),
@@ -64,10 +67,12 @@ export const getInitialData = async (
 
 	/* If basePubPub - return fixed data */
 	if (locationData.isBasePubPub) {
-		const [featureFlags, initialNotificationsData] = await Promise.all([
-			getFeatureFlagsForUserAndCommunity(loginData.id, null),
-			getNotificationData(user.id),
-		]);
+		const [featureFlags, initialNotificationsData, dismissedUserDismissables] =
+			await Promise.all([
+				getFeatureFlagsForUserAndCommunity(loginData.id, null),
+				getNotificationData(user.id),
+				getDismissedUserDismissables(user.id),
+			]);
 
 		return {
 			communityData: {
@@ -95,6 +100,7 @@ export const getInitialData = async (
 			featureFlags,
 			scopeData: { activePermissions: {} } as types.ScopeData,
 			initialNotificationsData,
+			dismissedUserDismissables,
 		};
 	}
 
@@ -116,19 +122,23 @@ export const getInitialData = async (
 		/* eslint-disable-next-line no-param-reassign */
 		communityData.domain = req.headers.localhost;
 	}
-	const [scopeData, featureFlags, initialNotificationsData] = await Promise.all([
-		getScope({
-			communityId: communityData.id,
-			pubSlug: locationData.params.pubSlug,
-			collectionSlug: locationData.params.collectionSlug || locationData.query.collectionSlug,
-			accessHash: locationData.query.access,
-			loginId: loginData.id,
-			isDashboard,
-			includeFacets,
-		}),
-		getFeatureFlagsForUserAndCommunity(loginData.id, communityData.id),
-		getNotificationData(user.id),
-	]);
+
+	const [scopeData, featureFlags, initialNotificationsData, dismissedUserDismissables] =
+		await Promise.all([
+			getScope({
+				communityId: communityData.id,
+				pubSlug: locationData.params.pubSlug,
+				collectionSlug:
+					locationData.params.collectionSlug || locationData.query.collectionSlug,
+				accessHash: locationData.query.access,
+				loginId: loginData.id,
+				isDashboard,
+				includeFacets,
+			}),
+			getFeatureFlagsForUserAndCommunity(loginData.id, communityData.id),
+			getNotificationData(user.id),
+			getDismissedUserDismissables(user.id),
+		]);
 
 	const cleanedCommunityData = sanitizeCommunity(
 		communityData,
@@ -144,5 +154,6 @@ export const getInitialData = async (
 		scopeData,
 		featureFlags,
 		initialNotificationsData,
+		dismissedUserDismissables,
 	};
 };

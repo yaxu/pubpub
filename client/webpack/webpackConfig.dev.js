@@ -23,6 +23,7 @@ module.exports = {
 			utils: resolve(__dirname, '../../utils'),
 			types: resolve(__dirname, '../../types'),
 			facets: resolve(__dirname, '../../facets'),
+			'prosemirror-state': require.resolve('prosemirror-state'),
 		},
 	},
 	devtool: '#eval',

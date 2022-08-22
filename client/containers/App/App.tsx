@@ -34,7 +34,7 @@ type Props = {
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
 	const pageContextProps = usePageState(initialData, viewData);
-	const { communityData, loginData, locationData, scopeData } = pageContextProps;
+	const { communityData, locationData, scopeData } = pageContextProps;
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, isDashboard } = pathObject;
@@ -59,7 +59,7 @@ const App = (props: Props) => {
 							<div className="duqduq-warning">Development Environment</div>
 						)}
 						<SkipLink targetId="main-content">Skip to main content</SkipLink>
-						<LegalBanner loginData={loginData} />
+						<LegalBanner />
 						<Header />
 						{showNav && <NavBar />}
 						{isDashboard && (

@@ -1,8 +1,8 @@
-import * as katex from 'katex';
 import md5 from 'crypto-js/md5';
 import { RuleSet, pandocUtils, transformUtils, transformers } from '@pubpub/prosemirror-pandoc';
 
 import { editorSchema } from 'components/Editor';
+import { renderToKatexString } from 'utils/katex';
 
 const { createAttr, flatten, intersperse, textFromStrSpace, textToStrSpace } = transformUtils;
 
@@ -222,7 +222,7 @@ rules.toProsemirrorNode('RawInline', (node, { transform }) => {
 			type: 'equation',
 			attrs: {
 				value: content,
-				html: katex.renderToString(content, {
+				html: renderToKatexString(content, {
 					displayMode: false,
 					throwOnError: false,
 				}),
@@ -323,9 +323,9 @@ rules.transform('Note', 'footnote', {
 	},
 	fromProsemirrorNode: (node, { resources }) => {
 		const { value: unstructuredValue } = node.attrs;
-		const { html } = resources.note(node.attrs.id);
+		const { unstructuredHtml } = resources.note(node.attrs.id);
 		const unstructuredBlocks = unstructuredValue && htmlStringToPandocBlocks(unstructuredValue);
-		const structuredBlocks = html && htmlStringToPandocBlocks(html);
+		const structuredBlocks = unstructuredHtml && htmlStringToPandocBlocks(unstructuredHtml);
 		const content = [structuredBlocks, unstructuredBlocks].reduce(
 			(acc, next) => [...acc, ...(next || [])],
 			[],
@@ -340,16 +340,10 @@ rules.transform('Note', 'footnote', {
 rules.toProsemirrorNode('Math', (node) => {
 	const { mathType, content } = node;
 	const isDisplay = mathType === 'DisplayMath';
-	const prosemirrorType = isDisplay ? 'block_equation' : 'equation';
+	const prosemirrorType = isDisplay ? 'math_display' : 'math_inline';
 	return {
 		type: prosemirrorType,
-		attrs: {
-			value: content,
-			html: katex.renderToString(content, {
-				displayMode: isDisplay,
-				throwOnError: false,
-			}),
-		},
+		content: [{ type: 'text', text: content }],
 	};
 });
 
@@ -369,6 +363,29 @@ rules.fromProsemirrorNode('block_equation', (node) => {
 				type: 'Math',
 				mathType: 'DisplayMath',
 				content: node.attrs.value.toString(),
+			},
+		],
+	};
+});
+
+rules.fromProsemirrorNode('math_inline', (node) => {
+	const content = node.content.reduce((memo, textNode) => memo + textNode.text, '');
+	return {
+		type: 'Math',
+		mathType: 'InlineMath',
+		content,
+	};
+});
+
+rules.fromProsemirrorNode('math_display', (node) => {
+	const content = node.content.reduce((memo, textNode) => memo + textNode.text, '');
+	return {
+		type: 'Plain',
+		content: [
+			{
+				type: 'Math',
+				mathType: 'DisplayMath',
+				content,
 			},
 		],
 	};

@@ -26,6 +26,7 @@ export * from './submission';
 export * from './thread';
 export * from './userNotification';
 export * from './userSubscription';
+export * from './user';
 export * from './util';
 export * from './viewport';
 export * from './visibility';

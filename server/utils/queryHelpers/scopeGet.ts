@@ -184,7 +184,14 @@ getScopeElements = async (scopeInputs) => {
 				{
 					model: CollectionPub,
 					as: 'collectionPubs',
-					attributes: ['id', 'pubId', 'collectionId'],
+					attributes: ['id', 'pubId', 'collectionId', 'pubRank'],
+					include: [
+						{
+							model: Collection,
+							as: 'collection',
+							attributes: ['kind', 'isPublic'],
+						},
+					],
 				},
 				{
 					model: Release,
@@ -323,6 +330,9 @@ getActivePermissions = async (
 			}
 			if (elem.editHash && elem.editHash === scopeInputs.accessHash) {
 				defaultPermissionIndex = 1;
+			}
+			if (elem.reviewHash && elem.reviewHash === scopeInputs.accessHash) {
+				defaultPermissionIndex = 0;
 			}
 		});
 

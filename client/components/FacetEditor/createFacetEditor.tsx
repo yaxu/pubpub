@@ -14,6 +14,6 @@ export function createFacetEditor<Def extends FacetDefinition>(
 	options: FacetEditorCreationOptions<Def>,
 ): FacetEditorComponent<Def> {
 	return (props: SpecificFacetEditorProps<Def>) => {
-		return <GenericFacetEditor {...props} {...options} facetDefinition={facetDefinition} />;
+		return <GenericFacetEditor {...options} {...props} facetDefinition={facetDefinition} />;
 	};
 }

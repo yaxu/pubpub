@@ -107,7 +107,6 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 			compact={isCompact}
 			className={classNames('facet-editor-component', selfContained && 'self-contained')}
 			description={description}
-			collapseDescription={selfContained}
 			controls={isPersisting && selfContained && <Spinner size={20} />}
 		>
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>

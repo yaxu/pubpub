@@ -8,7 +8,6 @@ import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
 import { getAllPubContributors } from 'utils/contributors';
-import { CitationStyle, FacetCascadedType } from 'facets';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],

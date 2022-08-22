@@ -89,8 +89,6 @@ export type Pub = {
 	crossrefDepositRecord?: CrossrefDepositRecord;
 	inboundEdges?: InboundEdge[];
 	outboundEdges?: OutboundEdge[];
-	pubEdgeListingDefaultsToCarousel?: boolean;
-	pubEdgeDescriptionVisible?: boolean;
 	draftId?: string;
 	draft?: Draft;
 	scopeSummaryId: null | string;
@@ -172,4 +170,8 @@ export type SanitizedPubData = Pub & {
 	isReview: boolean;
 	releases: Release[];
 	releaseNumber: number | null;
+};
+
+export type PubWithCollections = Pub & {
+	collectionPubs: DefinitelyHas<CollectionPub, 'collection'>[];
 };

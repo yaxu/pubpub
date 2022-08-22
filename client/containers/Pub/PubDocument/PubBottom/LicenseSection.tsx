@@ -11,7 +11,7 @@ import PubBottomSection, { AccentedIconButton, SectionBullets } from './PubBotto
 const LicenseSection = () => {
 	const { pubData } = usePubContext();
 	const { communityData, scopeData } = usePageContext();
-	const license = useFacetsQuery((f) => f.License);
+	const license = useFacetsQuery((F) => F.License);
 	const { collectionPubs } = pubData;
 
 	const { link, full, kind, summary } = useMemo(

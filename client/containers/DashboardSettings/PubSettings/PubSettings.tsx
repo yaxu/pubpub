@@ -1,8 +1,7 @@
-import React from 'react';
-import { Button, Tooltip } from '@blueprintjs/core';
+import React, { useState } from 'react';
+import { Button } from '@blueprintjs/core';
 
 import {
-	Icon,
 	DatePicker,
 	DownloadChooser,
 	SettingsSection,
@@ -13,6 +12,7 @@ import {
 	FacetEditor,
 	TitleEditor,
 } from 'components';
+import { Pub, PubWithCollections } from 'types';
 import { apiFetch } from 'client/utils/apiFetch';
 import { slugifyString } from 'utils/strings';
 import { usePageContext, usePendingChanges } from 'utils/hooks';
@@ -20,13 +20,15 @@ import { getDashUrl } from 'utils/dashboard';
 import { pubUrl } from 'utils/canonicalUrls';
 import { usePersistableState } from 'client/utils/usePersistableState';
 
+import { useFacetsQuery } from 'client/utils/useFacets';
+import LabelWithInfo from '../LabelWithInfo';
 import DeletePub from './DeletePub';
 import Doi from './Doi';
 import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 
 type Props = {
 	settingsData: {
-		pubData: any;
+		pubData: PubWithCollections;
 	};
 };
 
@@ -38,6 +40,7 @@ const PubSettings = (props: Props) => {
 		activePermissions: { canAdminCommunity, canManage },
 	} = scopeData;
 
+	const [collectionPubs, setCollectionPubs] = useState(settingsData.pubData.collectionPubs);
 	const {
 		state: pubData,
 		hasChanges,
@@ -45,7 +48,7 @@ const PubSettings = (props: Props) => {
 		updatePersistedState: updatePersistedPubData,
 		persistedState: persistedPubData,
 		persist,
-	} = usePersistableState(settingsData.pubData, async (update) => {
+	} = usePersistableState<Pub>(settingsData.pubData, async (update) => {
 		await pendingPromise(apiFetch.put('/api/pubs', { pubId: pubData.id, ...update }));
 		if (update.slug && update.slug !== settingsData.pubData.slug) {
 			window.location.href = getDashUrl({
@@ -54,6 +57,7 @@ const PubSettings = (props: Props) => {
 			});
 		}
 	});
+	const headerBackgroundImage = useFacetsQuery((F) => F.PubHeaderTheme.backgroundImage);
 
 	const renderDetails = () => {
 		return (
@@ -62,7 +66,7 @@ const PubSettings = (props: Props) => {
 					<InputField label="Title" error={!pubData.title ? 'Required' : null}>
 						<TitleEditor
 							className="bp3-input"
-							initialValue={pubData.htmlTitle}
+							initialValue={pubData.htmlTitle!}
 							onInput={(nextHtmlTitle, nextTitle) =>
 								updatePubData({ htmlTitle: nextHtmlTitle, title: nextTitle })
 							}
@@ -104,23 +108,10 @@ const PubSettings = (props: Props) => {
 					<ImageUpload
 						htmlFor="avatar-upload"
 						label={
-							<span>
-								Preview Image
-								<Tooltip
-									content={
-										<span>
-											Image to be associated with this pub when it is shown in{' '}
-											<br />
-											other pages as part a preview link or in a listing of
-											pubs.
-										</span>
-									}
-									// @ts-expect-error ts-migrate(2322) FIXME: Type '{ children: Element; content: Element; toolt... Remove this comment to see the full error message
-									tooltipClassName="bp3-dark"
-								>
-									<Icon icon="info-sign" />
-								</Tooltip>
-							</span>
+							<LabelWithInfo
+								label="Preview Image"
+								info="This image is shown as a preview from Pages and other Pubs."
+							/>
 						}
 						canClear={true}
 						key={pubData.avatar}
@@ -135,8 +126,10 @@ const PubSettings = (props: Props) => {
 						}
 					/>
 					<Button
-						disabled={pubData.avatar === pubData.headerBackgroundImage}
-						onClick={() => updatePubData({ avatar: pubData.headerBackgroundImage })}
+						disabled={
+							!headerBackgroundImage || pubData.avatar !== headerBackgroundImage
+						}
+						onClick={() => updatePubData({ avatar: headerBackgroundImage! })}
 					>
 						Use header image as preview
 					</Button>
@@ -209,10 +202,8 @@ const PubSettings = (props: Props) => {
 				<PubCollectionsListing
 					pub={pubData}
 					allCollections={communityData.collections}
-					collectionPubs={pubData.collectionPubs}
-					updateCollectionPubs={(nextCollectionPubs) =>
-						updatePersistedPubData({ collectionPubs: nextCollectionPubs })
-					}
+					collectionPubs={collectionPubs}
+					updateCollectionPubs={setCollectionPubs}
 					canManage={canManage}
 				/>
 			</SettingsSection>

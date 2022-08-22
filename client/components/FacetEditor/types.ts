@@ -63,7 +63,7 @@ export type FacetEditorCreationOptions<Def extends FacetDefinition> = Pick<
 
 export type SpecificFacetEditorProps<Def extends FacetDefinition> = Omit<
 	GenericFacetEditorProps<Def>,
-	'propEditors' | 'description' | 'facetDefinition'
+	'propEditors' | 'facetDefinition'
 >;
 
 export type FacetEditorComponent<Def extends FacetDefinition = FacetDefinition> = React.FC<

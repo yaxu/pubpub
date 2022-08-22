@@ -22,13 +22,6 @@ export default (sequelize, dataTypes) => {
 				},
 			},
 			avatar: { type: dataTypes.TEXT },
-			headerStyle: {
-				type: dataTypes.ENUM,
-				values: ['white-blocks', 'black-blocks', 'dark', 'light'],
-				defaultValue: null,
-			},
-			headerBackgroundColor: { type: dataTypes.STRING },
-			headerBackgroundImage: { type: dataTypes.TEXT },
 			firstPublishedAt: { type: dataTypes.DATE },
 			lastPublishedAt: { type: dataTypes.DATE },
 			customPublishedAt: { type: dataTypes.DATE },
@@ -36,24 +29,10 @@ export default (sequelize, dataTypes) => {
 			labels: { type: dataTypes.JSONB },
 			downloads: { type: dataTypes.JSONB },
 			metadata: { type: dataTypes.JSONB },
-			licenseSlug: { type: dataTypes.TEXT, defaultValue: 'cc-by' },
-			citationStyle: { type: dataTypes.TEXT, defaultValue: 'apa-7' },
-			citationInlineStyle: { type: dataTypes.TEXT, defaultValue: 'count' },
 			viewHash: { type: dataTypes.STRING },
 			editHash: { type: dataTypes.STRING },
 			nodeLabels: { type: dataTypes.JSONB, defaultValue: {} },
 			reviewHash: { type: dataTypes.STRING },
-
-			pubEdgeListingDefaultsToCarousel: {
-				type: dataTypes.BOOLEAN,
-				defaultValue: true,
-				allowNull: false,
-			},
-			pubEdgeDescriptionVisible: {
-				type: dataTypes.BOOLEAN,
-				defaultValue: true,
-				allowNull: false,
-			},
 
 			/* Set by Associations */
 			draftId: { type: dataTypes.UUID, allowNull: false },

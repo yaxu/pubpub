@@ -4,7 +4,7 @@ import { bucketBy, indexById } from 'utils/arrays';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { assert } from 'utils/assert';
 
-import { ScopeKind, ByScopeKind, createByScopeKind } from './scopes';
+import { ScopeKind, ByScopeKind, createByScopeKind } from '../../facets/lib/scopes';
 
 export type ScopeStack = {
 	kind: ScopeKind;
@@ -53,7 +53,7 @@ const getIdIndexOfCommunityIds = <Item extends { id: string; communityId: string
 };
 
 const getScopeStacks = (
-	requestedScopes: ScopeIdsByKind,
+	requestedScopes: Partial<ScopeIdsByKind>,
 	primaryCollectionIdsByPubId: Record<string, string>,
 	communityIdsByPubId: Record<string, string>,
 	communityIdsByCollectionId: Record<string, string>,
@@ -92,7 +92,7 @@ const getScopeStacks = (
 };
 
 export const resolveScopeIds = async (
-	requestedScopes: ScopeIdsByKind,
+	requestedScopes: Partial<ScopeIdsByKind>,
 ): Promise<ResolvedScopeIds> => {
 	const {
 		pub: pubIds = [],

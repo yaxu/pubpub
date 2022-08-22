@@ -1,7 +1,7 @@
-import { FacetsError, FacetSourceScope } from 'facets';
-import * as types from 'types';
+import { FacetSourceScope } from './facet';
+import { FacetsError } from './errors';
 
-export type Scope = types.SingleScopeId;
+export type SingleScopeId = { communityId: string } | { collectionId: string } | { pubId: string };
 
 export type BindingKey = 'communityId' | 'collectionId' | 'pubId';
 
@@ -53,7 +53,7 @@ export const getScopeKindForBindingKey = (key: BindingKey): ScopeKind => {
 	return 'pub';
 };
 
-export const getScopeKind = (scope: Scope): ScopeKind => {
+export const getScopeKind = (scope: SingleScopeId): ScopeKind => {
 	if ('pubId' in scope) {
 		return 'pub';
 	}
@@ -63,17 +63,17 @@ export const getScopeKind = (scope: Scope): ScopeKind => {
 	return 'community';
 };
 
-export const getSourceScope = (scope: Scope): FacetSourceScope => {
+export const getSourceScope = (scope: SingleScopeId): FacetSourceScope => {
 	const kind = getScopeKind(scope);
 	const bindingKey = getBindingKeyForScopeKind(kind);
 	return { kind, id: scope[bindingKey] };
 };
 
-export const getScopeId = (sourceScope: FacetSourceScope): Scope => {
+export const getScopeId = (sourceScope: FacetSourceScope): SingleScopeId => {
 	const { kind, id } = sourceScope;
 	if (kind !== 'root') {
 		const key = getBindingKeyForScopeKind(kind);
-		return { [key]: id } as Scope;
+		return { [key]: id } as SingleScopeId;
 	}
 	throw new FacetsError("Can't get scope id for root scope");
 };

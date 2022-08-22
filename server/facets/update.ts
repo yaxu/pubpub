@@ -4,9 +4,9 @@ import {
 	intrinsics,
 	Intrinsics,
 	parsePartialFacetInstance,
+	SingleScopeId,
 } from 'facets';
 import { FacetBinding, facetModels } from 'server/models';
-import { Scope } from './scopes';
 
 type IntrinsicName = keyof Intrinsics;
 type UpdateFacetByName<Name extends IntrinsicName> = Partial<FacetInstanceType<Intrinsics[Name]>>;
@@ -15,7 +15,7 @@ type UpdateFacetsQuery = Partial<{
 }>;
 
 const updateFacetForScope = async <Name extends IntrinsicName>(
-	scope: Scope,
+	scope: SingleScopeId,
 	facet: FacetDefinition<Name>,
 	update: UpdateFacetByName<Name>,
 ) => {
@@ -39,7 +39,7 @@ const updateFacetForScope = async <Name extends IntrinsicName>(
 	}
 };
 
-export const updateFacetsForScope = async (scope: Scope, update: UpdateFacetsQuery) => {
+export const updateFacetsForScope = async (scope: SingleScopeId, update: UpdateFacetsQuery) => {
 	await Promise.all(
 		Object.entries(update).map(async ([facetName, facetUpdate]) => {
 			const facet = intrinsics[facetName];

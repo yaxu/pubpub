@@ -8,6 +8,6 @@ export const PubHeaderTheme = facet({
 	props: {
 		backgroundImage: prop(string, { label: 'Background image', rootValue: null }),
 		backgroundColor: prop(string, { label: 'Background color', rootValue: 'community' }),
-		textStyle: prop(textStyle, { label: 'Text style', rootValue: 'dark' }),
+		textStyle: prop(textStyle, { label: 'Text style', rootValue: 'light' }),
 	},
 });

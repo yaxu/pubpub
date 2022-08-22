@@ -45,7 +45,7 @@ const cascadedNodeLabels = cascade(NodeLabels, [
 		value: createFacetInstance(NodeLabels, {
 			image: {
 				enabled: true,
-				label: 'Ooooo',
+				text: 'Ooooo',
 			},
 		}),
 	},

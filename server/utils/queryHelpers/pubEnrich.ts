@@ -70,9 +70,10 @@ export const getPubCitations = async (pubData, initialData, initialDoc) => {
 		communityData,
 		scopeData: { facets },
 	} = initialData;
+	const citationStyleFacet = facets!.CitationStyle.value!;
 	const [initialStructuredCitations, citationHtml] = await Promise.all([
-		getStructuredCitationsForPub(facets?.CitationStyle.value, initialDoc),
-		generateCitationHtml(pubData, communityData),
+		getStructuredCitationsForPub(citationStyleFacet, initialDoc),
+		generateCitationHtml(pubData, communityData, citationStyleFacet.citationStyle),
 	]);
 
 	return {

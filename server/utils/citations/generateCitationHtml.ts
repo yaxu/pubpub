@@ -6,8 +6,9 @@ import getCollectionDoi from 'utils/collections/getCollectionDoi';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { pubUrl } from 'utils/canonicalUrls';
 import { getPrimaryCollection } from 'utils/collections/primary';
-import { renderJournalCitationForCitations } from 'utils/citations';
+import { CitationStyleKind, renderJournalCitationForCitations } from 'utils/citations';
 import { getAllPubContributors } from 'utils/contributors';
+import { CitationStyle, FacetCascadedType } from 'facets';
 
 const getDatePartsObject = (date) => ({
 	'date-parts': [date.getFullYear(), date.getMonth() + 1, date.getDate()],
@@ -49,6 +50,7 @@ const getContributorName = (attribution: types.Attribution, index, arr, hideNonA
 export const generateCitationHtml = async (
 	pubData: types.SanitizedPubData,
 	communityData: types.Community,
+	citationStyle: CitationStyleKind,
 ) => {
 	// TODO: We need to set the updated times properly, which are likely stored in firebase.
 	const pubIssuedDate = getPubPublishedDate(pubData);
@@ -110,7 +112,7 @@ export const generateCitationHtml = async (
 			default: pubCiteObject
 				.format('bibliography', {
 					format: 'html',
-					template: pubData.citationStyle,
+					template: citationStyle,
 					lang: 'en-US',
 				})
 				.replace(/\n/gi, ''),

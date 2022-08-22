@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { NodeLabelMap } from 'client/components/Editor';
 import { NoteManager } from 'client/utils/notes';
 import { PatchFn, PubPageData } from 'types';
 

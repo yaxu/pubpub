@@ -3,8 +3,6 @@ import { IconName } from '@blueprintjs/core';
 import { Node } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
-import { Pub } from 'types';
-
 import { referencesPluginKey } from '../plugins/references';
 import { NodeLabel, NodeLabelMap, ReferenceableNodeType } from '../types';
 
@@ -131,21 +129,6 @@ export const getReferenceableNodes = (editorState: EditorState, nodeLabels: Node
 
 export const getCurrentNodeLabels = (state: EditorState): NodeLabelMap => {
 	return referencesPluginKey.getState(state).nodeLabels;
-};
-
-export const getDefaultNodeLabels = (pub: Pub): NodeLabelMap => {
-	const nodeLabelDefaults = Object.entries(nodeDefaults).reduce(
-		(acc, [nodeType, { text }]) => ({
-			...acc,
-			[nodeType]: {
-				enabled: false,
-				text,
-			},
-		}),
-		{} as NodeLabelMap,
-	);
-
-	return Object.assign(nodeLabelDefaults, pub.nodeLabels);
 };
 
 export const getNodeLabelText = (node: Node, nodeLabels: NodeLabelMap) => {

@@ -73,7 +73,6 @@ export default {
 			count: counter({ useNodeLabels: true, counterType: ReferenceableNodeType.Math }),
 		},
 		toDOM: (node: Node, { isReact } = { isReact: false }) => {
-			console.log(node.attrs.count);
 			return isReact
 				? renderStaticMath(node, 'div', true)
 				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec);

@@ -9,3 +9,4 @@ export * from './parse';
 export * from './primitives';
 export * from './prop';
 export * from './propType';
+export * from './scopes';

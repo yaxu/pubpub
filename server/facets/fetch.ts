@@ -174,7 +174,9 @@ export const fetchFacetsForScopeIds = async <FacetNames extends IntrinsicFacetNa
 	return fetchFacetsForResolvedScopeIds(resolvedScopeIds, facetNames ?? ALL_INTRINSIC_FACETS);
 };
 
-const resolveFacetSourceScope = (scope: types.ScopeId | FacetSourceScope): FacetSourceScope => {
+const resolveFacetSourceScope = (
+	scope: types.SingleScopeId | FacetSourceScope,
+): FacetSourceScope => {
 	if ('kind' in scope) {
 		return scope;
 	}
@@ -182,7 +184,7 @@ const resolveFacetSourceScope = (scope: types.ScopeId | FacetSourceScope): Facet
 };
 
 export const fetchFacetsForScope = async <FacetNames extends IntrinsicFacetName>(
-	scope: types.ScopeId | FacetSourceScope,
+	scope: types.SingleScopeId | FacetSourceScope,
 	facetNames?: FacetNames[],
 ): Promise<types.DefinitelyHas<CascadedFacetsByKind, FacetNames>> => {
 	const { kind, id } = resolveFacetSourceScope(scope);

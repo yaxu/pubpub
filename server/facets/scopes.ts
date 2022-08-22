@@ -1,6 +1,7 @@
 import { FacetsError, FacetSourceScope } from 'facets';
+import * as types from 'types';
 
-export type Scope = { communityId: string } | { collectionId: string } | { pubId: string };
+export type Scope = types.SingleScopeId;
 
 export type BindingKey = 'communityId' | 'collectionId' | 'pubId';
 

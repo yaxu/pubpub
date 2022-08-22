@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FacetDefinition } from 'facets';
 
-import FacetEditor from './GenericFacetEditor';
+import GenericFacetEditor from './GenericFacetEditor';
 import {
 	FacetEditorComponent,
 	FacetEditorCreationOptions,
@@ -14,6 +14,6 @@ export function createFacetEditor<Def extends FacetDefinition>(
 	options: FacetEditorCreationOptions<Def>,
 ): FacetEditorComponent<Def> {
 	return (props: SpecificFacetEditorProps<Def>) => {
-		return <FacetEditor {...props} {...options} facetDefinition={facetDefinition} />;
+		return <GenericFacetEditor {...props} {...options} facetDefinition={facetDefinition} />;
 	};
 }

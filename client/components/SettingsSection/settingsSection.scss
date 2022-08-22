@@ -14,9 +14,13 @@ $community-gradient: linear-gradient(to bottom right, #fff, var(--community-acce
 	}
 	> .title-area {
 		margin-bottom: 15px;
-		> .title {
-			font-size: 20px;
-			font-weight: bold;
+		> .title-row {
+			display: flex;
+			justify-content: space-between;
+			> .title {
+				font-size: 20px;
+				font-weight: bold;
+			}
 		}
 		> .description {
 			summary {

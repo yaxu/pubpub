@@ -27,26 +27,31 @@ const editorsForIntrinsicFacets: Partial<{
 };
 
 function FacetEditor<Def extends IntrinsicFacetDefinition>(props: Props<Def>) {
-	const { facetName: name, ...editorProps } = props;
+	const { facetName: name, selfContained, ...editorProps } = props;
 	const Editor: undefined | FacetEditorComponent<any> = editorsForIntrinsicFacets[name];
-	const { currentScope, facets, updateFacet } = useFacetsState();
-	const { cascadeResult } = facets[name]!;
+	const { currentScope, facets, updateFacet, persistFacets } = useFacetsState();
+	const { cascadeResult, isPersisting } = facets[name]!;
 
 	const updateThisFacet = useCallback(
 		(patch: Partial<FacetInstanceType<Def>>) => {
 			updateFacet(name, patch);
+			if (selfContained) {
+				persistFacets();
+			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[name, updateFacet],
+		[name, updateFacet, persistFacets, selfContained],
 	);
 
 	if (Editor) {
 		return (
 			<Editor
 				{...editorProps}
+				selfContained={selfContained}
 				onUpdateValue={updateThisFacet}
 				cascadeResult={cascadeResult}
 				currentScope={currentScope}
+				isPersisting={isPersisting}
 			/>
 		);
 	}

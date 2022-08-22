@@ -16,7 +16,9 @@ const CopyrightSelectionPicker = (props: Props) => {
 	const notCopyright = facetValue.kind !== 'copyright';
 
 	const handleChange = (next: Partial<Props['value']>) => {
-		onUpdateValue({ ...value, ...next });
+		if (!notCopyright) {
+			onUpdateValue({ ...value, ...next });
+		}
 	};
 
 	return (

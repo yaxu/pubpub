@@ -52,6 +52,7 @@ export type GenericFacetEditorProps<Def extends FacetDefinition> = {
 	description?: React.ReactNode;
 	displayStyle?: FacetEditorDisplayStyle;
 	selfContained?: boolean;
+	isPersisting?: boolean;
 	onUpdateValue: (patch: Partial<FacetInstanceType<Def>>) => unknown;
 };
 

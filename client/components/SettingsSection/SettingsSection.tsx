@@ -13,6 +13,7 @@ type Props = {
 	compact?: boolean;
 	gradient?: boolean;
 	showTitle?: boolean;
+	controls?: React.ReactNode;
 	description?: React.ReactNode;
 	collapseDescription?: boolean;
 };
@@ -28,6 +29,7 @@ const SettingsSection = (props: Props) => {
 		showTitle = true,
 		description,
 		collapseDescription = false,
+		controls = null,
 	} = props;
 	const [emphasized, setEmphasized] = useState(false);
 
@@ -63,7 +65,10 @@ const SettingsSection = (props: Props) => {
 			{gradient && <div className="gradient" />}
 			{showTitle && (
 				<div className="title-area">
-					<div className="title">{title}</div>
+					<div className="title-row">
+						<div className="title">{title}</div>
+						{controls}
+					</div>
 					{descriptionNode}
 				</div>
 			)}

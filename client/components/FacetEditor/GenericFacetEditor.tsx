@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
+import { Spinner } from '@blueprintjs/core';
 
 import {
 	FacetDefinition,
@@ -49,6 +50,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 		propEditors,
 		displayStyle = 'settings',
 		selfContained,
+		isPersisting,
 	} = props;
 	const { props: cascadedProps, value: facetValue } = cascadeResult;
 	const { name, label } = facetDefinition;
@@ -106,6 +108,7 @@ function GenericFacetEditor<Def extends FacetDefinition>(props: GenericFacetEdit
 			className={classNames('facet-editor-component', selfContained && 'self-contained')}
 			description={description}
 			collapseDescription={selfContained}
+			controls={isPersisting && selfContained && <Spinner size={20} />}
 		>
 			<div className="prop-editors">{Object.values(propEditorsByName)}</div>
 		</SettingsSection>

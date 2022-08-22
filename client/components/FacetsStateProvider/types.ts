@@ -17,6 +17,7 @@ export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 	invalidProps: Partial<Record<keyof FacetInstanceType<Def>, true>>;
 	hasInvalidChanges: boolean;
 	hasPersistableChanges: boolean;
+	isPersisting: boolean;
 };
 
 export type FacetsState = {

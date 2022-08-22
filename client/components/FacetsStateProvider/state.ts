@@ -26,6 +26,7 @@ function createInitialFacetState<Def extends FacetDefinition>(
 		invalidProps: {},
 		hasInvalidChanges: true,
 		hasPersistableChanges: false,
+		isPersisting: false,
 	};
 }
 

@@ -21,6 +21,7 @@ export * from './scope';
 export * from './sequelize';
 export * from './submission';
 export * from './slug';
+export * from './spam';
 export * from './submissionWorkflow';
 export * from './submission';
 export * from './thread';

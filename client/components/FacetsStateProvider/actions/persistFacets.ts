@@ -1,6 +1,6 @@
 import { GetState, SetState } from 'zustand';
 
-import { IntrinsicFacetName, mapFacetDefinitions } from 'facets';
+import { FacetName, mapFacetDefinitions } from 'facets';
 import { apiFetch } from 'client/utils/apiFetch';
 
 import { FacetsState, FacetState } from '../types';
@@ -24,11 +24,11 @@ function markFacetsAsPersisted(state: FacetsState['facets']): FacetsState['facet
 
 function markFacetsAsPersisting(
 	state: FacetsState['facets'],
-	persistingFacetNames: IntrinsicFacetName[],
+	persistingFacetNames: FacetName[],
 ): FacetsState['facets'] {
 	return mapFacetDefinitions((definition, skip) => {
 		const facetState = state[definition.name];
-		if (persistingFacetNames.includes(definition.name as IntrinsicFacetName)) {
+		if (persistingFacetNames.includes(definition.name as FacetName)) {
 			return { ...facetState, isPersisting: true };
 		}
 		return skip;
@@ -41,7 +41,7 @@ export async function persistFacets(get: GetState<FacetsState>, set: SetState<Fa
 		const facetState = facets[facetDefinition.name];
 		return facetState?.persistableChanges ?? skip;
 	});
-	const persistingFacetNames = Object.keys(query) as IntrinsicFacetName[];
+	const persistingFacetNames = Object.keys(query) as FacetName[];
 	if (persistingFacetNames.length) {
 		set({ isPersisting: true, facets: markFacetsAsPersisting(facets, persistingFacetNames) });
 		await apiFetch.post('/api/facets', { scope: currentScope, facets: query });

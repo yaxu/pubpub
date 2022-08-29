@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { choice, prop, facet, propType } from '../lib';
+import { choice, prop, facet, propType } from '../core';
 
 const licenseKind = choice([
 	'cc-by',

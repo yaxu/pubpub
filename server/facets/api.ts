@@ -1,6 +1,6 @@
 import app, { wrap } from 'server/server';
 
-import { getScopeId } from '../../facets/lib/scopes';
+import { getScopeId } from 'facets';
 import { updateFacetsForScope } from './update';
 
 app.post(

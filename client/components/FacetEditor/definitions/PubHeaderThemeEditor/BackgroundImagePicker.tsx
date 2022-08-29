@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { intrinsics } from 'facets';
+import { Facet } from 'facets';
 import { ImageUpload } from 'components';
 
 import { FacetPropEditorProps } from '../../types';
 
 require('./backgroundColorPicker.scss');
 
-type Props = FacetPropEditorProps<typeof intrinsics.PubHeaderTheme, 'backgroundImage'>;
+type Props = FacetPropEditorProps<Facet<'PubHeaderTheme'>, 'backgroundColor'>;
 
 const BackgroundImagePicker = (props: Props) => {
 	const { value, onUpdateValue } = props;

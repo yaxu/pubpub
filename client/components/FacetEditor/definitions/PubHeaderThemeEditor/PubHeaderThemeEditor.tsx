@@ -1,4 +1,4 @@
-import { PubHeaderTheme } from 'facets/intrinsics';
+import { PubHeaderTheme } from 'facets';
 
 import { createFacetEditor } from '../../createFacetEditor';
 import BackgroundColorPicker from './BackgroundColorPicker';

@@ -1,4 +1,4 @@
-import { facet, prop, boolean } from '../lib';
+import { facet, prop, boolean } from '../core';
 
 export const PubEdgeDisplay = facet({
 	name: 'PubEdgeDisplay',

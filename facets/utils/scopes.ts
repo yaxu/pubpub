@@ -1,17 +1,5 @@
-import { FacetSourceScope } from './facet';
-import { FacetsError } from './errors';
-
-export type SingleScopeId = { communityId: string } | { collectionId: string } | { pubId: string };
-
-export type BindingKey = 'communityId' | 'collectionId' | 'pubId';
-
-export type ByScopeKind<T> = {
-	community: T;
-	collection: T;
-	pub: T;
-};
-
-export type ScopeKind = keyof ByScopeKind<any>;
+import { FacetSourceScope, FacetsError } from '../core';
+import { ScopeKind, ByScopeKind, SingleScopeId, BindingKey } from '../types';
 
 export const createByScopeKind = <T>(instantiate: () => T): ByScopeKind<T> => {
 	return {

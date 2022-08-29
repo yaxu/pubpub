@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NodeLabels } from 'facets/intrinsics';
+import { NodeLabels } from 'facets';
 
 import { createFacetEditor } from '../../createFacetEditor';
 import NodeLabelEditor from './NodeLabelEditor';

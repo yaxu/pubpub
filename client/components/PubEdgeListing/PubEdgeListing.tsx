@@ -6,7 +6,6 @@ import { unique } from 'utils/arrays';
 import { getDisplayedPubForPubEdge } from 'utils/pubEdge';
 import { PubPageData } from 'types';
 
-import { useFacetsQuery } from 'client/utils/useFacets';
 import { Filter, Mode, allFilters } from './constants';
 import PubEdgeListingCard from './PubEdgeListingCard';
 import PubEdgeListingCounter from './PubEdgeListingCounter';

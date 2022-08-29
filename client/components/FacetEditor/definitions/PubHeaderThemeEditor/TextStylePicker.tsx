@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PubHeaderTheme } from 'facets/intrinsics';
+import { PubHeaderTheme } from 'facets';
 import { usePageContext } from 'utils/hooks';
 
 import { FacetPropEditorProps } from '../../types';

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { FacetInstanceType, IntrinsicFacetDefinition, Intrinsics } from 'facets';
+import { FacetInstanceType, Facet, Facets } from 'facets';
 import { useFacetsState } from 'client/utils/useFacets';
 
 import {
@@ -9,15 +9,15 @@ import {
 	PubHeaderThemeEditor,
 	NodeLabelsEditor,
 	LicenseEditor,
-} from './intrinsics';
+} from './definitions';
 import { FacetEditorComponent, SpecificFacetEditorProps } from './types';
 
-type Props<Def extends IntrinsicFacetDefinition> = {
+type Props<Def extends Facet> = {
 	facetName: Def['name'];
 } & Omit<SpecificFacetEditorProps<Def>, 'currentScope' | 'cascadeResult' | 'onUpdateValue'>;
 
-const editorsForIntrinsicFacets: Partial<{
-	[K in keyof Intrinsics]: FacetEditorComponent<Intrinsics[K]>;
+const editorsForFacets: Partial<{
+	[K in keyof Facets]: FacetEditorComponent<Facets[K]>;
 }> = {
 	CitationStyle: CitationStyleEditor,
 	PubEdgeDisplay: PubEdgeDisplayEditor,
@@ -26,9 +26,9 @@ const editorsForIntrinsicFacets: Partial<{
 	License: LicenseEditor,
 };
 
-function FacetEditor<Def extends IntrinsicFacetDefinition>(props: Props<Def>) {
+function FacetEditor<Def extends Facet>(props: Props<Def>) {
 	const { facetName: name, selfContained, ...editorProps } = props;
-	const Editor: undefined | FacetEditorComponent<any> = editorsForIntrinsicFacets[name];
+	const Editor: undefined | FacetEditorComponent<any> = editorsForFacets[name];
 	const { currentScope, facets, updateFacet, persistFacets } = useFacetsState();
 	const { cascadeResult, isPersisting } = facets[name]!;
 

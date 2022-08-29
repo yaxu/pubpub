@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 
-import { intrinsics, FacetProp, FacetProps } from '../../facets';
+import { ALL_FACET_DEFINITIONS, FacetName, FacetProp, FacetProps } from '../../facets';
 
 type Column = {
 	type: typeof DataTypes[keyof typeof DataTypes];
@@ -31,7 +31,7 @@ const getSequelizePropsDefinition = (props: FacetProps) => {
 export const ingestFacets = (sequelize: Sequelize) => {
 	const FacetBinding = sequelize.import('./models/facetBinding') as any;
 	const modelsByName: Record<string, any> = {};
-	Object.values(intrinsics).forEach((facet) => {
+	Object.values(ALL_FACET_DEFINITIONS).forEach((facet) => {
 		const { name, props } = facet;
 		const FacetModel = sequelize.define(
 			name,
@@ -49,5 +49,8 @@ export const ingestFacets = (sequelize: Sequelize) => {
 		});
 		modelsByName[name] = FacetModel;
 	});
-	return { facetModels: modelsByName as Record<keyof typeof intrinsics, any>, FacetBinding };
+	return {
+		facetModels: modelsByName as Record<FacetName, any>,
+		FacetBinding,
+	};
 };

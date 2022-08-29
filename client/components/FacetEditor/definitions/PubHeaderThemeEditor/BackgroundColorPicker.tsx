@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { intrinsics } from 'facets';
+import { Facet } from 'facets';
 import { ColorInput } from 'components';
 import { calculateBackgroundColor } from 'utils/colors';
 import { usePageContext } from 'utils/hooks';
@@ -10,7 +10,7 @@ import BackgroundColorChoice from './BackgroundColorChoice';
 
 require('./backgroundColorPicker.scss');
 
-type Props = FacetPropEditorProps<typeof intrinsics.PubHeaderTheme, 'backgroundColor'>;
+type Props = FacetPropEditorProps<Facet<'PubHeaderTheme'>, 'backgroundColor'>;
 
 const BackgroundColorPicker = (props: Props) => {
 	const { value, onUpdateValue } = props;

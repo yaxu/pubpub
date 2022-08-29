@@ -43,3 +43,5 @@ export const arrayOf = <PropType extends FacetPropType>(type: PropType) => {
 		postgresType: 'jsonb',
 	});
 };
+
+export const primitives = { string, boolean, integer, double, choice, arrayOf } as const;

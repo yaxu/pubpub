@@ -4,7 +4,7 @@ import { bucketBy, indexById } from 'utils/arrays';
 import { getPrimaryCollection } from 'utils/collections/primary';
 import { assert } from 'utils/assert';
 
-import { ScopeKind, ByScopeKind, createByScopeKind } from '../../facets/lib/scopes';
+import { ScopeKind, ByScopeKind, createByScopeKind } from '../../facets';
 
 export type ScopeStack = {
 	kind: ScopeKind;

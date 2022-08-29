@@ -5,7 +5,7 @@ import { usePageContext } from 'utils/hooks';
 import { getDashUrl } from 'utils/dashboard';
 import { AttributionEditor, FacetEditor, SettingsSection } from 'components';
 import { pruneFalsyValues } from 'utils/arrays';
-import { ALL_INTRINSIC_FACETS } from 'facets';
+import { ALL_FACET_DEFINITIONS, FacetName } from 'facets';
 import { useCollectionState } from '../../DashboardOverview/CollectionOverview/collectionState';
 
 import CollectionDetailsEditor from './CollectionDetailsEditor';
@@ -90,8 +90,8 @@ const CollectionSettings = () => {
 			id: 'pub-defaults',
 			title: 'Pub settings',
 			pubPubIcon: 'pub',
-			sections: ALL_INTRINSIC_FACETS.map((facetName) => (
-				<FacetEditor key={facetName} facetName={facetName} />
+			sections: Object.keys(ALL_FACET_DEFINITIONS).map((facetName) => (
+				<FacetEditor key={facetName} facetName={facetName as FacetName} />
 			)),
 		},
 	]);

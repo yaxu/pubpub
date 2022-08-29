@@ -1,7 +1,6 @@
 export * from './canonicalize';
 export * from './cascade';
 export * from './create';
-export * from './database';
 export * from './errors';
 export * from './facet';
 export * from './map';
@@ -9,4 +8,3 @@ export * from './parse';
 export * from './primitives';
 export * from './prop';
 export * from './propType';
-export * from './scopes';

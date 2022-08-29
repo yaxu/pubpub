@@ -5,8 +5,8 @@ import {
 	FacetInstanceStack,
 	FacetInstanceType,
 	FacetSourceScope,
-	IntrinsicFacetName,
-	Intrinsics,
+	FacetName,
+	Facets,
 	cascade,
 	parsePartialFacetInstance,
 	createFacetInstance,
@@ -82,11 +82,11 @@ function getCascadeResultForPatch<Def extends FacetDefinition>(
 	return cascade(def, nextStack);
 }
 
-export function updateFacet<FacetName extends IntrinsicFacetName>(
+export function updateFacet<Name extends FacetName>(
 	get: GetState<FacetsState>,
 	set: SetState<FacetsState>,
-	name: FacetName,
-	patch: Partial<FacetInstanceType<Intrinsics[FacetName]>>,
+	name: Name,
+	patch: Partial<FacetInstanceType<Facets[Name]>>,
 ) {
 	const { facets, currentScope } = get();
 	const facetState: undefined | FacetState = facets[name];

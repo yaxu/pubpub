@@ -1,4 +1,4 @@
-import { PubEdgeDisplay } from 'facets/intrinsics';
+import { PubEdgeDisplay } from 'facets';
 
 import { createFacetEditor } from '../../createFacetEditor';
 import { radio } from '../../propTypeEditors';

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Checkbox, InputGroup, Tooltip } from '@blueprintjs/core';
 
-import { NodeLabels } from 'facets/intrinsics';
+import { NodeLabels } from 'facets';
 
 import { FacetPropEditorProps } from '../../types';
 

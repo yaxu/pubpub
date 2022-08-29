@@ -1,8 +1,4 @@
-import {
-	CitationStyle,
-	citationStyleKind,
-	inlineCitationStyleKind,
-} from 'facets/intrinsics/citationStyle';
+import { CitationStyle, citationStyleKind, inlineCitationStyleKind } from 'facets';
 import { citationStyles, citationInlineStyles } from 'utils/citations';
 
 import { createFacetEditor } from '../../createFacetEditor';

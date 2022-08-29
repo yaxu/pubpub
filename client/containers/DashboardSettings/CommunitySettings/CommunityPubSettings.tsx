@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { IntrinsicFacetName } from 'facets';
+import { FacetName } from 'facets';
 import { FacetEditor } from 'components';
 
-const facetsInOrder: IntrinsicFacetName[] = [
+const facetsInOrder: FacetName[] = [
 	'License',
 	'CitationStyle',
 	'PubHeaderTheme',

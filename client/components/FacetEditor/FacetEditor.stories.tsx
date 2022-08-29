@@ -1,8 +1,14 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import { createFacetInstance, cascade } from 'facets';
-import { NodeLabels, PubHeaderTheme, CitationStyle, PubEdgeDisplay } from 'facets/intrinsics';
+import {
+	createFacetInstance,
+	cascade,
+	NodeLabels,
+	PubHeaderTheme,
+	CitationStyle,
+	PubEdgeDisplay,
+} from 'facets';
 import { communityData, pubData } from 'utils/storybook/data';
 
 import {
@@ -10,7 +16,7 @@ import {
 	NodeLabelsEditor,
 	PubEdgeDisplayEditor,
 	PubHeaderThemeEditor,
-} from './intrinsics';
+} from './definitions';
 
 const cascadedPubTheme = cascade(PubHeaderTheme, [
 	{

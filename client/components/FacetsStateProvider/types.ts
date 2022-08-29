@@ -3,7 +3,7 @@ import {
 	FacetDefinition,
 	FacetInstanceType,
 	FacetSourceScope,
-	Intrinsics,
+	Facets,
 } from 'facets';
 
 import { bindActionsToStore } from './actions';
@@ -22,7 +22,7 @@ export type FacetState<Def extends FacetDefinition = FacetDefinition> = {
 
 export type FacetsState = {
 	currentScope: FacetSourceScope;
-	facets: { [K in keyof Intrinsics]: FacetState<Intrinsics[K]> };
+	facets: { [K in keyof Facets]: FacetState<Facets[K]> };
 	isPersisting: boolean;
 	hasPersistableChanges: boolean;
 };

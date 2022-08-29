@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo, useRef } from 'react';
 
 import { FacetsContext, FacetsState, FacetState } from 'components';
-import { CascadedFacetType, IntrinsicFacetName, Intrinsics } from 'facets';
+import { CascadedFacetType, FacetName, Facets } from 'facets';
 
 const throwFacetsStateError = (): never => {
 	throw new Error(`Must call useFacets beneath FacetsStateProvider`);
@@ -23,7 +23,7 @@ type FacetsQueryLevel =
 	// The latest client-side version of the facet, possibly including invalid props
 	| 'latest';
 
-type FacetsQueryable = { [K in keyof Intrinsics]: CascadedFacetType<Intrinsics[K]> };
+type FacetsQueryable = { [K in keyof Facets]: CascadedFacetType<Facets[K]> };
 
 type UseFacetsQueryOptions<T> = {
 	// Return a value if the FacetsStateProvider is not available.
@@ -69,7 +69,7 @@ export const useFacetsQuery = <T>(
 	const queryProxy = useMemo(
 		() =>
 			new Proxy({} as FacetsQueryable, {
-				get: (_, facetName: IntrinsicFacetName) => {
+				get: (_, facetName: FacetName) => {
 					const facetState = latestState.current!.facets[facetName];
 					return getQueryableObjectForLevel(facetState, level).value;
 				},

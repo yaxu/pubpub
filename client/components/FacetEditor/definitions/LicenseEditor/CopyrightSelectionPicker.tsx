@@ -11,20 +11,16 @@ type Props = FacetPropEditorProps<typeof License, 'copyrightSelection', false>;
 const currentYear = new Date().getFullYear();
 
 const CopyrightSelectionPicker = (props: Props) => {
-	const { value, onUpdateValue, facetValue } = props;
+	const { value, onUpdateValue } = props;
 	const { choice, year } = value;
-	const notCopyright = facetValue.kind !== 'copyright';
 
 	const handleChange = (next: Partial<Props['value']>) => {
-		if (!notCopyright) {
-			onUpdateValue({ ...value, ...next });
-		}
+		onUpdateValue({ ...value, ...next });
 	};
 
 	return (
 		<>
 			<RadioGroup
-				disabled={notCopyright}
 				className="copyright-selection-picker-component"
 				selectedValue={choice}
 				onChange={(e) => handleChange({ choice: (e.target as any).value })}
@@ -34,7 +30,7 @@ const CopyrightSelectionPicker = (props: Props) => {
 			</RadioGroup>
 			<NumericInput
 				min={0}
-				disabled={choice !== 'choose-here' || notCopyright}
+				disabled={choice !== 'choose-here'}
 				value={year ?? currentYear}
 				placeholder="1999"
 				onValueChange={(nextYear) =>

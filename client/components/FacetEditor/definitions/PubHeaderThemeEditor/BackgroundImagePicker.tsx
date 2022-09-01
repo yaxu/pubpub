@@ -13,6 +13,7 @@ const BackgroundImagePicker = (props: Props) => {
 	const { value, onUpdateValue } = props;
 	return (
 		<ImageUpload
+			key={value}
 			defaultImage={value!}
 			onNewImage={onUpdateValue}
 			width={150}

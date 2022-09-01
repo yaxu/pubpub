@@ -28,13 +28,15 @@ function getPropSourceInfo<Prop extends FacetProp>(
 	cascadeResult: FacetPropCascadeResult<Prop>,
 ): FacetPropSourceInfo {
 	const { sources } = cascadeResult;
-	const contributingScopes = sources.filter((s) => s.value !== null).map((s) => s.scope);
+	const contributingScopes = sources
+		.filter((s) => s.value !== null || s.scope.kind === 'root')
+		.map((s) => s.scope);
 	const lowestContributingScope = contributingScopes[contributingScopes.length - 1];
 	const isValueLocal = lowestContributingScope?.id === currentScope.id;
 	if (prop.cascade === 'overwrite') {
 		return {
 			isValueLocal,
-			contributingScopes: [lowestContributingScope],
+			contributingScopes,
 		};
 	}
 	throw new FacetCascadeNotImplError(prop.cascade);

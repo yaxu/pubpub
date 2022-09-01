@@ -236,7 +236,7 @@ const PubSettings = (props: Props) => {
 		{
 			id: 'look-and-feel',
 			title: 'Look & Feel',
-			icon: 'tint',
+			icon: 'palette',
 			sections: [
 				renderTheme,
 				renderCitationChooser,

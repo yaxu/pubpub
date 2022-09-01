@@ -15,6 +15,7 @@ import DashboardSettingsFrame, { Subtab } from '../DashboardSettingsFrame';
 const CollectionSettings = () => {
 	const {
 		communityData,
+		featureFlags,
 		scopeData: {
 			elements: { activeCollection },
 		},
@@ -86,14 +87,15 @@ const CollectionSettings = () => {
 				</SettingsSection>,
 			],
 		},
-		collection.kind !== 'tag' && {
-			id: 'pub-defaults',
-			title: 'Pub settings',
-			pubPubIcon: 'pub',
-			sections: Object.keys(ALL_FACET_DEFINITIONS).map((facetName) => (
-				<FacetEditor key={facetName} facetName={facetName as FacetName} />
-			)),
-		},
+		collection.kind !== 'tag' &&
+			featureFlags.showPubSettingsForCollection && {
+				id: 'pub-defaults',
+				title: 'Pub settings',
+				pubPubIcon: 'pub',
+				sections: Object.keys(ALL_FACET_DEFINITIONS).map((facetName) => (
+					<FacetEditor key={facetName} facetName={facetName as FacetName} />
+				)),
+			},
 	]);
 
 	return (

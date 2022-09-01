@@ -88,6 +88,7 @@ const facets: MenuItem = {
 	icon: 'facets',
 	dashboardMode: 'facets',
 	requiredPermission: 'manage',
+	shown: (context) => context.scopeData.activePermissions.isSuperAdmin,
 };
 
 export const menuItemsByScopeType = {

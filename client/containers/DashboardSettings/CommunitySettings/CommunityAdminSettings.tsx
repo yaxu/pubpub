@@ -61,7 +61,7 @@ const ExportAndDeleteSettings = () => {
 					</AnchorButton>
 				</Callout>
 			</SettingsSection>
-			<SettingsSection title="Data export">
+			<SettingsSection title="Data Export">
 				<p>
 					You can request an export of the data associated with your Community on PubPub
 					using the button below.
@@ -73,7 +73,7 @@ const ExportAndDeleteSettings = () => {
 					Request data export
 				</AnchorButton>
 			</SettingsSection>
-			<SettingsSection title="Community deletion">
+			<SettingsSection title="Community Deletion">
 				<p>
 					You can request that we completely delete your PubPub Community using the button
 					below. If you have published any notable Pubs, we may reserve the right to

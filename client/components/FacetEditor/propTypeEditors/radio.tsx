@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { RadioGroup, Radio } from '@blueprintjs/core';
 
-import { FacetPropType, TypeOfPropType } from 'facets';
+import { FacetPropType, TypeOfFacetPropType } from 'facets';
 import { PropTypeEditorProps } from '../types';
 
 type RadioItem<T> = {
@@ -10,7 +10,7 @@ type RadioItem<T> = {
 };
 
 type Options<T extends FacetPropType> = {
-	items: RadioItem<TypeOfPropType<T>>[];
+	items: RadioItem<TypeOfFacetPropType<T>>[];
 };
 
 type Props = PropTypeEditorProps<FacetPropType>;

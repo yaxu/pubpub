@@ -1,4 +1,4 @@
-import { FacetPropType, NullableTypeOfPropType, TypeOfPropType } from './propType';
+import { FacetPropType, NullableTypeOfPropType, TypeOfFacetPropType } from './propType';
 
 type IsNeverNull<T> = Extract<T, null> extends never ? true : false;
 
@@ -6,9 +6,9 @@ export type AvailableCascadeStrategyForPropType<PropType extends FacetPropType> 
 	// Any prop type can use the `overwrite` strategy
 	| 'overwrite'
 	// Only props that are objects can object-merge during cascade" {...a, ...b}
-	| (TypeOfPropType<PropType> extends Record<string, any> ? 'merge' : never)
+	| (TypeOfFacetPropType<PropType> extends Record<string, any> ? 'merge' : never)
 	// Only props that are arrays can array-merge during cascasde: [...a, ...b]
-	| (TypeOfPropType<PropType> extends any[] ? 'extend' : never);
+	| (TypeOfFacetPropType<PropType> extends any[] ? 'extend' : never);
 
 export type CascadeStrategy = 'overwrite' | 'merge' | 'extend';
 
@@ -50,7 +50,7 @@ export type FacetProp<
 	};
 
 export type RootValueOfFacetProp<Prop extends FacetProp> = Prop['rootValue'];
-export type TypeOfFacetProp<Prop extends FacetProp> = TypeOfPropType<Prop['propType']>;
+export type TypeOfFacetProp<Prop extends FacetProp> = TypeOfFacetPropType<Prop['propType']>;
 export type NullableTypeOfFacetProp<Prop extends FacetProp> = NullableTypeOfPropType<
 	Prop['propType']
 >;

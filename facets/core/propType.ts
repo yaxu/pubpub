@@ -23,15 +23,15 @@ export type FacetPropType<
 	extension: Extension;
 };
 
-export type TypeOfPropType<PropType extends FacetPropType> = TypeOf<PropType['schema']>;
+export type TypeOfFacetPropType<PropType extends FacetPropType> = TypeOf<PropType['schema']>;
 
-export type PossiblyNullableTypeOfPropType<
+export type PossiblyNullableTypeOfFacetPropType<
 	PropType extends FacetPropType,
 	Nullable extends boolean = false,
-> = TypeOfPropType<PropType> | (Nullable extends true ? null : never);
+> = TypeOfFacetPropType<PropType> | (Nullable extends true ? null : never);
 
 export type NullableTypeOfPropType<PropType extends FacetPropType> =
-	null | TypeOfPropType<PropType>;
+	null | TypeOfFacetPropType<PropType>;
 
 export const propType = <Schema extends ZodSchema, Extension extends AnyExtension>(
 	options: FacetPropTypeOptions<Schema, Extension>,

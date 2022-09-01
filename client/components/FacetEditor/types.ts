@@ -8,7 +8,7 @@ import {
 	FacetProp,
 	FacetPropType,
 	FacetSourceScope,
-	PossiblyNullableTypeOfPropType,
+	PossiblyNullableTypeOfFacetPropType,
 } from 'facets';
 
 type RenderFn<Props> = (props: Props) => React.ReactElement;
@@ -21,8 +21,8 @@ export type PropTypeEditorComponent<
 export type PropTypeEditorProps<PropType extends FacetPropType, Nullable extends boolean = true> = {
 	prop: FacetProp<PropType>;
 	propType: PropType;
-	value: PossiblyNullableTypeOfPropType<PropType, Nullable>;
-	onUpdateValue: (update: PossiblyNullableTypeOfPropType<PropType, Nullable>) => unknown;
+	value: PossiblyNullableTypeOfFacetPropType<PropType, Nullable>;
+	onUpdateValue: (update: PossiblyNullableTypeOfFacetPropType<PropType, Nullable>) => unknown;
 	propSourceInfo: FacetPropSourceInfo;
 	facetValue: any;
 };

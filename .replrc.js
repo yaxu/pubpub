@@ -7,8 +7,7 @@ import * as facets from 'server/facets';
 import { getPubDraftDoc, getPubDraftRef, editFirebaseDraftByRef } from 'server/utils/firebaseAdmin';
 import * as featureFlags from 'server/featureFlag/interface';
 import * as tasks from 'workers/tasks';
-import * as models from 'server/models'
-
+import * as models from 'server/models';
 
 const pilcrow = '¶';
 const prompt = isProd() ? chalk.redBright(`[PROD] ${pilcrow} `) : chalk.greenBright(`${pilcrow} `);

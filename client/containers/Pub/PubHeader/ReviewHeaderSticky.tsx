@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@blueprintjs/core';
+import immer from 'immer';
 
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
@@ -12,8 +13,153 @@ import { DocJson } from 'types';
 import { usePubContext } from '../pubHooks';
 import Review from './Review/Review';
 import ReviewerDialog from './Review/ReviewerDialog';
+import { assert } from 'utils/assert';
+import { useReducer } from '@storybook/addons';
 
 require('./reviewHeaderSticky.scss');
+
+enum Status {
+	Reviewing,
+	EditingMetadata,
+	ServerPersisting,
+	ServerPersistingError,
+	ServerPersistingSuccess,
+	Reset,
+}
+
+type StateReset = {
+	status: Status.Reset;
+	initialReview: DocJson;
+};
+
+type StateReviewing = {
+	status: Status.Reviewing;
+	review: DocJson;
+	open: boolean;
+	saving: boolean;
+};
+
+type StateEditingMetadata = {
+	status: Status.EditingMetadata;
+	review: DocJson;
+	reviewTitle: string;
+	reviewerName: string;
+};
+
+type PersistingProps = {
+	reviewTitle: string;
+	reviewerName: string;
+};
+
+type StateServerPersisting = PersistingProps & {
+	status: Status.ServerPersisting;
+	review: DocJson;
+};
+
+type StateServerPersistingError = PersistingProps & {
+	status: Status.ServerPersistingError;
+	review: DocJson;
+	error: Error;
+};
+
+type StateServerPersistingSuccess = {
+	status: Status.ServerPersistingSuccess;
+};
+
+type State =
+	| StateReviewing
+	| StateEditingMetadata
+	| StateServerPersisting
+	| StateServerPersistingError
+	| StateServerPersistingSuccess
+	| StateReset;
+
+enum ActionKind {
+	ToggleReview,
+	UpdateReview,
+	FinishUpdate,
+	SubmitReview,
+	UpdateReviewTitle,
+	UpdateReviewerName,
+}
+
+type ToggleReview = { kind: ActionKind.ToggleReview };
+type UpdateReview = { kind: ActionKind.UpdateReview; review: DocJson };
+type FinishUpdate = { kind: ActionKind.FinishUpdate };
+type SubmitReview = { kind: ActionKind.SubmitReview };
+type UpdateReviewTitle = { kind: ActionKind.UpdateReviewTitle; reviewTitle: string };
+type UpdateReviewerName = { kind: ActionKind.UpdateReviewerName; reviewerName: string };
+
+const toggleReview = (): ToggleReview => ({ kind: ActionKind.ToggleReview });
+const updateReview = (review: DocJson): UpdateReview => ({ kind: ActionKind.UpdateReview, review });
+const finishUpdate = (): FinishUpdate => ({ kind: ActionKind.FinishUpdate });
+const submitReview = (): SubmitReview => ({ kind: ActionKind.SubmitReview });
+const updateReviewTitle = (reviewTitle: string): UpdateReviewTitle => ({
+	kind: ActionKind.UpdateReviewTitle,
+	reviewTitle,
+});
+const updateReviewerName = (reviewerName: string): UpdateReviewerName => ({
+	kind: ActionKind.UpdateReviewerName,
+	reviewerName,
+});
+
+// const config = {
+// 	actions: {
+// 		updateReview: (state: StateReviewing, review: DocJson) => {
+// 			return { ...state, review };
+// 		},
+// 		thing: (state: StateEditingMetadata) => {
+// 			return { hi: "qwelian" }
+// 		}
+// 	},
+// };
+
+// type ReducerFn = (state: unknown, payload: unknown) => unknown
+
+// type Config = {
+// 	actions: { [actionType: string]: ReducerFn }
+// }
+
+// type MyCoolReduxLib<C extends Config> = {
+// 	states: { [K in keyof C["actions"]]: ReturnType<C["actions"][K]> }[keyof C["actions"]]
+// }
+
+// type Yay = MyCoolReduxLib<typeof config>
+
+type Action =
+	| ToggleReview
+	| UpdateReview
+	| FinishUpdate
+	| SubmitReview
+	| UpdateReviewTitle
+	| UpdateReviewerName;
+
+const reducer = (state: State, action: Action) =>
+	immer(state, (draft) => {
+		switch (action.kind) {
+			case ActionKind.ToggleReview:
+				assert(draft.status === Status.Reviewing);
+				draft.open = !draft.status;
+				break;
+			case ActionKind.UpdateReview:
+				assert(draft.status === Status.Reviewing);
+				draft.review = action.review;
+				draft.saving = true;
+				break;
+			case ActionKind.FinishUpdate:
+				assert(draft.status === Status.Reviewing);
+				draft.saving = false;
+				break;
+			case ActionKind.SubmitReview:
+				assert(draft.status === Status.Reviewing);
+				return {
+					status: Status.EditingMetadata as const,
+					review: draft.review,
+					reviewTitle: 'Untitled Review',
+					reviewerName: '',
+				};
+		}
+	});
 
 const ReviewHeaderSticky = () => {
 	const { pubData, updatePubData } = usePubContext();
@@ -23,16 +169,10 @@ const ReviewHeaderSticky = () => {
 		loginData: { fullName },
 	} = usePageContext();
 
-	const [visible, setVisible] = useState(false);
-	const [reviewTitle, setReviewTitle] = useState('Untitled Review');
-	const [reviewerName, setReviewerName] = useState('');
 	const [createError, setCreateError] = useState(undefined);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isSaving, setIsSaving] = useState(false);
 	const [createdReview, setCreatedReview] = useState(false);
-	const [showReview, setShowReview] = useState(true);
 	const [reviewNumber, setReviewNumber] = useState(0);
-	const [saved, setSaved] = useState(false);
 
 	// creates a docjoson object in local store, provides state handlers as well
 	const { value: review, setValue: setReview } = useLocalStorage<DocJson>({
@@ -43,27 +183,33 @@ const ReviewHeaderSticky = () => {
 		debounce: 100,
 	});
 
+	const [state, dispatch] = useReducer(reducer, {
+		status: Status.Reviewing,
+		review,
+		open: true,
+		saving: false,
+	});
+
 	const updatingReviewDoc = (doc: DocJson) => {
-		setReview(doc);
-		setIsSaving(true);
+		dispatch(updateReview(doc));
 		setTimeout(() => {
-			setSaved(true);
-			setIsSaving(false);
+			dispatch(finishUpdate());
 		}, 1000);
 	};
 
 	const url = new URL(window.location.href);
 	const query = new URLSearchParams(url.search);
 	const handleSubmit = () => {
+		assert(state.status === Status.EditingMetadata);
 		setIsLoading(true);
 		apiFetch
 			.post('/api/reviews', {
 				communityId: communityData.id,
 				pubId: pubData.id,
 				reviewContent: review,
-				title: reviewTitle,
+				title: state.reviewTitle,
 				accessHash: query.get('access'),
-				reviewerName,
+				reviewerName: state.reviewerName,
 			})
 			.then((reviewRes) => {
 				updatePubData((currentPubData) => {
@@ -89,7 +235,7 @@ const ReviewHeaderSticky = () => {
 	const renderReview = () => (
 		<Review
 			communityData={communityData}
-			onSubmit={() => setVisible(true)}
+			onSubmit={() => dispatch(submitReview())}
 			isLoading={isLoading}
 			review={review}
 			updateReview={updatingReviewDoc}
@@ -97,45 +243,62 @@ const ReviewHeaderSticky = () => {
 	);
 	const reviewPath = `/dash/pub/${pubData.slug}/reviews/${reviewNumber}`;
 	const pubPath = pubUrl(communityData, pubData);
+	const reviewVisible =
+		state.status === Status.Reviewing ||
+		state.status === Status.EditingMetadata ||
+		state.status === Status.ServerPersisting ||
+		state.status === Status.ServerPersistingError;
+	const reviewDialogVisible =
+		state.status === Status.EditingMetadata ||
+		state.status === Status.ServerPersisting ||
+		state.status === Status.ServerPersistingError;
+
 	return (
 		<div className="review-header-sticky-component container pub">
 			<div className="sticky-section">
 				<div className="sticky-title">{pubData.title}</div>
 				<div className="side-content">
-					{showReview && renderReview()}
+					{reviewVisible && renderReview()}
 					<div className="sticky-buttons">
 						<div className="sticky-review-text">review</div>
-						{isSaving && (
+						{state.status === Status.Reviewing && state.saving ? (
 							<div className="saving-text">
 								<em>Saving...</em>
 							</div>
+						) : (
+							<em className="saving-text">Saved</em>
 						)}
-						{saved && !isSaving && <em className="saving-text">Saved</em>}
-						<ReviewerDialog
-							isOpen={visible}
-							onClose={() => {
-								setCreatedReview(false);
-								setVisible(false);
-							}}
-							pubData={pubData}
-							onCreateReviewDoc={handleSubmit}
-							setReviewTitle={setReviewTitle}
-							reviewTitle={reviewTitle}
-							reviewerName={reviewerName}
-							setReviewerName={setReviewerName}
-							createdReview={createdReview}
-							createError={createError}
-							activePermissions={activePermissions}
-							fullName={fullName}
-							memberData={memberData}
-							pubPath={pubPath}
-							reviewPath={reviewPath}
-						/>
+						{state.status === Status.EditingMetadata && (
+							<ReviewerDialog
+								isOpen={reviewDialogVisible}
+								onClose={() => {
+									setCreatedReview(false);
+									setVisible(false);
+								}}
+								pubData={pubData}
+								onCreateReviewDoc={handleSubmit}
+								setReviewTitle={(reviewTitle) =>
+									dispatch(updateReviewTitle(reviewTitle))
+								}
+								reviewTitle={state.reviewTitle}
+								reviewerName={state.reviewerName}
+								setReviewerName={(reviewerName) =>
+									dispatch(updateReviewerName(reviewerName))
+								}
+								createdReview={createdReview}
+								createError={createError}
+								activePermissions={activePermissions}
+								fullName={fullName}
+								memberData={memberData}
+								pubPath={pubPath}
+								reviewPath={reviewPath}
+							/>
+						)}
 
 						<Button
 							minimal
 							icon={<Icon icon="expand-all" />}
-							onClick={() => setShowReview(!showReview)}
+							onClick={() => dispatch(toggleReview())}
 						/>
 					</div>
 				</div>

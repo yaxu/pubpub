@@ -9,10 +9,10 @@ type Props = {
 	pubData: PubPageData;
 	onClose: (...args: any[]) => any;
 	onCreateReviewDoc: () => void;
-	setReviewTitle: React.Dispatch<React.SetStateAction<string>>;
+	setReviewTitle: (reviewTitle: string) => unknown;
 	reviewTitle: string;
 	reviewerName: string;
-	setReviewerName: React.Dispatch<React.SetStateAction<string>>;
+	setReviewerName: (reviewerName: string) => unknown;
 	createdReview: boolean;
 	createError: any;
 	activePermissions: ScopeData['activePermissions'];

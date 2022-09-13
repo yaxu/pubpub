@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import { Button } from '@blueprintjs/core';
 import immer from 'immer';
 
 import { usePageContext } from 'utils/hooks';
 import { pubUrl } from 'utils/canonicalUrls';
+import { assert } from 'utils/assert';
 import { Icon } from 'components';
 import { apiFetch } from 'client/utils/apiFetch';
 import { useLocalStorage } from 'client/utils/useLocalStorage';
@@ -13,8 +14,6 @@ import { DocJson } from 'types';
 import { usePubContext } from '../pubHooks';
 import Review from './Review/Review';
 import ReviewerDialog from './Review/ReviewerDialog';
-import { assert } from 'utils/assert';
-import { useReducer } from '@storybook/addons';
 
 require('./reviewHeaderSticky.scss');
 
@@ -94,6 +93,7 @@ const toggleReview = (): ToggleReview => ({ kind: ActionKind.ToggleReview });
 const updateReview = (review: DocJson): UpdateReview => ({ kind: ActionKind.UpdateReview, review });
 const finishUpdate = (): FinishUpdate => ({ kind: ActionKind.FinishUpdate });
 const submitReview = (): SubmitReview => ({ kind: ActionKind.SubmitReview });
+
 const updateReviewTitle = (reviewTitle: string): UpdateReviewTitle => ({
 	kind: ActionKind.UpdateReviewTitle,
 	reviewTitle,
@@ -102,29 +102,6 @@ const updateReviewerName = (reviewerName: string): UpdateReviewerName => ({
 	kind: ActionKind.UpdateReviewerName,
 	reviewerName,
 });
-
-// const config = {
-// 	actions: {
-// 		updateReview: (state: StateReviewing, review: DocJson) => {
-// 			return { ...state, review };
-// 		},
-// 		thing: (state: StateEditingMetadata) => {
-// 			return { hi: "qwelian" }
-// 		}
-// 	},
-// };
-
-// type ReducerFn = (state: unknown, payload: unknown) => unknown
-
-// type Config = {
-// 	actions: { [actionType: string]: ReducerFn }
-// }
-
-// type MyCoolReduxLib<C extends Config> = {
-// 	states: { [K in keyof C["actions"]]: ReturnType<C["actions"][K]> }[keyof C["actions"]]
-// }
-
-// type Yay = MyCoolReduxLib<typeof config>
 
 type Action =
 	| ToggleReview
@@ -135,6 +112,7 @@ type Action =
 	| UpdateReviewerName;
 
 const reducer = (state: State, action: Action) =>
+	// eslint-disable-next-line consistent-return
 	immer(state, (draft) => {
 		switch (action.kind) {
 			case ActionKind.ToggleReview:
@@ -158,6 +136,8 @@ const reducer = (state: State, action: Action) =>
 					reviewTitle: 'Untitled Review',
 					reviewerName: '',
 				};
+			default:
+				break;
 		}
 	});
 
@@ -273,7 +253,6 @@ const ReviewHeaderSticky = () => {
 								isOpen={reviewDialogVisible}
 								onClose={() => {
 									setCreatedReview(false);
-									setVisible(false);
 								}}
 								pubData={pubData}
 								onCreateReviewDoc={handleSubmit}

@@ -6,9 +6,8 @@ import { getPrimaryCollection } from 'utils/collections/primary';
 import { getPubPublishedDate } from 'utils/pub/pubDates';
 import { formatDate } from 'utils/dates';
 import { collectionUrl, communityUrl, pubUrl } from 'utils/canonicalUrls';
-import { Tab, Tabs, TabId } from "@blueprintjs/core";
+import { Tab, Tabs, TabId } from '@blueprintjs/core';
 import { getTextFromDoc, jsonToNode } from 'components/Editor';
-
 
 require('./landing.scss');
 
@@ -43,10 +42,12 @@ type FlattenedCommunity = {
 		imageUrl: string;
 		highlights: DocJson;
 		quote: DocJson;
-	}
+	};
 };
 
-const getFlattedCommunitiesFromFeaturedItems = (featuredItems: LandingPageFeatures): FlattenedCommunity[] => {
+const getFlattedCommunitiesFromFeaturedItems = (
+	featuredItems: LandingPageFeatures,
+): FlattenedCommunity[] => {
 	return featuredItems.community.map((feature) => {
 		const { community } = feature;
 		return {
@@ -59,10 +60,10 @@ const getFlattedCommunitiesFromFeaturedItems = (featuredItems: LandingPageFeatur
 				imageUrl: feature.payload.imageUrl,
 				highlights: feature.payload.highlights,
 				quote: feature.payload.quote,
-			}
-		}
+			},
+		};
 	});
-}
+};
 
 const getFlattenedPubsFromFeaturedItems = (featuredItems: LandingPageFeatures): FlattenedPub[] => {
 	return featuredItems.pub.map((feature) => {
@@ -79,7 +80,7 @@ const getFlattenedPubsFromFeaturedItems = (featuredItems: LandingPageFeatures): 
 				title: community.title,
 				url: communityUrl(community),
 				accentColorDark: community.accentColorDark,
-				accentColorLight: community.accentColorLight
+				accentColorLight: community.accentColorLight,
 			},
 			primaryCollection: primaryCollection
 				? {
@@ -90,7 +91,6 @@ const getFlattenedPubsFromFeaturedItems = (featuredItems: LandingPageFeatures): 
 		};
 	});
 };
-
 
 const features = [
 	{
@@ -152,12 +152,14 @@ const Landing = (props: Props) => {
 		[featuredItems],
 	);
 	const [communityTabId, setTabId] = useState<number>(1);
-	const [featuredCommunityColor, setFeaturedCommunityColor] = useState<string   |undefined>(flattenedCommunities[0].meta.backgroundColor);
+	const [featuredCommunityColor, setFeaturedCommunityColor] = useState<string | undefined>(
+		flattenedCommunities[0].meta.backgroundColor,
+	);
 
-	const handleCommunityTabChange = (communityTabId:number, targetColor:string) => {
+	const handleCommunityTabChange = (communityTabId: number, targetColor: string) => {
 		setTabId(communityTabId);
-		setFeaturedCommunityColor(flattenedCommunities[communityTabId-1].meta.backgroundColor);
-	}
+		setFeaturedCommunityColor(flattenedCommunities[communityTabId - 1].meta.backgroundColor);
+	};
 
 	const featureGrid = features.map((feature) => {
 		return (
@@ -172,63 +174,78 @@ const Landing = (props: Props) => {
 	});
 
 	const communitiesBlock = () => {
-		const communityTabs = () => flattenedCommunities.map((flat, index) => {
-			const highlightsList = () => {
-				return (
-					<ul>
-						{getTextFromDoc(jsonToNode(flat.meta.highlights)).split("#").map((highlight) => {
-							return <li>{highlight}</li>
-						})}
-					</ul>
-				);
-			};
-			const panel = () => {
-				return (
-					<div className="panel-inner">
-						<div className="img-highlights">
-							<img className="community-image" src={flat.meta.imageUrl} alt={"Community Image"} />
-							<div className="highlights">
-								<div className="header">
-									<Icon icon="badge" className="icon" />
-									<span>Highlights</span>
+		const communityTabs = () =>
+			flattenedCommunities.map((flat, index) => {
+				const highlightsList = () => {
+					return (
+						<ul>
+							{getTextFromDoc(jsonToNode(flat.meta.highlights))
+								.split('#')
+								.map((highlight) => {
+									return <li>{highlight}</li>;
+								})}
+						</ul>
+					);
+				};
+				const panel = () => {
+					return (
+						<div className="panel-inner">
+							<div className="img-highlights">
+								<img
+									className="community-image"
+									src={flat.meta.imageUrl}
+									alt="Community"
+								/>
+								<div className="highlights">
+									<div className="header">
+										<Icon icon="badge" className="icon" />
+										<span>Highlights</span>
+									</div>
+									{highlightsList()}
 								</div>
-								{highlightsList()}
+							</div>
+							<div className="quote">
+								<Icon icon="citation" className="icon" />
+								<div className="text">
+									{getTextFromDoc(jsonToNode(flat.meta.quote))}
+								</div>
+							</div>
+							<div className="info">
+								<Icon icon="link" className="icon" />
+								<div className="text">
+									<a href={flat.url}>{flat.url}</a>
+									<p>on PubPub since {flat.since}</p>
+								</div>
 							</div>
 						</div>
-						<div className="quote">
-							<Icon icon="citation" className="icon" />
-							<div className="text">{getTextFromDoc(jsonToNode(flat.meta.quote))}</div>
-						</div>
-						<div className="info">
-							<Icon icon="link" className="icon" />
-							<div className="text">
-								<a href={flat.url}>{flat.url}</a>
-								<p>on PubPub since {flat.since}</p>
-							</div>
-						</div>
-					</div>
-				)
-			}
-			const tabtitle = () => {
-				return (
-					<div className="tab-title">
+					);
+				};
+				const tabtitle = () => {
+					return (
+						<div className="tab-title">
 							<Icon icon="office" className="icon" />
 							<div className="name">{flat.title}</div>
 							<Icon icon="chevron-right" className="icon arrow" />
-					</div>
-				)
-			}
-			return (
-				<Tab id={index+1} title={tabtitle()} panel={panel()} panelClassName="panel" />
-			)
-		});
+						</div>
+					);
+				};
+				return (
+					<Tab id={index + 1} title={tabtitle()} panel={panel()} panelClassName="panel" />
+				);
+			});
 
 		return (
-			<Tabs className="community-block" defaultSelectedTabId={communityTabId} vertical large onChange={handleCommunityTabChange}>
+			<Tabs
+				className="community-block"
+				defaultSelectedTabId={communityTabId}
+				vertical
+				large
+				onChange={handleCommunityTabChange}
+			>
 				{communityTabs()}
 			</Tabs>
-		)
-	}
+		);
+	};
 
 	const pubList = flattenedPubs.map((flat) => {
 		const { title, pub, community, primaryCollection, byline, publishedDate } = flat;
@@ -242,7 +259,12 @@ const Landing = (props: Props) => {
 							<div className="color-overlay" />
 						</div>
 					)}
-					{!headerBackgroundImage && <div className="color-bg" style={{backgroundColor: community.accentColorDark}} />}
+					{!headerBackgroundImage && (
+						<div
+							className="color-bg"
+							style={{ backgroundColor: community.accentColorDark }}
+						/>
+					)}
 					<div className="info">
 						<div className="title-box">
 							<Icon icon="pubDoc" className="icon pub-icon" />
@@ -388,12 +410,13 @@ const Landing = (props: Props) => {
 					</div>
 				</div>
 
-				<div className="communities-box" style={{backgroundColor: featuredCommunityColor}}>
+				<div
+					className="communities-box"
+					style={{ backgroundColor: featuredCommunityColor }}
+				>
 					<div className="container">
 						<div className="title">featured communities</div>
-						<div className="featured-space">
-								{communitiesBlock()}
-						</div>
+						<div className="featured-space">{communitiesBlock()}</div>
 						<div className="callout-repeat">
 							<div className="text-blocks">
 								<p>feeling inspired?</p>

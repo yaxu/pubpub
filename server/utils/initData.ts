@@ -84,6 +84,7 @@ export const getInitialData = async (req, isDashboard = false): Promise<types.In
 				hideCreatePubButton: true,
 				headerLinks: [
 					{ title: 'About', url: '/about' },
+					{ title: 'Features', url: '/features'},
 					{ title: 'Pricing', url: '/pricing' },
 					{ title: 'Search', url: '/search' },
 					{ title: 'Contact', url: 'mailto:hello@pubpub.org', external: true },

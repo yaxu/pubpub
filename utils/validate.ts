@@ -17,7 +17,7 @@ export type ValidationResult<Rec extends AnyRecord> = {
 	validatedFields: ValidatedFields<Rec>;
 };
 
-export const isNonEmptyString = (str: string) => str.length > 0;
+export const isNonEmptyString = (str: string) => typeof str === 'string' && str.length > 0;
 
 export const isNonEmptyDocJson = (docJson: DocJson) => {
 	return !isEmptyDoc(docJson);

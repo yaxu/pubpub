@@ -268,7 +268,9 @@ const Landing = (props: Props) => {
 					<div className="info">
 						<div className="title-box">
 							<Icon icon="pubDoc" className="icon pub-icon" />
-							<div className="pub-title">{title}</div>
+							<a className="pub-title" href={pubUrl(community, pub)}>
+								{title}
+							</a>
 						</div>
 						{description && <div className="desc">{description}</div>}
 						<div className="authors">{byline}</div>
@@ -375,19 +377,19 @@ const Landing = (props: Props) => {
 						<div className="box-item">
 							<div className="title">open & community led</div>
 							<div className="buttons">
-								<a href="" className="button">
+								<a href="https://github.com/pubpub/pubpub" className="button">
 									<Icon icon="git-repo" className="icon" />
 									<p>Github</p>
 								</a>
-								<a href="" className="button">
+								<a href="https://github.com/orgs/pubpub/projects/9" className="button">
 									<Icon icon="map" className="icon" />
 									<p>Roadmap</p>
 								</a>
-								<a href="" className="button">
+								<a href="https://github.com/pubpub/pubpub/discussions" className="button">
 									<Icon icon="comment" className="icon" />
 									<p>Forum</p>
 								</a>
-								<a href="" className="button">
+								<a href="https://notes.knowledgefutures.org" className="button">
 									<Icon icon="office" className="icon" />
 									<p>KFG community</p>
 								</a>

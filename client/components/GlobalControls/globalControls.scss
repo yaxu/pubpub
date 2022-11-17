@@ -9,7 +9,7 @@
 
 .global-controls-component {
 	@include button-colors;
-
+	font-family: motiva-sans, sans-serif;
 	display: flex;
 	align-items: center;
 

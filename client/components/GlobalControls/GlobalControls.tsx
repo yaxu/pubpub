@@ -98,6 +98,7 @@ const GlobalControls = (props: Props) => {
 			return (
 				<>
 					<GlobalControlsButton href="/explore" mobileOrDesktop={{ text: 'Explore' }} />
+					<GlobalControlsButton href="/features" mobileOrDesktop={{ text: 'Features' }} />
 					<GlobalControlsButton href="/pricing" mobileOrDesktop={{ text: 'Pricing' }} />
 					<GlobalControlsButton href="/about" mobileOrDesktop={{ text: 'About' }} />
 					{renderSearch()}

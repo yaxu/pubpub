@@ -23,6 +23,7 @@ export { default as DashboardSettings } from './DashboardSettings/DashboardSetti
 export { default as DashboardSubmissions } from './DashboardSubmissions/DashboardSubmissions';
 export { default as DashboardSubmissionWorkflow } from './DashboardSubmissionWorkflow/DashboardSubmissionWorkflow';
 export { default as Explore } from './Explore/Explore';
+export { default as Features } from './Features/Features';
 export { default as Landing } from './Landing/Landing';
 export { default as Login } from './Login/Login';
 export { default as NoMatch } from './NoMatch/NoMatch';

@@ -22,6 +22,7 @@ import {
 	DashboardSubmissions,
 	DashboardSubmissionWorkflow,
 	Explore,
+	Features,
 	Landing,
 	Legal,
 	Login,
@@ -131,6 +132,10 @@ export default (viewData, locationData, chunkName) => {
 		},
 		Explore: {
 			ActiveComponent: Explore,
+			hideNav: true,
+		},
+		Features: {
+			ActiveComponent: Features,
 			hideNav: true,
 		},
 		Landing: {

@@ -725,6 +725,9 @@ $leftColumnWidth: 20%;
 										width: 340px;
 										font-weight: 200;
 										margin-left: 20px;
+										overflow: hidden;
+										white-space: nowrap;
+										text-overflow: ellipsis;										
 									}
 									.icon {
 										margin-left: 3px;
@@ -781,7 +784,7 @@ $leftColumnWidth: 20%;
 									max-height: 250px;
 								}
 								.highlights {
-									margin-left: 35px;
+									margin-left: 25px;
 									display: flex;
 									flex-direction: column;
 									width: 250px;
@@ -806,9 +809,9 @@ $leftColumnWidth: 20%;
 									ul {
 										margin-top: 25px;
 										list-style: none;
-								    margin-left: 0;
-								    padding-left: 1em;
-								    text-indent: -1em;
+								    	margin-left: 0;
+								    	padding-left: 1em;
+								    	text-indent: -1em;
 										li {
 											padding-bottom: 15px;
 											font-style: italic;

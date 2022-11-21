@@ -76,7 +76,7 @@ app.use(
 	session({
 		secret: 'sessionsecret',
 		resave: false,
-		saveUninitialized: false,
+		saveUninitialized: true,
 		store: process.env.NODE_ENV !== 'test' ? new SequelizeStore({ db: sequelize }) : undefined,
 		cookie: {
 			path: '/',

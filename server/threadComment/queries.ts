@@ -2,11 +2,12 @@ import { ThreadComment, includeUserModel, Commenter } from 'server/models';
 import * as types from 'types';
 import { createCommenter } from '../commenter/queries';
 
-const findThreadCommentWithUser = (id) =>
-	ThreadComment.findOne({
-		where: { id },
+const findThreadCommentWithUserOrCommenter = (threadCommentId: string) => {
+	return ThreadComment.findOne({
+		where: { id: threadCommentId },
 		include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
 	});
+};
 
 export type CreateThreadWithCommentOptions = {
 	text: string;
@@ -37,22 +38,22 @@ export type CreateThreadOptions = {
 	text: string;
 	content: types.DocJson;
 	threadId: string;
-	commenterName?: string;
 	userId?: string;
+	commenterId?: string;
 };
 
 export const createThreadComment = async (options: CreateThreadOptions) => {
-	const { text, content, commenterName, threadId, userId } = options;
+	const { text, content, commenterId, threadId, userId } = options;
 
 	const user = userId || null;
-	const commenter = commenterName || null;
+	const commenter = commenterId || null;
 
 	const { threadCommentId } = await createThreadCommentWithUserOrCommenter(
 		{ text, content, userId: user, commenterName: commenter },
 		threadId,
 	);
 
-	const threadCommentWithUser = await findThreadCommentWithUser(threadCommentId);
+	const threadCommentWithUser = await findThreadCommentWithUserOrCommenter(threadCommentId);
 	return threadCommentWithUser;
 };
 

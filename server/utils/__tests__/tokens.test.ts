@@ -20,14 +20,14 @@ afterAll(() => {
 it('creates a valid JWT that can be decoded later', () => {
 	const token = issueToken({
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 		expiresIn: '1hr',
 		payload: { number: 35 },
 	});
 	const decoded = verifyAndDecodeToken(token, {
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 	});
 	expect(decoded.payload.number).toEqual(35);
@@ -35,47 +35,47 @@ it('creates a valid JWT that can be decoded later', () => {
 
 it('refuses to create a JWT without required values', () => {
 	expect(() =>
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ communityId: string; type: str... Remove this comment to see the full error message
 		issueToken({
-			communityId: 'us',
+			userId: undefined as any,
+			scope: { communityId: 'us' },
 			type: 'test_token',
 			expiresIn: '1hr',
 			payload: { number: 35 },
 		}),
 	).toThrow();
 	expect(() =>
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ userId: string; type: string; ... Remove this comment to see the full error message
 		issueToken({
 			userId: 'me',
 			type: 'test_token',
 			expiresIn: '1hr',
-			payload: { number: 35 },
+			scope: {} as any,
+			payload: { number: 36 },
 		}),
 	).toThrow();
 	expect(() =>
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ userId: string; communityId: s... Remove this comment to see the full error message
 		issueToken({
 			userId: 'me',
-			communityId: 'us',
+			scope: { communityId: 'us' },
 			expiresIn: '1hr',
-			payload: { number: 35 },
+			payload: { number: 37 },
+			type: undefined as any,
 		}),
 	).toThrow();
 	expect(() =>
-		// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '{ userId: string; communityId: s... Remove this comment to see the full error message
 		issueToken({
 			userId: 'me',
-			communityId: 'us',
+			scope: { communityId: 'us' },
 			type: 'test_token',
-			payload: { number: 35 },
+			payload: { number: 38 },
+			expiresIn: undefined as any,
 		}),
 	).toThrow();
 });
 
-it('guards decoded values with an assertion of matching type, communityId, and userId', () => {
+it('guards decoded values with an assertion of matching type, scope, and userId', () => {
 	const token = issueToken({
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 		expiresIn: '1hr',
 		payload: { number: 35 },
@@ -83,21 +83,28 @@ it('guards decoded values with an assertion of matching type, communityId, and u
 	expect(
 		verifyAndDecodeToken(token, {
 			userId: 'someone_else',
-			communityId: 'us',
+			scope: { communityId: 'us' },
 			type: 'test_token',
 		}),
 	).toEqual(null);
 	expect(
 		verifyAndDecodeToken(token, {
 			userId: 'me',
-			communityId: 'them',
+			scope: { communityId: 'them' },
 			type: 'test_token',
 		}),
 	).toEqual(null);
 	expect(
 		verifyAndDecodeToken(token, {
 			userId: 'me',
-			communityId: 'us',
+			scope: { pubId: 'us' },
+			type: 'test_token',
+		}),
+	).toEqual(null);
+	expect(
+		verifyAndDecodeToken(token, {
+			userId: 'me',
+			scope: { communityId: 'us' },
 			type: 'another_token',
 		}),
 	).toEqual(null);
@@ -107,21 +114,21 @@ it('correctly expires tokens', () => {
 	const expiresInSeconds = 60 * 30;
 	const token = issueToken({
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 		expiresIn: expiresInSeconds,
 		payload: { number: 35 },
 	});
 	const decodedNow = verifyAndDecodeToken(token, {
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 	});
 	expect(decodedNow.payload.number).toEqual(35);
 	advanceTime(1000 * expiresInSeconds + 1);
 	const decodedLater = verifyAndDecodeToken(token, {
 		userId: 'me',
-		communityId: 'us',
+		scope: { communityId: 'us' },
 		type: 'test_token',
 	});
 	expect(decodedLater).toEqual(null);

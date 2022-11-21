@@ -23,8 +23,8 @@ export type ThreadComment = {
 	content: {};
 	userId: string;
 	threadId: string;
-	author?: User;
-	commenter?: Commenter;
+	author?: null | User;
+	commenter?: null | Commenter;
 };
 
 export type Thread = {

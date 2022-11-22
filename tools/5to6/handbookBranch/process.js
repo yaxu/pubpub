@@ -2,7 +2,7 @@
 
 import { Op } from 'sequelize';
 import Color from 'color';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import firebaseAdmin from 'firebase-admin';
 import { createBranch } from 'components/Editor';
 import {
@@ -113,7 +113,7 @@ Promise.all([])
 		const newBranchesData = discussionChannels.map((channel, index, array) => {
 			const draftBranch = branchesData[index].find((branch) => branch.title === 'draft');
 			const draftBranchId = draftBranch.id;
-			const newBranchId = uuidv4();
+			const newBranchId = uuid.v4();
 
 			const newBranchData = {
 				sourceId: draftBranchId,

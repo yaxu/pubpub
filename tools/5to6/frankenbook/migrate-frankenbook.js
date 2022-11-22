@@ -1,6 +1,6 @@
 /* eslint-disable */
 import fs from 'fs';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import firebaseAdmin from 'firebase-admin';
 import { Discussion, Pub, Collection, CollectionPub, Version } from '../v5/models';
 import { nestDiscussionsToThreads } from '../../../client/containers/Pub/PubDocument/PubDiscussions/discussionUtils';
@@ -132,10 +132,10 @@ const newPubs = sectionsData.map((sectionData) => {
 	};
 });
 
-const newCollectionId = uuidv4();
-const vol1TagId = uuidv4();
-const vol2TagId = uuidv4();
-const vol3TagId = uuidv4();
+const newCollectionId = uuid.v4();
+const vol1TagId = uuid.v4();
+const vol2TagId = uuid.v4();
+const vol3TagId = uuid.v4();
 
 const newCollections = [
 	{

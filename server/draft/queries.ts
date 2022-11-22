@@ -1,8 +1,8 @@
-import uuid from 'uuid/v4';
+import uuid from 'uuid';
 
 import { Draft } from 'server/models';
 
-export const createDraft = (id: string = uuid()) => {
+export const createDraft = (id: string = uuid.v4()) => {
 	return Draft.create({ id, firebasePath: `drafts/draft-${id}` });
 };
 

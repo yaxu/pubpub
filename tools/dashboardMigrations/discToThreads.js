@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 
 import {
 	Anchor,
@@ -66,9 +66,9 @@ export default async () => {
 	for (let i = 0; i < groupedDiscussionValues.length; i++) {
 		const group = groupedDiscussionValues[i];
 		const header = group[0];
-		const threadId = uuidv4();
-		const visibilityId = uuidv4();
-		const anchorId = uuidv4();
+		const threadId = uuid.v4();
+		const visibilityId = uuid.v4();
+		const anchorId = uuid.v4();
 		const newDiscussion = {
 			id: header.id,
 			title: header.title,

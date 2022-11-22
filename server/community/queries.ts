@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 
 import * as types from 'types';
 import {
@@ -20,8 +20,8 @@ import { postToSlackAboutNewCommunity } from 'server/utils/slack';
 import { updateCommunityData } from 'server/utils/search';
 
 export const createCommunity = (inputValues, userData, alertAndSubscribe = true) => {
-	const newCommunityId = uuidv4();
-	const homePageId = uuidv4();
+	const newCommunityId = uuid.v4();
+	const homePageId = uuid.v4();
 	const subdomain = slugifyString(inputValues.subdomain);
 	const forbiddenSubdomains = [
 		'v1',

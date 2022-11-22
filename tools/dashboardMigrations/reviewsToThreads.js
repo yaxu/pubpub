@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import {
 	Pub,
 	Review,
@@ -55,8 +55,8 @@ export default async () => {
 				console.log('Woah undefined?!');
 			}
 
-			const threadId = uuidv4();
-			const visibilityId = uuidv4();
+			const threadId = uuid.v4();
+			const visibilityId = uuid.v4();
 			let status = 'open';
 			if (review.isClosed) {
 				status = 'closed';

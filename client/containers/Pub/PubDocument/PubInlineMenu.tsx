@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 import { Button, Classes } from '@blueprintjs/core';
 
 import { pubUrl } from 'utils/canonicalUrls';
@@ -72,7 +72,7 @@ const PubInlineMenu = () => {
 					icon={<Icon icon="chat" />}
 					onClick={() => {
 						const view = collabData.editorChangeObject!.view;
-						setLocalHighlight(view, selection.from, selection.to, uuidv4());
+						setLocalHighlight(view, selection.from, selection.to, uuid.v4());
 						moveToEndOfSelection(collabData.editorChangeObject!.view);
 					}}
 				/>

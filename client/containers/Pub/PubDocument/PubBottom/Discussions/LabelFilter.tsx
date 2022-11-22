@@ -9,7 +9,7 @@ import {
 	Position,
 	Tooltip,
 } from '@blueprintjs/core';
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'client/utils/apiFetch';
@@ -128,7 +128,7 @@ class LabelFilter extends Component<Props, State> {
 			const newLabelsData = [
 				...prevState.labelsData,
 				{
-					id: uuidv4(),
+					id: uuid.v4(),
 					title: 'New Label',
 					color: '#b71540',
 					publicApply: false,

@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4';
+import uuid from 'uuid';
 
 import { Thread, Visibility, ReviewNew, Pub } from 'server/models';
 import { createReviewer } from 'server/reviewer/queries';
@@ -50,8 +50,8 @@ export const createReview = async ({
 		}
 		return prev;
 	}, 0);
-	const threadId = uuidv4();
-	const visibilityId = uuidv4();
+	const threadId = uuid.v4();
+	const visibilityId = uuid.v4();
 	await Promise.all([
 		Visibility.create({
 			id: visibilityId,

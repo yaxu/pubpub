@@ -27,7 +27,6 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			isRelease,
 			isReviewingPub,
 			discussions,
-			isAVisitingCommenter,
 		},
 		submissionState,
 		historyData: { currentKey, isViewingHistory, historyDoc, historyDocEditorKey },
@@ -126,18 +125,6 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			initialContent: initialDoc,
 			includeCollabPlugin: false,
 			includeDiscussionsPlugin: true,
-			discussionAnchors,
-			canCreateAnchoredDiscussions: true,
-		};
-	}
-	if (isAVisitingCommenter) {
-		return {
-			editorKey: 'commenting',
-			isReadOnly: true,
-			initialHistoryKey: initialDocKey,
-			initialContent: initialDoc,
-			includeCollabPlugin: false,
-			includeDiscussionsPlugin: false,
 			discussionAnchors,
 			canCreateAnchoredDiscussions: true,
 		};

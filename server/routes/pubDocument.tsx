@@ -73,7 +73,6 @@ type GetEnrichedPubDataOptions = {
 	initialData: InitialData;
 	historyKey?: null | number;
 	releaseNumber?: null | number;
-	isAVisitingCommenter?: boolean;
 };
 
 const getEnrichedPubData = async (options: GetEnrichedPubDataOptions) => {

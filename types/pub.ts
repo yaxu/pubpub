@@ -127,7 +127,6 @@ export type PubPageData = DefinitelyHas<Omit<Pub, 'discussions'>, 'collectionPub
 		commentHash: Maybe<string>;
 		isRelease: boolean;
 		isReviewingPub: boolean;
-		isAVisitingCommenter: boolean;
 		isInMaintenanceMode?: boolean;
 		firebaseToken?: string;
 		initialStructuredCitations: boolean;
@@ -170,7 +169,6 @@ export type SanitizedPubData = Pub & {
 	discussions: Discussion[];
 	collectionPubs: CollectionPubWithAttributions[];
 	isRelease: boolean;
-	isAVisitingCommenter: boolean;
 	releases: Release[];
 	releaseNumber: number | null;
 };

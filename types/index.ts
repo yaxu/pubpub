@@ -1,6 +1,7 @@
 export * from './activity';
 export * from './attribution';
 export * from './collection';
+export * from './commenter';
 export * from './community';
 export * from './context';
 export * from './customScript';

@@ -1,11 +1,7 @@
-import { User } from './user';
+import { Commenter } from './commenter';
 import { Discussion } from './discussion';
 import { Review } from './review';
-
-export type Commenter = {
-	id: string;
-	name: string;
-};
+import { User } from './user';
 
 export type ThreadEvent = {
 	id: string;

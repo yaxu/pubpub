@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import { Button, Classes } from '@blueprintjs/core';
 
 import { pubUrl } from 'utils/canonicalUrls';

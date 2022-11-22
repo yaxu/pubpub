@@ -1,60 +1,63 @@
-import { ThreadComment, includeUserModel, Commenter } from 'server/models';
 import * as types from 'types';
-import { createCommenter } from '../commenter/queries';
+import { ThreadComment, includeUserModel, Commenter } from 'server/models';
+import { PubPubError } from 'server/utils/errors';
+import { assert } from 'utils/assert';
+import { createCommenter, getCommenterById } from '../commenter/queries';
 
-const findThreadCommentWithUserOrCommenter = (threadCommentId: string) => {
+type CreateThreadCommentOptions = {
+	text: string;
+	content: types.DocJson;
+	threadId: string;
+	userId?: string;
+	commenter?: types.Commenter;
+};
+
+const findThreadCommentWithUserOrCommenter = (
+	threadCommentId: string,
+): Promise<types.DefinitelyHas<types.ThreadComment, 'user' | 'commenter'>> => {
 	return ThreadComment.findOne({
 		where: { id: threadCommentId },
 		include: [includeUserModel({ as: 'author' }), { model: Commenter, as: 'commenter' }],
 	});
 };
 
-export type CreateThreadWithCommentOptions = {
-	text: string;
-	content: types.DocJson;
-	userId: null | string;
-	commenterName: null | string;
+const resolveAuthorId = async (
+	options: Pick<CreateThreadCommentOptions, 'userId' | 'commenter'>,
+): Promise<{ userId: string } | { commenterId: string }> => {
+	const { userId, commenter } = options;
+	if (userId) {
+		return { userId };
+	}
+	if (commenter) {
+		// Although we have a types.Commenter here, it may exist only on the client up to this
+		// point. Let's check to see whether it exists in the DB.
+		const existingCommenter = await getCommenterById(commenter.id);
+		if (existingCommenter) {
+			assert(existingCommenter.id === commenter.id);
+			return { commenterId: existingCommenter.id };
+		}
+		// SIDE EFFECT: Make sure we have an actual Commenter model in the DB before we try
+		// associating any ThreadComments with this ID.
+		const newCommenter = await createCommenter(commenter);
+		assert(newCommenter.id === commenter.id);
+		return { commenterId: newCommenter.id };
+	}
+	throw new PubPubError.MissingIdentifierError('ThreadComment author not specified');
 };
 
-export const createThreadCommentWithUserOrCommenter = async (
-	options: CreateThreadWithCommentOptions,
-	threadId: string,
-) => {
-	const { text, content, userId, commenterName } = options;
-	const newCommenter = commenterName && (await createCommenter({ name: commenterName }));
-	const userIdOrCommenterId = newCommenter ? { commenterId: newCommenter.id } : { userId };
-	const commenter = newCommenter && 'id' in newCommenter ? newCommenter : null;
+export const createThreadComment = async (options: CreateThreadCommentOptions) => {
+	const { text, content, threadId, commenter, userId } = options;
+
+	const authorId = await resolveAuthorId({ userId, commenter });
 	const threadComment = await ThreadComment.create({
 		text,
 		content,
 		threadId,
-		...userIdOrCommenterId,
+		...authorId,
 	});
 
-	return { threadCommentId: threadComment.id, commenterId: commenter?.id };
-};
-
-export type CreateThreadOptions = {
-	text: string;
-	content: types.DocJson;
-	threadId: string;
-	userId?: string;
-	commenterId?: string;
-};
-
-export const createThreadComment = async (options: CreateThreadOptions) => {
-	const { text, content, commenterId, threadId, userId } = options;
-
-	const user = userId || null;
-	const commenter = commenterId || null;
-
-	const { threadCommentId } = await createThreadCommentWithUserOrCommenter(
-		{ text, content, userId: user, commenterName: commenter },
-		threadId,
-	);
-
-	const threadCommentWithUser = await findThreadCommentWithUserOrCommenter(threadCommentId);
-	return threadCommentWithUser;
+	// Send it back with the associated User or Commenter
+	return findThreadCommentWithUserOrCommenter(threadComment.id);
 };
 
 export const updateThreadComment = (inputValues, updatePermissions) => {

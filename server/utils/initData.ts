@@ -75,6 +75,7 @@ export const getInitialData = async (
 			]);
 
 		return {
+			sessionId: req.sessionID,
 			communityData: {
 				title: 'PubPub',
 				description: 'Collaborative Community Publishing',
@@ -148,6 +149,7 @@ export const getInitialData = async (
 	);
 
 	return {
+		sessionId: req.sessionID,
 		communityData: cleanedCommunityData,
 		loginData,
 		locationData,

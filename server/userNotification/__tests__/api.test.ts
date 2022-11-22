@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 
 import { UserNotification } from 'server/models';
 import { modelize, login, setup, teardown } from 'stubstub';
@@ -6,8 +6,8 @@ import { PubDiscussionCommentAddedActivityItem } from 'types';
 
 import { fetchUserNotifications } from '../queries';
 
-const communityId = uuid();
-const pubId = uuid();
+const communityId = uuid.v4();
+const pubId = uuid.v4();
 const baseTimestamp = '2021-12-00:00:00.000';
 
 const getDateForElapsedMinutes = (minutes: number) => {
@@ -21,12 +21,12 @@ const getTimestampForElapsedMinutes = (minutes: number) => {
 
 const fakePayload: PubDiscussionCommentAddedActivityItem['payload'] = {
 	threadComment: {
-		id: uuid(),
+		id: uuid.v4(),
 		text: 'hmm',
-		userId: uuid(),
+		userId: uuid.v4(),
 	},
-	threadId: uuid(),
-	discussionId: uuid(),
+	threadId: uuid.v4(),
+	discussionId: uuid.v4(),
 	isReply: true,
 	pub: {
 		title: 'Fake',

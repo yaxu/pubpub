@@ -1,6 +1,6 @@
 /* eslint-disable */
 import fs from 'fs';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import firebaseAdmin from 'firebase-admin';
 import { Discussion, Pub, Collection, CollectionPub, Version } from '../v5/models';
 import { nestDiscussionsToThreads } from '../../../client/containers/Pub/PubDocument/PubDiscussions/discussionUtils';

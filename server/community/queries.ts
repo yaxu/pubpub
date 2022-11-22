@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import * as types from 'types';
 import {

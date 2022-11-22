@@ -4,9 +4,12 @@ import { issueToken } from 'server/utils/tokens';
 
 import { getCommenterIdFromSessionId } from './ids';
 
-export const createCommenter = (props: Pick<types.Commenter, 'name'>): Promise<types.Commenter> => {
-	const { name } = props;
+export const createCommenter = (
+	props: Pick<types.Commenter, 'name'> & Partial<Pick<types.Commenter, 'id'>>,
+): Promise<types.Commenter> => {
+	const { id, name } = props;
 	return Commenter.create({
+		id,
 		name,
 	});
 };

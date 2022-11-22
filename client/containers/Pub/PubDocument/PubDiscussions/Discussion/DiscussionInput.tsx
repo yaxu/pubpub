@@ -133,7 +133,7 @@ const DiscussionInput = (props: Props) => {
 		locationData.queryString.length > 1 ? locationData.queryString : ''
 	}`;
 
-	const canComment = isLoggedIn || pubData.isAVisitingCommenter;
+	const canComment = isLoggedIn;
 	const isUser = !!(canEdit || loginData.fullName);
 
 	const handleCommenterNameOnBlur = (evt) => {
@@ -149,8 +149,7 @@ const DiscussionInput = (props: Props) => {
 	);
 	const renderUserNameInput = () => {
 		return (
-			!isUser &&
-			pubData.isAVisitingCommenter && (
+			!isUser && (
 				<div className="simple-input guest-name-input">
 					<p>Add your name?</p>
 					<InputGroup

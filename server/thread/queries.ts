@@ -1,10 +1,7 @@
 import * as types from 'types';
 import { Discussion, Pub, ReviewNew, Visibility, Thread } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
-import {
-	createThreadCommentWithUserOrCommenter,
-	CreateThreadWithCommentOptions,
-} from 'server/threadComment/queries';
+import { createThreadComment } from 'server/threadComment/queries';
 
 type FilterUsersOptions = {
 	userIds: string[];
@@ -68,22 +65,28 @@ export const canUserSeeThread = async (options: CanUserSeeThreadOptions): Promis
 	return maybeUserId === userId;
 };
 
-export const createNewThreadWithComment = async (options: CreateThreadWithCommentOptions) => {
-	const { text, content, userId, commenterName } = options;
-	const newThread = await Thread.create({});
+type CreateThreadWithCommentOptions = {
+	text: string;
+	content: types.DocJson;
+	userId?: string;
+	commenter: types.Commenter;
+};
 
-	const { threadCommentId, commenterId } = await createThreadCommentWithUserOrCommenter(
-		{
-			text,
-			content,
-			userId,
-			commenterName,
-		},
-		newThread.id,
-	);
+export const createNewThreadWithComment = async (options: CreateThreadWithCommentOptions) => {
+	const { text, content, userId, commenter } = options;
+	const thread: types.Thread = await Thread.create({});
+
+	const threadComment = await createThreadComment({
+		threadId: thread.id,
+		text,
+		content,
+		userId,
+		commenter,
+	});
+
 	return {
-		threadId: newThread.id,
-		threadCommentId,
-		commenterId,
+		threadId: thread.id,
+		threadCommentId: threadComment.id,
+		commenterId: threadComment.commenter?.id ?? null,
 	};
 };

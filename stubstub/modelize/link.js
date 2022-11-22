@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 import * as graphlib from 'graphlib';
 
 import * as dbModels from '../../server/models';
@@ -80,7 +80,7 @@ const walkAst = (ast, parameters) => {
 		);
 
 		const thisModelDefinition = {
-			id: uuid(),
+			id: uuid.v4(),
 			modelName,
 			boundName,
 			properties,

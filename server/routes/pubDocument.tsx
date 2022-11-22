@@ -27,7 +27,7 @@ import {
 import { createUserScopeVisit } from 'server/userScopeVisit/queries';
 import { InitialData } from 'types';
 import { findUserSubscription } from 'server/userSubscription/shared/queries';
-import { issueGuestCommenterToken } from 'server/commenter/tokens';
+import { getPubGuestCommenterInfo } from 'server/commenter/queries';
 
 const getInitialDataForPub = (req) => getInitialData(req, { includeFacets: true });
 
@@ -103,13 +103,14 @@ const getEnrichedPubData = async (options: GetEnrichedPubDataOptions) => {
 		};
 	};
 
-	const [docInfo, edges, subscription, guestCommenterToken] = await Promise.all([
+	const [docInfo, edges, subscription, guestCommenterInfo] = await Promise.all([
 		getDocInfo(),
 		getPubEdges(pubData, initialData),
 		initialData.loginData.id
 			? findUserSubscription({ userId: initialData.loginData.id, pubId: pubData.id })
 			: null,
-		issueGuestCommenterToken({
+		getPubGuestCommenterInfo({
+			sessionId: initialData.sessionId,
 			userId: initialData.loginData.id,
 			pubId: pubData.id,
 			accessHash: initialData.locationData.query.access,
@@ -119,7 +120,7 @@ const getEnrichedPubData = async (options: GetEnrichedPubDataOptions) => {
 	const citations = await getPubCitations(pubData, initialData, docInfo.initialDoc);
 	return {
 		subscription: subscription?.toJSON() ?? null,
-		guestCommenterToken,
+		guestCommenterInfo,
 		...pubData,
 		...citations,
 		...edges,

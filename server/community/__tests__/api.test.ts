@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 

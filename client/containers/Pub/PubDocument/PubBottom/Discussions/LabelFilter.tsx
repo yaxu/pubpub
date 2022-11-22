@@ -9,7 +9,7 @@ import {
 	Position,
 	Tooltip,
 } from '@blueprintjs/core';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import Icon from 'components/Icon/Icon';
 import { apiFetch } from 'client/utils/apiFetch';

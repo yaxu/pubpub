@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 
 import { setup, teardown, login, modelize, expectCreatedActivityItem } from 'stubstub';
 import { CollectionPub, Pub, Draft } from 'server/models';
 import { issueCreatePubToken } from '../tokens';
 
-const defaultCollectionId = uuid();
+const defaultCollectionId = uuid.v4();
 
 const models = modelize`
 	Community community {

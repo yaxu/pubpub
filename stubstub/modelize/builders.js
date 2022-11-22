@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import SHA3 from 'crypto-js/sha3';
 import encHex from 'crypto-js/enc-hex';
 

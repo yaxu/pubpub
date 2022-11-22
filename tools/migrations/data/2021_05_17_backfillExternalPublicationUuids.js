@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import { ExternalPublication, PubEdge } from 'server/models';
 import { indexByProperty } from 'utils/arrays';

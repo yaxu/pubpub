@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { AnchorButton, InputGroup } from '@blueprintjs/core';
 import { Node } from 'prosemirror-model';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import { Icon } from 'components';
 import { s3Upload } from 'client/utils/upload';

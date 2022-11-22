@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import Sequelize from 'sequelize';
 
 import { Branch, BranchPermission, Discussion, PubVersion } from '../../../server/models';

@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import { Thread, Visibility, ReviewNew, Pub } from 'server/models';
 import { createReviewer } from 'server/reviewer/queries';
@@ -13,7 +13,7 @@ import {
 	createReleasedEvent,
 } from '../threadEvent/queries';
 import { createRelease } from '../release/queries';
-import { createThreadComment, CreateThreadOptions } from '../threadComment/queries';
+import { createThreadComment } from '../threadComment/queries';
 
 type CreateReviewOptions = {
 	pubId: string;
@@ -77,14 +77,13 @@ export const createReview = async ({
 	});
 	if (userId) {
 		await createCreatedThreadEvent(userData, threadId);
-		if (text) {
-			const options = {
+		if (text && content) {
+			await createThreadComment({
 				text,
 				content,
 				threadId,
 				userId,
-			} as CreateThreadOptions;
-			await createThreadComment(options);
+			});
 		}
 	}
 

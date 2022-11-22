@@ -2,7 +2,7 @@
 
 import { Op } from 'sequelize';
 import Color from 'color';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 import firebaseAdmin from 'firebase-admin';
 import { createBranch } from 'components/Editor';
 import {

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 
 import { Pub, Draft, Branch } from 'server/models';
 
@@ -15,7 +15,7 @@ const getDraftForPub = (pub) => {
 		});
 	}
 	console.warn(`No draft branch found for Pub: [${pub.slug}] ${pub.title}`);
-	const id = uuid();
+	const id = uuid.v4();
 	return Draft.create({ id, firebasePath: `drafts/draft-${id}` });
 };
 

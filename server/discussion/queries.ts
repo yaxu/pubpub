@@ -14,9 +14,9 @@ import {
 import { getReadableDateInYear } from 'utils/dates';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
 import { createNewThreadWithComment } from 'server/thread/queries';
-import { VisibilityAccess, DocJson } from 'types';
+import * as types from 'types';
 
-const findDiscussionWithUser = (id) =>
+const findDiscussionWithAuthor = (id) =>
 	Discussion.findOne({
 		where: {
 			id,
@@ -49,12 +49,12 @@ const findDiscussionWithUser = (id) =>
 		],
 	});
 
-type CreateDiscussionOpts = {
+type CreateDiscussionOptions = {
 	pubId: string;
 	discussionId?: string;
 	title?: string;
 	text: string;
-	content: DocJson;
+	content: types.DocJson;
 	historyKey: number;
 	visibilityAccess: 'members' | 'public';
 	initAnchorData: {
@@ -64,11 +64,11 @@ type CreateDiscussionOpts = {
 		from: number;
 		to: number;
 	};
-	commenterName?: string;
+	commenter: types.Commenter;
 	userId?: string;
 };
 
-export const createDiscussion = async (options: CreateDiscussionOpts) => {
+export const createDiscussion = async (options: CreateDiscussionOptions) => {
 	const {
 		pubId,
 		discussionId,
@@ -78,12 +78,9 @@ export const createDiscussion = async (options: CreateDiscussionOpts) => {
 		historyKey,
 		visibilityAccess,
 		initAnchorData,
-		commenterName,
+		commenter,
 		userId,
 	} = options;
-
-	const user = userId || null;
-	const commenter = commenterName || null;
 
 	const discussions = await Discussion.findAll({
 		where: { pubId },
@@ -106,8 +103,8 @@ export const createDiscussion = async (options: CreateDiscussionOpts) => {
 	const { threadId, commenterId } = await createNewThreadWithComment({
 		text,
 		content,
-		commenterName: commenter,
-		userId: user,
+		commenter,
+		userId,
 	});
 
 	const newVisibility = await Visibility.create({ access: visibilityAccess });
@@ -136,7 +133,7 @@ export const createDiscussion = async (options: CreateDiscussionOpts) => {
 		});
 	}
 
-	return findDiscussionWithUser(newDiscussion.id);
+	return findDiscussionWithAuthor(newDiscussion.id);
 };
 
 export const updateDiscussion = async (values, permissions) => {
@@ -201,7 +198,7 @@ export const updateDiscussion = async (values, permissions) => {
 export const updateVisibilityForDiscussions = async (
 	pubId: string,
 	discussionIds: string[],
-	access: VisibilityAccess,
+	access: types.VisibilityAccess,
 ) => {
 	const discussions = await Discussion.findAll({ where: { pubId, id: discussionIds } });
 	const visibilityIds = discussions.map((d) => d.visibilityId);

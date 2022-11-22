@@ -4,6 +4,7 @@ import { ForbiddenSlugStatus } from 'types';
 
 export enum PubPubApplicationError {
 	ForbiddenSlug = 'forbidden-slug',
+	MissingIdentifierError = 'missing-identifier',
 }
 
 class PubPubBaseError extends Error {
@@ -24,6 +25,11 @@ export const PubPubError = {
 			super(PubPubApplicationError.ForbiddenSlug, 'Forbidden slug');
 			this.desiredSlug = desiredSlug;
 			this.slugStatus = slugStatus;
+		}
+	},
+	MissingIdentifierError: class extends PubPubBaseError {
+		constructor(message: string) {
+			super(PubPubApplicationError.MissingIdentifierError, message);
 		}
 	},
 };

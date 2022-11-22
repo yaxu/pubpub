@@ -88,6 +88,7 @@ export type InitialNotificationsData = {
 };
 
 export type InitialData = {
+	sessionId: string;
 	scopeData: ScopeData;
 	locationData: LocationData;
 	loginData: LoginData;

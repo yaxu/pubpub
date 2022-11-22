@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 import { getResizedUrl } from 'utils/images';
 import { generatePubBackground } from 'utils/pubs';

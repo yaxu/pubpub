@@ -3,9 +3,8 @@ export type Commenter = {
 	name: string;
 };
 
-export type PubGuestCommenterInfo = {
+export type PubGuestCommenterInfo<RequireFullInfo extends boolean = false> = {
 	commenterToken: string;
-	commenter: {
-		id: string;
-	} & (Pick<Commenter, 'name'> | {});
+	commenter: Pick<Commenter, 'id'> &
+		(RequireFullInfo extends true ? Pick<Commenter, 'name'> : {});
 };

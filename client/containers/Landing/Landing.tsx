@@ -174,6 +174,41 @@ const Landing = (props: Props) => {
 	});
 
 	const communitiesBlock = () => {
+		const communityMobileBlocks = () =>
+			flattenedCommunities.map((flat, index) => {
+				const highlightsCommaList = () => {
+					return (
+						<ul>
+							{getTextFromDoc(jsonToNode(flat.meta.highlights))
+								.split('#')
+								.map((highlight) => {
+									return <li>{highlight}</li>;
+								})}
+						</ul>
+					);
+				};
+				return (
+					<div className="block" style={{ backgroundColor: flat.meta.backgroundColor }}>
+						<div className="title-header">
+							<Icon icon="office" className="icon" />
+							<div className="name">{flat.title}</div>
+						</div>
+						<img
+							className="community-image"
+							src={flat.meta.imageUrl}
+							alt={index + 1 + '-community'}
+						/>
+						<div className="highlights">
+							<div className="header">
+								<Icon icon="badge" className="icon" />
+								<span>Highlights</span>
+							</div>
+							<div>{highlightsCommaList}</div>
+						</div>
+					</div>
+				);
+			});
+
 		const communityTabs = () =>
 			flattenedCommunities.map((flat, index) => {
 				const highlightsList = () => {
@@ -235,15 +270,18 @@ const Landing = (props: Props) => {
 			});
 
 		return (
-			<Tabs
-				className="community-block"
-				defaultSelectedTabId={communityTabId}
-				vertical
-				large
-				onChange={handleCommunityTabChange}
-			>
-				{communityTabs()}
-			</Tabs>
+			<React.Fragment>
+				<Tabs
+					className="community-block"
+					defaultSelectedTabId={communityTabId}
+					vertical
+					large
+					onChange={handleCommunityTabChange}
+				>
+					{communityTabs()}
+				</Tabs>
+				<div className="communities-mobile">{communityMobileBlocks()}</div>
+			</React.Fragment>
 		);
 	};
 
@@ -381,11 +419,17 @@ const Landing = (props: Props) => {
 									<Icon icon="git-repo" className="icon" />
 									<p>Github</p>
 								</a>
-								<a href="https://github.com/orgs/pubpub/projects/9" className="button">
+								<a
+									href="https://github.com/orgs/pubpub/projects/9"
+									className="button"
+								>
 									<Icon icon="map" className="icon" />
 									<p>Roadmap</p>
 								</a>
-								<a href="https://github.com/pubpub/pubpub/discussions" className="button">
+								<a
+									href="https://github.com/pubpub/pubpub/discussions"
+									className="button"
+								>
 									<Icon icon="comment" className="icon" />
 									<p>Forum</p>
 								</a>

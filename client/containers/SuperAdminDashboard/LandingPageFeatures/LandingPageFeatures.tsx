@@ -7,6 +7,8 @@ import { LandingPageFeatures as LandingPageFeaturesType } from 'types';
 import LandingPageFeatureManager, { RenderFeatureProps } from './LandingPageFeatureManager';
 import FeaturedCommunityItem from './FeaturedCommunityItem';
 
+require('./landingPageFeatures.scss');
+
 type Props = {
 	landingPageFeatures: LandingPageFeaturesType<false>;
 };
@@ -37,8 +39,8 @@ const LandingPageFeatures = (props: Props) => {
 	};
 
 	return (
-		<>
-			<SettingsSection title="Pubs">
+		<div className="landing-page-features-component">
+			<SettingsSection key={0} title="Pubs">
 				<LandingPageFeatureManager
 					kind="pub"
 					placeholder="Enter a Pub slug or URL"
@@ -46,7 +48,7 @@ const LandingPageFeatures = (props: Props) => {
 					renderFeature={renderPubFeature}
 				/>
 			</SettingsSection>
-			<SettingsSection title="Communities">
+			<SettingsSection key={1} title="Communities">
 				<LandingPageFeatureManager
 					kind="community"
 					placeholder="Enter a Community subdomain or URL"
@@ -54,7 +56,7 @@ const LandingPageFeatures = (props: Props) => {
 					renderFeature={renderCommunityFeature}
 				/>
 			</SettingsSection>
-		</>
+		</div>
 	);
 };
 

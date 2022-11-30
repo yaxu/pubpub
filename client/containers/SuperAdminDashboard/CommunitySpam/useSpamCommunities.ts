@@ -16,7 +16,7 @@ type UseSpamCommunitiesOptions = {
 
 export const useSpamCommunities = (options: UseSpamCommunitiesOptions) => {
 	const { searchTerm, filter, limit, initialCommunities } = options;
-	const [_, setOffset, offsetRef] = useStateRef(0);
+	const [_, setOffset, offsetRef] = useStateRef(initialCommunities.length);
 	const [isLoading, setIsLoading] = useState(false);
 	const [mayLoadMoreCommunities, setMayLoadMoreCommunities] = useState(true);
 	const [communities, setCommunities] = useState(initialCommunities);

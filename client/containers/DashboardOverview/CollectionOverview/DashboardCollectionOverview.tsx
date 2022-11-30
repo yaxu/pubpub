@@ -20,7 +20,7 @@ import {
 	QuickActions,
 	QuickAction,
 	ScopeSummaryList,
-	OverviewSearchFilter,
+	PubsOverviewSearchFilter,
 } from '../helpers';
 import { PubOverviewRow, LoadMorePubsRow, SpecialRow } from '../overviewRows';
 import { PubWithCollections } from './types';
@@ -78,7 +78,7 @@ const DashboardCollectionOverview = (props: Props) => {
 		communityData,
 	} = usePageContext();
 	const [searchTerm, setSearchTerm] = useState('');
-	const [filter, setFilter] = useState<null | OverviewSearchFilter>(null);
+	const [filter, setFilter] = useState<null | PubsOverviewSearchFilter>(null);
 	const [pubsAddedToCollection, setPubsAddedToCollection] = useState<PubWithCollections[]>([]);
 	const { collection, updateCollection } = useCollectionState(initialCollection);
 	const query = filter?.query;

@@ -1,8 +1,4 @@
-export type SpamStatus =
-	| 'suspected-not-spam'
-	| 'suspected-spam'
-	| 'confirmed-spam'
-	| 'confirmed-not-spam';
+export type SpamStatus = 'unreviewed' | 'confirmed-spam' | 'confirmed-not-spam';
 
 export type SpamTag = {
 	id: string;
@@ -10,9 +6,25 @@ export type SpamTag = {
 	spamScoreVersion: number;
 	spamScoreComputedAt: string;
 	status: SpamStatus;
+	fields: Record<string, string[]>;
 };
 
 export type SpamVerdict = Pick<
 	SpamTag,
-	'spamScore' | 'spamScoreVersion' | 'status' | 'spamScoreComputedAt'
+	'spamScore' | 'spamScoreVersion' | 'spamScoreComputedAt' | 'fields'
 >;
+
+export type SpamCommunityQueryOrderingField = 'community-created-at' | 'spam-score';
+
+export type SpamCommunityQueryOrdering = {
+	direction: 'ASC' | 'DESC';
+	field: SpamCommunityQueryOrderingField;
+};
+
+export type SpamCommunityQuery = {
+	status: SpamStatus[];
+	offset?: number;
+	limit?: number;
+	searchTerm?: string;
+	ordering: SpamCommunityQueryOrdering;
+};

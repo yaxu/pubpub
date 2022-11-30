@@ -1,6 +1,7 @@
 import * as types from 'types';
 import { Community, SpamTag } from 'server/models';
 
+import { SpamStatus } from 'types';
 import { getSuspectedCommunitySpamVerdict } from './score';
 
 // Adding a spam tag doesn't imply that the Community _is_ spam, only that we have a score for it.
@@ -10,17 +11,40 @@ export const addSpamTagToCommunity = async (communityId: string) => {
 			where: { id: communityId },
 			include: [{ model: SpamTag, as: 'spamTag' }],
 		});
-	const { spamTag } = community;
 	const verdict = getSuspectedCommunitySpamVerdict(community);
+	const { spamTag } = community;
 	if (spamTag) {
-		// Be paranoid: never transition from suspected-spam or confirmed-anything to another state.
-		if (spamTag.status === 'suspected-not-spam') {
-			await (spamTag as types.SequelizeModel<types.SpamTag>).update(verdict);
-		}
+		await (spamTag as types.SequelizeModel<types.SpamTag>).update(verdict);
 		return spamTag;
 	}
 	const newSpamTag = await SpamTag.create(verdict);
-	// Using the model singleton here so the Community.afterUpdate hook won't be triggered.
-	await Community.update({ spamTagId: newSpamTag.id }, { where: { id: communityId }, limit: 1 });
+	await Community.update(
+		{ spamTagId: newSpamTag.id },
+		{
+			where: { id: communityId },
+			limit: 1,
+			// We need individualHooks: false so we don't trigger Community's afterUpdate hook,
+			// which probably called this function.
+			individualHooks: false,
+		},
+	);
 	return newSpamTag;
+};
+
+type UpdateSpamTagForCommunityOptions = {
+	communityId: string;
+	status: SpamStatus;
+};
+
+export const updateSpamTagForCommunity = async (options: UpdateSpamTagForCommunityOptions) => {
+	const { communityId, status } = options;
+	const { spamTag } = await Community.findOne({
+		where: { id: communityId },
+		include: [{ model: SpamTag, as: 'spamTag' }],
+	});
+	if (spamTag) {
+		await spamTag.update({ status });
+	} else {
+		throw new Error('Community is missing a SpamTag');
+	}
 };

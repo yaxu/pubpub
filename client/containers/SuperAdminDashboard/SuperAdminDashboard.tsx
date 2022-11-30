@@ -1,32 +1,25 @@
 import React from 'react';
-import { Tabs, Tab } from '@blueprintjs/core';
 
 import { GridWrapper } from 'components';
-import { LandingPageFeatures } from 'types';
+import { SuperAdminTabKind } from 'utils/superAdmin';
 
-import LandingPageFeaturesType from './LandingPageFeatures';
-import Spam from './Spam';
+import { superAdminTabs } from './tabs';
 
 require('./superAdminDashboard.scss');
 
 type Props = {
-	landingPageFeatures: LandingPageFeatures<false>;
+	tabKind: SuperAdminTabKind;
+	tabProps: Record<string, any>;
 };
 
 const SuperAdminDashboard = (props: Props) => {
-	const { landingPageFeatures } = props;
+	const { tabKind, tabProps } = props;
+	const { component: TabComponent } = superAdminTabs[tabKind];
 	return (
 		<GridWrapper columnClassName="superadmin-dashboard-component">
 			<h1>Superadmin Dashboard</h1>
 			<p>Warning! Danger! etc.</p>
-			<Tabs id="superadmin-dashboard" large>
-				<Tab
-					id="features"
-					title="Landing Page"
-					panel={<LandingPageFeaturesType features={landingPageFeatures} />}
-				/>
-				<Tab id="spam" title="Spam" panel={<Spam />} />
-			</Tabs>
+			<TabComponent {...tabProps} />
 		</GridWrapper>
 	);
 };

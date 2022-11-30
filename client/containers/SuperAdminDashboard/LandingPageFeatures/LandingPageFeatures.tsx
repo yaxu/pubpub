@@ -8,11 +8,11 @@ import LandingPageFeatureManager, { RenderFeatureProps } from './LandingPageFeat
 import FeaturedCommunityItem from './FeaturedCommunityItem';
 
 type Props = {
-	features: LandingPageFeaturesType<false>;
+	landingPageFeatures: LandingPageFeaturesType<false>;
 };
 
 const LandingPageFeatures = (props: Props) => {
-	const { features } = props;
+	const { landingPageFeatures } = props;
 
 	const renderPubFeature = ({ feature }: RenderFeatureProps<'pub'>) => {
 		const { pub } = feature;
@@ -42,7 +42,7 @@ const LandingPageFeatures = (props: Props) => {
 				<LandingPageFeatureManager
 					kind="pub"
 					placeholder="Enter a Pub slug or URL"
-					initialFeatures={features.pub}
+					initialFeatures={landingPageFeatures.pub}
 					renderFeature={renderPubFeature}
 				/>
 			</SettingsSection>
@@ -50,7 +50,7 @@ const LandingPageFeatures = (props: Props) => {
 				<LandingPageFeatureManager
 					kind="community"
 					placeholder="Enter a Community subdomain or URL"
-					initialFeatures={features.community}
+					initialFeatures={landingPageFeatures.community}
 					renderFeature={renderCommunityFeature}
 				/>
 			</SettingsSection>

@@ -18,7 +18,7 @@ const SuperAdminDashboard = (props: Props) => {
 	return (
 		<GridWrapper columnClassName="superadmin-dashboard-component">
 			<h1>Superadmin Dashboard</h1>
-			<p>Warning! Danger! etc.</p>
+			<p><i>All power corrupts, and absolute power tends to corrupt absolutely.</i></p>
 			<TabComponent {...tabProps} />
 		</GridWrapper>
 	);

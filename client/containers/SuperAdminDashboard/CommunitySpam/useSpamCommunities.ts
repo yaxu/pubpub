@@ -24,7 +24,6 @@ export const useSpamCommunities = (options: UseSpamCommunitiesOptions) => {
 	const loadMoreCommunities = useCallback(async () => {
 		setIsLoading(true);
 		setMayLoadMoreCommunities(false);
-		setOffset((offset) => offset + limit);
 		const { status, ordering } = filter.query!;
 		const nextCommunities = await apiFetch.post(`/api/spamTags/queryCommunitiesForSpam?`, {
 			limit,
@@ -36,6 +35,7 @@ export const useSpamCommunities = (options: UseSpamCommunitiesOptions) => {
 		setIsLoading(false);
 		setMayLoadMoreCommunities(nextCommunities.length === limit);
 		setCommunities((currentCommunities) => [...currentCommunities, ...nextCommunities]);
+		setOffset((offset) => offset + limit);
 	}, [offsetRef, setOffset, limit, filter, searchTerm]);
 
 	useUpdateEffect(() => {

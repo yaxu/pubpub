@@ -14,7 +14,10 @@ export type SpamVerdict = Pick<
 	'spamScore' | 'spamScoreVersion' | 'spamScoreComputedAt' | 'fields'
 >;
 
-export type SpamCommunityQueryOrderingField = 'community-created-at' | 'spam-score';
+export type SpamCommunityQueryOrderingField =
+	| 'community-created-at'
+	| 'spam-score'
+	| 'spam-tag-updated-at';
 
 export type SpamCommunityQueryOrdering = {
 	direction: 'ASC' | 'DESC';

@@ -18,7 +18,7 @@ export const filters: SpamCommunitiesFilter[] = [
 		title: '🗑 Confirmed spam',
 		id: 'spam',
 		query: {
-			ordering: { field: 'community-created-at', direction: 'DESC' },
+			ordering: { field: 'spam-tag-updated-at', direction: 'DESC' },
 			status: ['confirmed-spam'],
 		},
 	},
@@ -26,7 +26,7 @@ export const filters: SpamCommunitiesFilter[] = [
 		title: '✅ Confirmed not spam',
 		id: 'not-spam',
 		query: {
-			ordering: { field: 'community-created-at', direction: 'DESC' },
+			ordering: { field: 'spam-tag-updated-at', direction: 'DESC' },
 			status: ['confirmed-not-spam'],
 		},
 	},

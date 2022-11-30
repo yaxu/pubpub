@@ -1,110 +1,83 @@
-import { Op, QueryTypes } from 'sequelize';
-import { QueryBuilder } from 'knex';
+import { Op } from 'sequelize';
 
 import * as types from 'types';
-import { knex, sequelize, Community, SpamTag } from 'server/models';
+import { Community, SpamTag } from 'server/models';
 
-const orderableFields: Record<types.SpamCommunityQueryOrderingField, string> = {
-	'community-created-at': 'Communities.createdAt',
-	'spam-score': 'SpamTags.spamScore',
+const orderableFields: Record<types.SpamCommunityQueryOrderingField, any[]> = {
+	'community-created-at': ['createdAt'],
+	'spam-tag-updated-at': [{ model: SpamTag, as: 'spamTag' }, 'updatedAt'],
+	'spam-score': [{ model: SpamTag, as: 'spamTag' }, 'spamScore'],
 };
 
-const getFieldsToQueryForUrl = (searchTerm: string) => {
+const getWhereQueryPartForUrl = (searchTerm: string) => {
 	let url: URL;
 	try {
 		url = new URL(searchTerm);
 	} catch (err: unknown) {
-		return {};
+		return [];
 	}
 	if (url.hostname.endsWith('.pubpub.org')) {
 		const subdomain = url.hostname.replace('.pubpub.org', '');
-		return { subdomain };
+		return [{ subdomain }];
 	}
-	return { domain: url.hostname };
+	return [{ domain: url.hostname }];
 };
 
-const createCommunitiesWhereClause = (query: types.SpamCommunityQuery) => {
-	const { searchTerm } = query;
-	return (builder: QueryBuilder) => {
-		if (searchTerm) {
-			const normalizedSearchTerm = `%${searchTerm.trim()}%`;
-			const urlQueryFields = getFieldsToQueryForUrl(searchTerm);
-			builder.orWhere('Communities.subdomain', 'ilike', normalizedSearchTerm);
-			builder.orWhere('Communities.domain', 'ilike', normalizedSearchTerm);
-			builder.orWhere('Communities.title', 'ilike', normalizedSearchTerm);
-			if ('domain' in urlQueryFields && urlQueryFields.domain) {
-				builder.orWhere('Communities.domain', 'ilike', urlQueryFields.domain);
-			}
-			if ('subdomain' in urlQueryFields && urlQueryFields.subdomain) {
-				builder.orWhere('Communities.subdomain', 'ilike', urlQueryFields.subdomain);
-			}
-		}
-		return builder;
+const getWhereQueryPartForFreeformEntry = (searchTerm: string) => {
+	const normalizedQuery = `%${searchTerm.trim()}%`;
+	return {
+		[Op.or]: [
+			{ title: { [Op.iLike]: normalizedQuery } },
+			{ subdomain: { [Op.iLike]: normalizedQuery } },
+			{ domain: { [Op.iLike]: normalizedQuery } },
+		],
 	};
 };
 
-const createJoinToSpamTags = (query: types.SpamCommunityQuery) => {
-	const { status } = query;
-	return (builder: QueryBuilder) => {
-		builder.innerJoin('SpamTags', {
-			'SpamTags.id': 'Communities.spamTagId',
-			'SpamTags.status': knex.raw('some(?::text[])', [status]),
-		});
-		return builder;
-	};
+const getCommunityWhereQuery = (searchTerm: undefined | string) => {
+	if (searchTerm) {
+		return {
+			where: {
+				[Op.or]: [
+					getWhereQueryPartForFreeformEntry(searchTerm),
+					getWhereQueryPartForUrl(searchTerm),
+				],
+			},
+		};
+	}
+	return {};
 };
 
-const createOrderLimitOffset = (query: types.SpamCommunityQuery) => {
-	const { offset, limit, ordering } = query;
-	return (builder: QueryBuilder) => {
-		if (ordering) {
-			const { field, direction } = ordering;
-			const orderableField = orderableFields[field];
-			const normalizedDirection = direction.toLowerCase() === 'asc' ? 'asc' : 'desc';
-			builder.orderByRaw(`?? ${normalizedDirection}`, [orderableField]);
-		}
-		if (typeof limit === 'number') {
-			builder.limit(limit);
-		}
-		console.log('offset', offset, typeof offset);
-		if (typeof offset === 'number') {
-			builder.offset(offset);
-		}
-		return builder;
-	};
+const getSpamTagWhereQuery = (status: undefined | types.SpamStatus[]) => {
+	if (status) {
+		return { where: { status: { [Op.in]: status } } };
+	}
+	return {};
 };
 
-const buildCommunityIdsQuery = (query: types.SpamCommunityQuery) => {
-	const whereClause = createCommunitiesWhereClause(query);
-	const joinToSpamTags = createJoinToSpamTags(query);
-	const orderLimitOffset = createOrderLimitOffset(query);
-	const select = knex.select({ id: 'Communities.id' }).from('Communities');
-	return [whereClause, joinToSpamTags, orderLimitOffset]
-		.reduce((builder, appl) => appl(builder), select)
-		.toSQL()
-		.toNative();
+const getQueryOrdering = (ordering: types.SpamCommunityQueryOrdering) => {
+	const { field, direction } = ordering;
+	return [[...orderableFields[field], direction]];
 };
 
-const sortCommunitiesByListOfIds = (communities: any[], communityIds: string[]) => {
-	return communities
-		.concat()
-		.sort((a, b) => communityIds.indexOf(a.id) - communityIds.indexOf(b.id));
-};
-
-const getCommunityIdsForQuery = async (query: types.SpamCommunityQuery) => {
-	const { sql, bindings } = buildCommunityIdsQuery(query);
-	console.log(sql, bindings);
-	const results = await sequelize.query(sql, { type: QueryTypes.SELECT, bind: bindings });
-	return results.map((r) => r.id);
-};
-
-export const queryCommunitiesForSpamManagement = async (
+export const queryCommunitiesForSpamManagement = (
 	query: types.SpamCommunityQuery,
-): Promise<types.DefinitelyHas<types.Community, 'spamTag'>[]> => {
-	const communityIds = await getCommunityIdsForQuery(query);
-	const communities = await Community.findAll({
-		where: { id: { [Op.in]: communityIds } },
-		include: [{ model: SpamTag, as: 'spamTag' }],
+): Promise<types.DefinitelyHas<types.Community, 'spamTag'>> => {
+	const { limit, offset, ordering, status, searchTerm } = query;
+	return Community.findAll({
+		...getCommunityWhereQuery(searchTerm),
+		attributes: ['id', 'title', 'subdomain', 'domain', 'description', 'createdAt'],
+		limit,
+		offset,
+		subQuery: false,
+		order: getQueryOrdering(ordering),
+		include: [
+			{
+				model: SpamTag,
+				as: 'spamTag',
+				distinct: true,
+				...getSpamTagWhereQuery(status),
+			},
+		],
 	});
-	return sortCommunitiesByListOfIds(communities, communityIds);
 };

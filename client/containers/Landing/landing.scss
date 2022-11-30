@@ -646,6 +646,9 @@ $leftColumnWidth: 20%;
 				.featured-space {
 					border-bottom: 1px dashed #fff;
 					padding-top: 20px;
+					.communities-mobile {
+						display: none;
+					}
 					.community-block {
 						color: #fff;
 						.bp3-tab-list {
@@ -979,7 +982,7 @@ $leftColumnWidth: 20%;
 				align-items: flex-start;
 				flex-direction: column;
 				justify-content: space-between;
-				width: 85%;
+				width: 90%;
 				h1 {
 					font-size: 60px;
 				}
@@ -1324,7 +1327,7 @@ $leftColumnWidth: 20%;
 						padding-top: 50px;
 						font-size: 18px;
 						letter-spacing: 1.25px;
-						margin-bottom: 25px;
+						margin-bottom: 10px;
 					}
 					.featured-space {
 						border-bottom: 1px dashed #fff;
@@ -1333,6 +1336,7 @@ $leftColumnWidth: 20%;
 							display: none;
 						}
 						.communities-mobile {
+							display: block;
 							width: 100%;
 							height: auto;
 							.block {
@@ -1340,13 +1344,16 @@ $leftColumnWidth: 20%;
 								display: flex;
 								flex-direction: column;
 								color: #fff;
+								border-bottom: 1px dashed #dcdcdc;
 								.title-header {
-									padding-top: 20px;
+									padding-top: 25px;
+									padding-bottom: 10px;
 									padding-left: 10px;
 									display: flex;
 									flex-direction: row;
 									height: 50px;
 									align-items: center;
+									font-size: 18px;
 									.icon {
 										svg {
 											width: 10px;
@@ -1369,6 +1376,30 @@ $leftColumnWidth: 20%;
 								}
 								.highlights {
 									padding-bottom: 10px;
+									padding-top: 10px;
+									.header {
+										display: flex;
+										flex-direction: row;
+										p {
+											text-transform: uppercase;
+											font-weight: 200;
+											font-size: 10px;
+										}
+										.icon {
+											svg {
+												width: 10px;
+												height: 10px;
+												margin-left: 10px;
+												margin-right: 10px;
+												margin-top: 6px;
+											}
+										}
+									}
+								}
+							}
+							.block:first-of-type {
+								.title-header {
+									padding-top: 5px;
 								}
 							}
 						}

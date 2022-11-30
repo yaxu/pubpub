@@ -201,7 +201,7 @@ const Landing = (props: Props) => {
 						<div className="highlights">
 							<div className="header">
 								<Icon icon="badge" className="icon" />
-								<span>Highlights</span>
+								<p>Highlights</p>
 							</div>
 							<div>{highlightsCommaList}</div>
 						</div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Tag, Intent, ButtonGroup } from '@blueprintjs/core';
 
 import { Community, DefinitelyHas, SpamStatus } from 'types';
@@ -26,8 +26,23 @@ const getIntentForSpamScore = (spamScore: number): Intent => {
 const CommunitySpamEntry = (props: Props) => {
 	const { community } = props;
 	const { title, description, createdAt, spamTag } = community;
-	const { spamScore, status: initialStatus } = spamTag;
+	const { spamScore, status: initialStatus, fields } = spamTag;
 	const [status, setUpdatedStatus] = useState<null | SpamStatus>(initialStatus);
+
+	const fieldsJsonString = useMemo(() => JSON.stringify(fields, null, 2), [fields]);
+
+	const renderFieldsReport = () => {
+		return (
+			<div className="fields-report">
+				<details>
+					<summary>Matched fields</summary>
+					<code>
+						<pre>{fieldsJsonString}</pre>
+					</code>
+				</details>
+			</div>
+		);
+	};
 
 	const renderStatusTag = () => {
 		if (status === 'unreviewed') {
@@ -36,13 +51,13 @@ const CommunitySpamEntry = (props: Props) => {
 		if (status === 'confirmed-spam') {
 			return (
 				<Tag intent="danger" icon="cross">
-					Quarantined as spam
+					Confirmed spam
 				</Tag>
 			);
 		}
 		return (
 			<Tag intent="success" icon="tick">
-				Not spam
+				Confirmed not spam
 			</Tag>
 		);
 	};
@@ -81,6 +96,7 @@ const CommunitySpamEntry = (props: Props) => {
 				</a>
 			</div>
 			{description && <div className="description">{description}</div>}
+			{Object.keys(fields).length > 0 && renderFieldsReport()}
 			<div className="details">
 				<div className="tags">
 					{renderStatusTag()}

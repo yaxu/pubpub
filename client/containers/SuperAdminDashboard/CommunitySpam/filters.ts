@@ -8,14 +8,22 @@ export type SpamCommunitiesFilter = OverviewSearchFilter<
 export const filters: SpamCommunitiesFilter[] = [
 	{
 		title: '👀 Unreviewed',
-		id: 'queue',
+		id: 'unreviewed',
 		query: {
 			ordering: { field: 'spam-score', direction: 'DESC' },
 			status: ['unreviewed'],
 		},
 	},
 	{
-		title: '🗑 Confirmed spam',
+		title: '✨ Recently created',
+		id: 'recent',
+		query: {
+			ordering: { field: 'community-created-at', direction: 'DESC' },
+			status: ['unreviewed', 'confirmed-not-spam', 'confirmed-spam'],
+		},
+	},
+	{
+		title: '❌ Confirmed spam',
 		id: 'spam',
 		query: {
 			ordering: { field: 'spam-tag-updated-at', direction: 'DESC' },

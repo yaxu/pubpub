@@ -3,6 +3,7 @@ import useStateRef from 'react-usestateref';
 import { useUpdateEffect } from 'react-use';
 
 import { apiFetch } from 'client/utils/apiFetch';
+import { unique } from 'utils/arrays';
 
 import { CommunityWithSpam } from './types';
 import { SpamCommunitiesFilter } from './filters';
@@ -22,21 +23,24 @@ export const useSpamCommunities = (options: UseSpamCommunitiesOptions) => {
 	const [communities, setCommunities] = useState(initialCommunities);
 
 	const loadMoreCommunities = useCallback(async () => {
+		const currentOffset = offsetRef.current;
 		setIsLoading(true);
 		setMayLoadMoreCommunities(false);
+		setOffset((offset) => offset + limit);
 		const { status, ordering } = filter.query!;
 		const nextCommunities = await apiFetch.post(`/api/spamTags/queryCommunitiesForSpam?`, {
 			limit,
 			searchTerm,
-			offset: offsetRef.current,
+			offset: currentOffset,
 			status,
 			ordering,
 		});
 		setIsLoading(false);
-		setMayLoadMoreCommunities(nextCommunities.length === limit);
-		setCommunities((currentCommunities) => [...currentCommunities, ...nextCommunities]);
-		setOffset((offset) => offset + limit);
-	}, [offsetRef, setOffset, limit, filter, searchTerm]);
+		setTimeout(() => setMayLoadMoreCommunities(nextCommunities.length === limit), 0);
+		setCommunities((currentCommunities) =>
+			unique([...currentCommunities, ...nextCommunities], (c) => c.id),
+		);
+	}, [setMayLoadMoreCommunities, filter.query, limit, searchTerm, offsetRef, setOffset]);
 
 	useUpdateEffect(() => {
 		setOffset(0);

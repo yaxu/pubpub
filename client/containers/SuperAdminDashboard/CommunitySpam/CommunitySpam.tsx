@@ -29,7 +29,7 @@ const CommunitySpam = (props: Props) => {
 		});
 
 	useInfiniteScroll({
-		scrollTolerance: 100,
+		scrollTolerance: 0,
 		useDocumentElement: true,
 		onRequestMoreItems: loadMoreCommunities,
 		enabled: mayLoadMoreCommunities,

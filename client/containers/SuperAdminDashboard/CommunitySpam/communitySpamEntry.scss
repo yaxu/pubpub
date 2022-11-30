@@ -24,6 +24,16 @@
         font-style: italic;
     }
 
+    .fields-report {
+        details > summary {
+            user-select: none;
+        }
+        pre {
+            background: #eee;
+            padding: 5px;
+        }
+    }
+
     .details {
         display: flex;
         justify-content: space-between;

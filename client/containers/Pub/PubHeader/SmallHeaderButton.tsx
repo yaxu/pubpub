@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button } from 'reakit';
+import { Button } from 'ariakit';
 
 import { Icon } from 'components';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'reakit/Button';
+import { Button } from 'ariakit/Button';
 
 import { Icon } from 'components';
 

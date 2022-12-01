@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'reakit';
+import { Button } from 'ariakit';
 
 export const ControlsButton = (props) => {
 	return <Button className="controls-button" {...props} />;

@@ -4,7 +4,7 @@ import {
 	Popover as RkPopover,
 	PopoverDisclosure as RkPopoverDisclosure,
 	PopoverInitialState,
-} from 'reakit';
+} from 'ariakit';
 
 import { adaptDisclosureElementForBlueprintButton } from './blueprintAdapter';
 

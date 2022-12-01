@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { Classes } from '@blueprintjs/core';
-import * as RK from 'reakit/Menu';
+import * as RK from 'ariakit/Menu';
 
 import { MenuContext, MenuConfigContext } from './menuContexts';
 

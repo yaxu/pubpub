@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+import { Toolbar, ToolbarItem, useToolbarState } from 'ariakit';
 import { Button } from '@blueprintjs/core';
 
 import { EditorChangeObject } from 'components/Editor';

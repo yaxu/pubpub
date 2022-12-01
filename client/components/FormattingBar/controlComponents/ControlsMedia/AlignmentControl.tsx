@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@blueprintjs/core';
-import { Radio, RadioGroup, useRadioState } from 'reakit';
+import { Radio, RadioGroup, useRadioState } from 'ariakit';
 
 import { Icon } from 'components';
 

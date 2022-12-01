@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Checkbox } from 'reakit/Checkbox';
+import { Checkbox } from 'ariakit/Checkbox';
 
 import { ActivityFilter, ScopeId } from 'types';
 import { Icon, IconName } from 'components';

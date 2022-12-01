@@ -1,5 +1,5 @@
 import React from 'react';
-import { Provider as RKProvider } from 'reakit';
+import { Provider as RKProvider } from 'ariakit';
 import classNames from 'classnames';
 
 import {

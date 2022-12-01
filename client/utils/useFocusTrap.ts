@@ -23,7 +23,7 @@ const isChildOfReakitPortal = (node: Node) => {
 	}
 	return ancestors
 		.filter((ancestor): ancestor is Element => ancestor instanceof Element)
-		.some((ancestor) => ancestor.classList?.contains('__reakit-portal'));
+		.some((ancestor) => ancestor.classList?.contains('__ariakit-portal'));
 };
 
 const rememberScrollPosition = () => {

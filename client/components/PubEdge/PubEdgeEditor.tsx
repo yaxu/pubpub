@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { EditableText, TagInput } from '@blueprintjs/core';
-import { Button as RKButton } from 'reakit/Button';
+import { Button as RKButton } from 'ariakit/Button';
 
 import { DatePicker } from 'components';
 import { getHostnameForUrl } from 'utils/pubEdge';

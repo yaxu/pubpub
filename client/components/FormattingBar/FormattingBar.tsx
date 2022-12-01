@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import { Toolbar, ToolbarItem, useToolbarState } from 'reakit';
+import { Toolbar, ToolbarItem, useToolbarState } from 'ariakit';
 import { EditorView } from 'prosemirror-view';
 
 import { usePageContext } from 'utils/hooks';

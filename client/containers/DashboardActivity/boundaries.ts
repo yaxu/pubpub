@@ -103,8 +103,16 @@ export const getBoundaryGroupsForSortedActivityItems = (
 		const laterBoundary = boundaries[boundaryIndex];
 		const earlierBoundary = boundaries[boundaryIndex + 1];
 		const itemsBetweenTheseBoundaries: RenderedActivityItem[] = [];
+		const accountedItems: Set<RenderedActivityItem['id']> = new Set();
 		while (items[0] && itemFitsBetweenBoundaries(items[0], laterBoundary, earlierBoundary)) {
-			itemsBetweenTheseBoundaries.push(items.shift()!);
+			const item = items.shift()!;
+			if (!accountedItems.has(item.id)) {
+				accountedItems.add(item.id);
+				itemsBetweenTheseBoundaries.push(item);
+				console.log('a goodun');
+			} else {
+				console.log('bum news: ', { item, itemsBetweenTheseBoundaries, accountedItems });
+			}
 		}
 		if (itemsBetweenTheseBoundaries.length > 0) {
 			boundaryGroups.push({

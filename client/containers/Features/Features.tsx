@@ -61,32 +61,8 @@ const Features = function () {
 
 	return (
 		<div id="features-box">
-			<div className="container">
-				<div className="subtitle-1">
-					a feature rich platform <span className="smaller">for</span>
-				</div>
-				<div className="subtitle-1">authoring & publishing</div>
-			</div>
 			<div className="features-list">
-				<div className="feature">
-					<div className="container">
-						<p className="title">Dashboard to control settings & processes</p>
-						<div className="content">
-							<div className="bullets">
-								<ul>
-									<li>Control settings at any scope level.</li>
-									<li>Explore & access to all your content in one place.</li>
-									<li>Designed to make administrative tasks much simpler.</li>
-								</ul>
-							</div>
-							<img
-								className="graphic"
-								src="/static/landing/features/dashboard.png"
-								alt="alt"
-							/>
-						</div>
-					</div>
-				</div>
+				<div className="section-title">recently added features</div>
 				<div className="feature alt-row">
 					<div className="container">
 						<p className="title">Create Workflows for Submissions & Reviews</p>
@@ -110,18 +86,18 @@ const Features = function () {
 				</div>
 				<div className="feature">
 					<div className="container">
-						<p className="title">Cascading Settings</p>
+						<p className="title">Dashboard to control settings & processes</p>
 						<div className="content">
 							<div className="bullets">
 								<ul>
-									<li>Set default pub-settings at higher scope levels.</li>
-									<li>Expedite & standardize your workflows.</li>
-									<li>Implement consistent styling across content.</li>
+									<li>Control settings at any scope level.</li>
+									<li>Explore & access to all your content in one place.</li>
+									<li>Designed to make administrative tasks much simpler.</li>
 								</ul>
 							</div>
 							<img
 								className="graphic"
-								src="/static/landing/features/cascading.png"
+								src="/static/landing/features/dashboard.png"
 								alt="alt"
 							/>
 						</div>
@@ -149,6 +125,25 @@ const Features = function () {
 						</div>
 					</div>
 				</div>
+				<div className="feature">
+					<div className="container">
+						<p className="title">Cascading Settings</p>
+						<div className="content">
+							<div className="bullets">
+								<ul>
+									<li>Set default pub-settings at higher scope levels.</li>
+									<li>Expedite & standardize your workflows.</li>
+									<li>Implement consistent styling across content.</li>
+								</ul>
+							</div>
+							<img
+								className="graphic"
+								src="/static/landing/features/cascading.png"
+								alt="alt"
+							/>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div className="otherfeatures-box">
 				<div className="container">
@@ -162,6 +157,16 @@ const Features = function () {
 						&nbsp;to see other new features we have in the pipeline!
 					</div>
 				</div>
+			</div>
+			<div className="container callout">
+				<div className="subtitle-1">
+					a feature rich platform <span className="smaller">for</span>
+				</div>
+				<div className="subtitle-1">authoring, publishing & editorial review</div>
+				<a href="/community/create" className="custom-callout-button-2">
+					<span>Start creating...</span>
+					<Icon icon="chevron-right" className="icon" />
+				</a>
 			</div>
 		</div>
 	);

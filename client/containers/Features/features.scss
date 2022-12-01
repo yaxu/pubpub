@@ -1,32 +1,50 @@
 #features-box {
   font-family: motiva-sans, sans-serif;
   width: 100%;
-  margin-top: 35px;
+  margin-top: 50px;
   .container {
     width: 96%;
     margin-left: auto;
     margin-right: auto;
     max-width: 1200px;
   }
+  .callout {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
   .subtitle-1 {
-    font-size: 5em;
+    font-size: 4em;
     font-weight: 200;
     color: #d8d8d8;
     line-height: 1.3em;
     .smaller {
       font-style: italic;
-      font-size: 40px;
+      font-size: 32px;
     }
   }
   .features-list {
     width: 100%;
-    margin-top: 35px;
+    margin-top: 50px;
+    .section-title {
+      width: 96%;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 1200px;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 1.25px;
+      text-transform: uppercase;
+      padding-top: 50px;
+      margin-bottom: 25px;
+      color: #1f1f1f;
+    }
     .feature {
       padding-top: 25px;
       padding-bottom: 25px;
       border-top: 1px dashed #d6d6d6;
+      background-color: #1f1f1f;
       .title {
-        color: #000;
+        color: #f6f6f6;
         font-size: 36px;
         font-weight: 200;
         line-height: 36px;
@@ -46,6 +64,7 @@
             margin-left: 0;
             padding-left: 1em;
             text-indent: -1em;
+            color: #d8d8d8;
             li {
               padding-bottom: 15px;
               font-weight: 200;
@@ -66,6 +85,14 @@
     }
     .alt-row {
       background-color: #f6f6f6;
+      .container {
+        .title {
+          color: #000;
+        }
+        .content .bullets ul {
+          color: #1f1f1f;
+        }
+      }
     }
   } 
   .otherfeatures-box {
@@ -84,7 +111,7 @@
         text-transform: uppercase;
         padding-top: 50px;
         margin-bottom: 25px;
-        color: #fff;
+        color: #f6f6f6;
       }
       .feature-grid {
         margin-top: 50px;
@@ -155,11 +182,23 @@
     .features-list {
       width: 100%;
       margin-top: 20px;
+      .section-title {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        font-weight: 400;
+        font-size: 18px;
+        letter-spacing: 1.25px;
+        text-transform: uppercase;
+        padding-top: 50px;
+        margin-bottom: 25px;
+        color: #1f1f1f;
+      }
       .feature {
         padding-top: 10px;
         padding-bottom: 10px;
         .title {
-          color: #000;
+          color: #f6f6f6;
           font-size: 28px;
           font-weight: 200;
           line-height: 34px;

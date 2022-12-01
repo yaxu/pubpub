@@ -156,7 +156,7 @@ const Landing = (props: Props) => {
 		flattenedCommunities[0].meta.backgroundColor,
 	);
 
-	const handleCommunityTabChange = (communityTabId: number, targetColor: string) => {
+	const handleCommunityTabChange = (communityTabId: number) => {
 		setTabId(communityTabId);
 		setFeaturedCommunityColor(flattenedCommunities[communityTabId - 1].meta.backgroundColor);
 	};
@@ -173,25 +173,48 @@ const Landing = (props: Props) => {
 		);
 	});
 
+	const featureGridMobile = features.slice(0, 5).map((feature) => {
+		return (
+			<div className="feature" key={feature.icon}>
+				<Icon icon={feature.icon} className="icon" />
+				<div className="description">
+					<h4>{feature.title}</h4>
+					<p>{feature.desc}</p>
+				</div>
+			</div>
+		);
+	});
+
+	featureGridMobile.push(
+		<a href="/community/create" className="custom-callout-button-2">
+			<span>Explore PubPub Features</span>
+			<Icon icon="chevron-right" className="icon" />
+		</a>,
+	);
+
 	const communitiesBlock = () => {
 		const communityMobileBlocks = () =>
 			flattenedCommunities.map((flat, index) => {
+				let joinedString = '';
 				const highlightsCommaList = () => {
-					return (
-						<ul>
-							{getTextFromDoc(jsonToNode(flat.meta.highlights))
-								.split('#')
-								.map((highlight) => {
-									return <li>{highlight}</li>;
-								})}
-						</ul>
-					);
+					getTextFromDoc(jsonToNode(flat.meta.highlights))
+						.split('#')
+						.forEach((highlight) => {
+							if (joinedString !== '') {
+								joinedString = joinedString + ', ' + highlight;
+							} else {
+								joinedString = highlight;
+							}
+						});
+					return <div>{joinedString}</div>;
 				};
 				return (
 					<div className="block" style={{ backgroundColor: flat.meta.backgroundColor }}>
 						<div className="title-header">
 							<Icon icon="office" className="icon" />
-							<div className="name">{flat.title}</div>
+							<a className="name" href={flat.url}>
+								{flat.title}
+							</a>
 						</div>
 						<img
 							className="community-image"
@@ -201,9 +224,9 @@ const Landing = (props: Props) => {
 						<div className="highlights">
 							<div className="header">
 								<Icon icon="badge" className="icon" />
-								<p>Highlights</p>
+								<p>community highlights</p>
 							</div>
-							<div>{highlightsCommaList}</div>
+							<div className="list">{highlightsCommaList()}</div>
 						</div>
 					</div>
 				);
@@ -371,16 +394,22 @@ const Landing = (props: Props) => {
 						<p className="subtitle-2">knowledge communities</p>
 					</div>
 					<a href="/community/create" className="custom-callout-button-1">
-						Create your community
+						<span>Create your community</span>
+						<Icon icon="chevron-right" className="icon" />
 					</a>
 				</div>
 				<div className="title-popovers">
 					<div className="popover">
 						<img src="/static/landing/_landing_popover1.png" />
+						<div className="content">Popover content</div>
 					</div>
 					<div className="popover">
 						<img src="/static/landing/_landing_popover2.png" />
+					</div>
+					<div className="popover">
 						<img src="/static/landing/_landing_popover3.png" />
+					</div>
+					<div className="popover">
 						<img src="/static/landing/_landing_popover4.png" />
 					</div>
 				</div>
@@ -396,7 +425,8 @@ const Landing = (props: Props) => {
 						<p>share it with audiences who care.</p>
 					</div>
 					<a href="/community/create" className="custom-callout-button-2">
-						Start creating now...
+						<span>Create your community</span>
+						<Icon icon="chevron-right" className="icon" />
 					</a>
 				</div>
 				{/* END Callout Repeat Block */}
@@ -453,6 +483,7 @@ const Landing = (props: Props) => {
 					<div className="container">
 						<div className="title">features of pubpub</div>
 						<div className="feature-grid">{featureGrid}</div>
+						<div className="feature-grid-mobile">{featureGridMobile}</div>
 					</div>
 				</div>
 
@@ -469,7 +500,8 @@ const Landing = (props: Props) => {
 								<p>create your own community now!</p>
 							</div>
 							<a href="/community/create" className="custom-callout-button-2">
-								Start here...
+								<span>Start here...</span>
+								<Icon icon="chevron-right" className="icon" />
 							</a>
 						</div>
 					</div>

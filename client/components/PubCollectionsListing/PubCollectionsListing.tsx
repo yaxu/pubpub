@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Divider, Button, Tooltip } from '@blueprintjs/core';
-import { Button as RKButton } from 'ariakit/Button';
+import { Button as RKButton } from 'ariakit';
 
 import { Collection, CollectionPub as BareCollectionPub, Pub } from 'types';
 import { DragDropListing, Icon, QueryListDropdown, PrimaryCollectionExplanation } from 'components';

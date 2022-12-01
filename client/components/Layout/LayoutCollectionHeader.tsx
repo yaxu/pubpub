@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'ariakit/Button';
+import { Button } from 'ariakit';
 
 import { GridWrapper, ContributorAvatars, Icon, ClickToCopyButton } from 'components';
 import { Collection } from 'types';

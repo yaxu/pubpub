@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { Button, Spinner } from '@blueprintjs/core';
-import { Button as RKButton } from 'ariakit/Button';
+import { Button as RKButton } from 'ariakit';
 
 import { Avatar, ImageUpload, Icon } from 'components';
 

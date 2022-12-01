@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import { Tab, TabList, useTabState } from 'ariakit';
+import { Tab, TabList, useTabState } from 'ariakit/Tab';
 
 import { Icon } from 'components';
 

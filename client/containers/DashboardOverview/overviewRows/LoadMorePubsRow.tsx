@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'ariakit';
+import { Button } from 'ariakit/Button';
 import { Spinner } from '@blueprintjs/core';
 
 import { Icon } from 'components';

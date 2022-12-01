@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { Button } from 'ariakit/Button';
+import { Button } from 'ariakit/button';
 
 import { Icon } from 'components';
 import { Callback } from 'types';

@@ -9,7 +9,7 @@ import {
 	InputGroup,
 	Overlay,
 } from '@blueprintjs/core';
-import { RadioGroup, Radio, useRadioState } from 'ariakit/Radio';
+import { RadioGroup, Radio, useRadioState } from 'ariakit/radio';
 
 import { Icon } from 'components';
 import { usePageContext } from 'utils/hooks';

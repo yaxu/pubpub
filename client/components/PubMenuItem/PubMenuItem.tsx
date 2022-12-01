@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Button } from 'ariakit/Button';
+import { Button } from 'ariakit/button';
 import { Classes } from '@blueprintjs/core';
 
 import { Byline, PreviewImage } from 'components';

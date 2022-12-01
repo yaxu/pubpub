@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@blueprintjs/core';
-import { MenuDisclosureProps } from 'ariakit/Menu';
+import { MenuDisclosureProps } from 'ariakit/menu';
 
 import { LoginData } from 'types';
 import { Avatar, Menu, MenuItem, MobileAware, MobileAwareRenderProps } from 'components';

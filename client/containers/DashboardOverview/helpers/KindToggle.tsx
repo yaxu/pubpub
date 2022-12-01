@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from 'ariakit/Checkbox';
+import { Checkbox } from 'ariakit/checkbox';
 
 import { Icon, IconName } from 'components';
 

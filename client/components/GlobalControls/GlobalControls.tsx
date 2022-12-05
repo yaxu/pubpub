@@ -9,6 +9,7 @@ import {
 import { usePageContext } from 'utils/hooks';
 import { canSelectCommunityForDevelopment } from 'utils/environment';
 import { pubPubIcons } from 'client/utils/icons';
+import { MenuItem } from 'components/Menu';
 
 import UserMenu from './UserMenu';
 import LoginButton from './LoginButton';
@@ -97,11 +98,41 @@ const GlobalControls = (props: Props) => {
 		if (isBasePubPub) {
 			return (
 				<>
-					<GlobalControlsButton href="/explore" mobileOrDesktop={{ text: 'Explore' }} />
-					<GlobalControlsButton href="/features" mobileOrDesktop={{ text: 'Features' }} />
-					<GlobalControlsButton href="/pricing" mobileOrDesktop={{ text: 'Pricing' }} />
-					<GlobalControlsButton href="/about" mobileOrDesktop={{ text: 'About' }} />
-					{renderSearch()}
+					<div className="base-links">
+						<GlobalControlsButton
+							href="/explore"
+							mobileOrDesktop={{ text: 'Explore' }}
+						/>
+						<GlobalControlsButton
+							href="/features"
+							mobileOrDesktop={{ text: 'Features' }}
+						/>
+						<GlobalControlsButton
+							href="/pricing"
+							mobileOrDesktop={{ text: 'Pricing' }}
+						/>
+						<GlobalControlsButton href="/about" mobileOrDesktop={{ text: 'About' }} />
+						{renderSearch()}
+					</div>
+					<div className="base-links-mobile">
+						<Menu
+							aria-label="Website Menu"
+							placement="bottom-end"
+							menuStyle={{ zIndex: 25 }}
+							disclosure={
+								<GlobalControlsButton
+									mobile={{ icon: 'menu' }}
+									desktop={{ text: 'Menu', rightIcon: 'caret-down' }}
+								/>
+							}
+						>
+							<MenuItem href="/explore" text="Explore" />
+							<MenuItem href="/features" text="Features" />
+							<MenuItem href="/pricing" text="Pricing" />
+							<MenuItem href="/pricing" text="About" />
+						</Menu>
+						{renderSearch()}
+					</div>
 				</>
 			);
 		}

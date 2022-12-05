@@ -16,6 +16,10 @@
 	.bp3-button {
 		padding: 0px 10px;
 	}
+
+	.base-links-mobile {
+		display: none;
+	}
 }
 
 // AccentStyle.tsx provides a very specific color selector for buttons under .bp3-dark
@@ -23,5 +27,19 @@
 .bp3-dark {
 	.global-controls-component {
 		@include button-colors;
+	}
+}
+
+
+/***** Mobile *****/
+@media only screen and (max-width: 720px) {
+	.global-controls-component {
+		.base-links {
+			display: none;
+		}
+
+		.base-links-mobile {
+			display: inline-block;
+		}
 	}
 }

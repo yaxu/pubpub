@@ -185,6 +185,13 @@ const Landing = (props: Props) => {
 		);
 	});
 
+	featureGrid.push(
+		<a href="/community/create" className="custom-callout-button-2">
+			<span>Explore PubPub Features</span>
+			<Icon icon="chevron-right" className="icon" />
+		</a>,
+	);
+
 	featureGridMobile.push(
 		<a href="/community/create" className="custom-callout-button-2">
 			<span>Explore PubPub Features</span>
@@ -399,19 +406,72 @@ const Landing = (props: Props) => {
 					</a>
 				</div>
 				<div className="title-popovers">
-					<div className="popover">
-						<img src="/static/landing/_landing_popover1.png" />
-						<div className="content">Popover content</div>
-					</div>
-					<div className="popover">
-						<img src="/static/landing/_landing_popover2.png" />
-					</div>
-					<div className="popover">
-						<img src="/static/landing/_landing_popover3.png" />
-					</div>
-					<div className="popover">
-						<img src="/static/landing/_landing_popover4.png" />
-					</div>
+					<a href="https://commonplace.knowledgefutures.org" className="popover">
+						<img src="/static/landing/_landing_popover_community.png" alt="Community" />
+						<div className="content">
+							<div className="top">
+								<Icon icon="office" className="icon" />
+								<div className="title">community:</div>
+								<div className="name">Common Place</div>
+							</div>
+							<div className="bottom">
+								The top-level unit of PubPub, Communities can represent a single
+								book, a collection of books, a journal, a blog, a preprint server,
+								or any other content.
+							</div>
+						</div>
+					</a>
+					<a href="https://hdsr.mitpress.mit.edu/volume4issue4" className="popover">
+						<img
+							src="/static/landing/_landing_popover_collection.png"
+							alt="Collection"
+						/>
+						<div className="content collection">
+							<div className="top">
+								<Icon icon="office" className="icon" />
+								<div className="title">collection:</div>
+								<div className="name">HDSR Issue 4.4, Fall 2022</div>
+							</div>
+							<div className="bottom">
+								Collections can be used as simple tags, or they can be created to
+								organize books, journal issues, or conference proceedings.
+							</div>
+						</div>
+					</a>
+					<a
+						href="https://tmb.apaopen.org/pub/nonverbal-overload/release/2"
+						className="popover"
+					>
+						<img src="/static/landing/_landing_popover_pub.png" alt="Pub" />
+						<div className="content pub">
+							<div className="top">
+								<Icon icon="pubDoc" className="icon" />
+								<div className="title">Pub:</div>
+								<div className="name">
+									Nonverbal Overload: A Theoretical Argument for the Causes of
+									Zoom Fatigue
+								</div>
+							</div>
+							<div className="bottom">
+								Collections can be used as simple tags, or they can be created to
+								organize books, journal issues, or conference proceedings.
+							</div>
+						</div>
+					</a>
+					<a href="/community/create" className="popover">
+						<div className="action">
+							<Icon icon="plus" className="icon" />
+						</div>
+						<div className="content signup">
+							<div className="top">
+								<div className="title">start here...</div>
+								<Icon icon="caret-right" className="icon" />
+							</div>
+							<div className="bottom">
+								Create your community and start authoring content!
+							</div>
+						</div>
+					</a>
 				</div>
 			</div>
 			{/* END Jumbotron */}
@@ -512,28 +572,40 @@ const Landing = (props: Props) => {
 						<div className="title">pubpub is trusted by</div>
 						<div className="links">
 							<div className="row">
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/apa.png" />
+								<a href="https://www.apa.org" className="logo-link">
+									<img src="/static/landing/logos/apa.png" alt="APA" />
 								</a>
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/arcadia.png" />
+								<a href="https://www.arcadia.science" className="logo-link">
+									<img src="/static/landing/logos/arcadia.png" alt="Arcadia" />
 								</a>
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/hdsi.png" />
+								<a href="https://datascience.harvard.edu" className="logo-link">
+									<img
+										src="/static/landing/logos/hdsi.png"
+										alt="Harvard Data Science Initiative"
+									/>
 								</a>
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/crimrxiv.png" />
+								<a href="https://www.crimrxiv.com" className="logo-link">
+									<img src="/static/landing/logos/crimrxiv.png" alt="Crim rxiv" />
 								</a>
 							</div>
 							<div className="row">
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/africarxiv.png" />
+								<a href="https://info.africarxiv.org" className="logo-link">
+									<img
+										src="/static/landing/logos/africarxiv.png"
+										alt="Africa Arxiv"
+									/>
 								</a>
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/collegeofcomputing.png" />
+								<a href="https://computing.mit.edu" className="logo-link">
+									<img
+										src="/static/landing/logos/collegeofcomputing.png"
+										alt="MIT College of Computing"
+									/>
 								</a>
-								<a href="" className="logo-link">
-									<img src="/static/landing/logos/mediastudies.png" />
+								<a href="https://www.mediastudies.press" className="logo-link">
+									<img
+										src="/static/landing/logos/mediastudies.png"
+										alt="Media Studies Press"
+									/>
 								</a>
 								<div className="more">
 									and <span>4000+</span> other communities all over the world

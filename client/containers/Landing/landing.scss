@@ -1342,18 +1342,19 @@ $leftColumnWidth: 20%;
 							.logo-link {
 								width: 150px;
 								text-decoration: none;
-								padding-right: 15px;
+								padding: 5px 10px;
 								img {
-									max-width: 150px;
+									max-width: 125px;
 								}
 							}
 							.more {
 								width: 150px;
 								letter-spacing: 0px;
 								text-align: center;
-								margin-left: 20px;
+								margin-left: 25px;
+								font-size: 0.8em;
 								span {
-									font-size: 24px;
+									font-size: 20px;
 									font-weight: 600;
 								}
 							}
@@ -1366,6 +1367,7 @@ $leftColumnWidth: 20%;
 				height: auto;
 				background-color: #fff;
 				transition: none;
+				padding-bottom: 10px;
 				.container {
 					width: 100%;
 					margin-left: auto;
@@ -1480,8 +1482,11 @@ $leftColumnWidth: 20%;
 						display: flex;
 						flex-direction: column;
 						justify-content: space-between;
+						.text-blocks {
+							width: 85%;
+						}
 						.custom-callout-button-2 {
-							width: 90%;
+							width: 85%;
 							background-color: rgba(0, 0, 0, 0);
 							color: #fff;
 							border-color: #fff;

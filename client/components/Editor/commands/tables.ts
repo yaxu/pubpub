@@ -32,10 +32,15 @@ const toggleTableLabel: Command = (state: EditorState, dispatch?: Dispatch) => {
 	);
 
 	if (table) {
-		const transaction = state.tr.setNodeMarkup(table.pos, table.node.type, {
-			...table.node.attrs,
-			hideLabel: !table.node.attrs.hideLabel,
-		});
+		const transaction = state.tr.setNodeMarkup(
+			table.pos,
+			table.node.type,
+			{
+				...table.node.attrs,
+				hideLabel: !table.node.attrs.hideLabel,
+			},
+			table.node.marks,
+		);
 		if (dispatch) {
 			dispatch(transaction);
 		}

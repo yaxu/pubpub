@@ -1,5 +1,5 @@
 import { tableNodes } from 'prosemirror-tables';
-import { Fragment, Node as ProsemirrorNode, NodeRange } from 'prosemirror-model';
+import { Fragment, Node as ProsemirrorNode } from 'prosemirror-model';
 
 import { pruneFalsyValues } from 'utils/arrays';
 import { withValue } from 'utils/fp';

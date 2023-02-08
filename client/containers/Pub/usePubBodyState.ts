@@ -25,7 +25,7 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 			initialDocKey,
 			isInMaintenanceMode,
 			isRelease,
-			isReview,
+			isReviewingPub,
 			discussions,
 		},
 		submissionState,
@@ -117,16 +117,16 @@ export const usePubBodyState = (options: Options): PubBodyState => {
 		};
 	}
 
-	if (isReview) {
+	if (isReviewingPub) {
 		return {
 			editorKey: 'review',
 			isReadOnly: true,
 			initialHistoryKey: initialDocKey,
 			initialContent: initialDoc,
 			includeCollabPlugin: false,
-			includeDiscussionsPlugin: false,
-			discussionAnchors: null,
-			canCreateAnchoredDiscussions: false,
+			includeDiscussionsPlugin: true,
+			discussionAnchors,
+			canCreateAnchoredDiscussions: true,
 		};
 	}
 

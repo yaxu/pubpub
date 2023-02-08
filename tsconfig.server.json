@@ -3,14 +3,15 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist/server",
-    "incremental": true
+    "incremental": true,
   },
   "include": [
     "server/**/*",
     "client/**/*",
     "types/**/*",
     "utils/**/*",
-    "workers/**/*"
+    "workers/**/*",
+    "facets/**/*",
   ],
   "exclude": [
     "../**/__tests__/**/*",

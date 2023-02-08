@@ -8,7 +8,7 @@ import {
 	ActivityFilter,
 	WithId,
 	IdIndex,
-	Scope,
+	ScopeId,
 } from 'types';
 import {
 	attributesPublicUser,
@@ -37,7 +37,7 @@ type PromiseRecord<T extends { [k: string]: any }> = {
 
 type FetchActivityItemsOptions = {
 	since?: string;
-	scope: Scope;
+	scope: ScopeId;
 	filters?: ActivityFilter[];
 	limit?: number;
 	offset?: number;
@@ -81,7 +81,7 @@ const filterDefinitions: Record<ActivityFilter, SequelizeFilter | SequelizeFilte
 	submission: itemKindFilter(['submission-status-updated']),
 };
 
-const getWhereQueryForChildScopes = async (scope: Scope) => {
+const getWhereQueryForChildScopes = async (scope: ScopeId) => {
 	if ('pubId' in scope) {
 		return { pubId: scope.pubId };
 	}
@@ -145,7 +145,7 @@ const fetchActivityItemModels = async (
 
 const getActivityItemAssociationIds = (
 	items: types.ActivityItem[],
-	scope?: Scope,
+	scope?: ScopeId,
 ): ActivityAssociationIds => {
 	const associationIds = createActivityAssociationSets();
 	const {
@@ -198,7 +198,9 @@ const getActivityItemAssociationIds = (
 			thread.add(item.payload.threadId);
 			if (item.payload.threadComment) {
 				threadComment.add(item.payload.threadComment.id);
-				user.add(item.payload.threadComment.userId);
+				if (item.payload.threadComment.userId) {
+					user.add(item.payload.threadComment.userId);
+				}
 			}
 		} else if (item.kind === 'pub-review-comment-added') {
 			review.add(item.payload.review.id);
@@ -305,7 +307,7 @@ const fetchAssociations = (
 
 export const fetchAssociationsForActivityItems = async (
 	activityItems: types.ActivityItem[],
-	scope?: Scope,
+	scope?: ScopeId,
 ) => {
 	const associationIds = getActivityItemAssociationIds(activityItems, scope);
 	return fetchAssociations(associationIds);

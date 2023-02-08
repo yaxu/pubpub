@@ -1,5 +1,5 @@
-import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { Component } from 'react';
+import { Button, Callout, FormGroup, InputGroup } from '@blueprintjs/core';
 
 import { apiFetch } from 'client/utils/apiFetch';
 import { AssignDoi } from 'components';
@@ -129,10 +129,7 @@ class Doi extends Component<Props, State> {
 	}
 
 	disabledDueToUnmanagedPrefix() {
-		return (
-			this.props.depositTarget &&
-			!(this.props.depositTarget.password && this.props.depositTarget.username)
-		);
+		return this.props.depositTarget && !this.props.depositTarget.isPubPubManaged;
 	}
 
 	handleDeposit(doi) {
@@ -243,8 +240,7 @@ class Doi extends Component<Props, State> {
 			canIssueDoi &&
 			// a deposit has not been submitted yet for this work
 			!(justSetDoi || pubData.crossrefDepositRecordId) &&
-			// the Pub is not a supplement to another work
-			// and the community has a custom, hardcoded DOI prefix
+			// and the Community has a custom DOI prefix
 			this.props.depositTarget &&
 			doiPrefix !== PUBPUB_DOI_PREFIX
 		);
@@ -315,7 +311,7 @@ class Doi extends Component<Props, State> {
 
 		return (
 			<>
-				{!pubData.doi && <p>A DOI can be set for each Pub by admins of this community.</p>}
+				{!pubData.doi && <p>A DOI can be set for each Pub by admins of this Community.</p>}
 				{this.disabledDueToUnmanagedPrefix() && (
 					<Callout intent="warning">
 						This Pub cannot be deposited to Crossref via PubPub because there is no

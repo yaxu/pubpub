@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Classes } from '@blueprintjs/core';
 
 require('./userNav.scss');
 
@@ -19,21 +20,21 @@ const defaultProps = {
 
 const UserNav = function (props) {
 	const tabs = [
-		{ id: 0, label: `All Pubs (${props.allPubsCount})`, path: '' },
-		{ id: 1, label: `Authored Pubs (${props.authoredPubsCount})`, path: '/authored' },
+		{ id: 0, label: 'All Pubs', path: '', count: props.allPubsCount },
+		{ id: 1, label: 'Attributed Pubs', path: '/authored', count: props.authoredPubsCount },
 		// { id: 1, label: 'All Pubs', path: '/pubs' },
 		// { id: 2, label: 'Discussions', path: '/discussions' },
 	];
 	return (
 		<div className="user-nav-component">
-			<div className="bp3-tabs">
-				<div className="bp3-tab-list bp3-large" role="tablist">
+			<div className={Classes.TABS}>
+				<div className={`${Classes.TAB_LIST} ${Classes.LARGE}`} role="tablist">
 					{tabs.map((tab) => {
 						return (
 							<a
 								key={`tab-${tab.id}`}
 								href={`/user/${props.userSlug}${tab.path}`}
-								className="bp3-tab"
+								className={Classes.TAB}
 								role="tab"
 								aria-selected={
 									tab.path.indexOf(props.activeTab) > -1 ||
@@ -41,8 +42,9 @@ const UserNav = function (props) {
 										? 'true'
 										: 'false'
 								}
+								data-tab-related-count={tab.count}
 							>
-								{tab.label}
+								{tab.label} {typeof tab.count !== 'undefined' && `(${tab.count})`}
 							</a>
 						);
 					})}

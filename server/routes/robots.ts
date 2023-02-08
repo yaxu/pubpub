@@ -9,13 +9,13 @@ const buildRobotsFile = (community) => {
 	if (community) {
 		return stripIndent(`
 			User-agent: *
-			Disallow:
+			Disallow: /login?redirect=*
 			Sitemap: ${communityUrl(community)}/sitemap-index.xml
 		`).trim();
 	}
 	return stripIndent(`
 		User-agent: *
-		Disallow:
+		Disallow: /login?redirect=*
 	`).trim();
 };
 
@@ -24,7 +24,7 @@ app.get(
 	wrap(async (req, res) => {
 		let communityData;
 		if (hostIsValid(req, 'community')) {
-			const initData = await getInitialData(req, true);
+			const initData = await getInitialData(req, { isDashboard: true });
 			communityData = initData.communityData;
 		}
 

@@ -1,0 +1,28 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
+.review-component {
+	.review-button {
+		padding-top: 18px;
+		.#{$bp}-button {
+			.#{$bp}-icon {
+				color: white !important;
+			}
+			&:hover {
+				.#{$bp}-icon {
+					color: white !important;
+				}
+			}
+		}
+		.#{$bp}-button-text {
+			color: white;
+		}
+	}
+
+	.review-border {
+		border-style: solid;
+		border-color: #dddddd;
+		padding: 18px;
+	}
+}

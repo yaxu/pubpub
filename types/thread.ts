@@ -1,6 +1,12 @@
+import { DocJson } from 'types';
 import { User } from './user';
 import { Discussion } from './discussion';
 import { Review } from './review';
+
+export type Commenter = {
+	id: string;
+	name: string;
+};
 
 export type ThreadEvent = {
 	id: string;
@@ -15,10 +21,12 @@ export type ThreadComment = {
 	createdAt: string;
 	updatedAt: string;
 	text: string;
-	content: {};
-	userId: string;
+	content: DocJson;
+	userId: null | string;
 	threadId: string;
-	author?: User;
+	commenterId: null | string;
+	author?: null | User;
+	commenter?: null | Commenter;
 };
 
 export type Thread = {

@@ -1,6 +1,7 @@
 import { DOMOutputSpec, Node } from 'prosemirror-model';
 
 import { renderToKatexString } from 'utils/katex';
+import { ReferenceableNodeType } from '../types';
 
 import { counter } from './reactive/counter';
 
@@ -55,8 +56,8 @@ export default {
 	math_inline: {
 		...inlineMathSchema,
 		group: 'inline',
-		toDOM: (node: Node, { isReact } = { isReact: false }) =>
-			isReact
+		toDOM: (node: Node, { isStaticallyRendered } = { isStaticallyRendered: false }) =>
+			isStaticallyRendered
 				? renderStaticMath(node, 'math-inline', false)
 				: (['math-inline', { class: 'math-node' }, 0] as DOMOutputSpec),
 	},
@@ -69,11 +70,12 @@ export default {
 			hideLabel: { default: false },
 		},
 		reactiveAttrs: {
-			count: counter({ useNodeLabels: true }),
+			count: counter({ useNodeLabels: true, counterType: ReferenceableNodeType.Math }),
 		},
-		toDOM: (node: Node, { isReact } = { isReact: false }) =>
-			isReact
+		toDOM: (node: Node, { isStaticallyRendered } = { isStaticallyRendered: false }) => {
+			return isStaticallyRendered
 				? renderStaticMath(node, 'div', true)
-				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec),
+				: (['math-display', getMathNodeAttrs(node), 0] as DOMOutputSpec);
+		},
 	},
 };

@@ -1,5 +1,6 @@
 import React from 'react';
-import { NonIdealState } from '@blueprintjs/core';
+import { Classes, NonIdealState } from '@blueprintjs/core';
+
 import { GridWrapper, PubPreview } from 'components';
 import { usePageContext } from 'utils/hooks';
 import UserHeader from './UserHeader';
@@ -30,12 +31,10 @@ const User = (props: Props) => {
 	});
 	const authoredPubs = communityPubs.filter((pub) => {
 		const collaborators = pub.attributions || [];
-		const isAuthor = collaborators.reduce((prev, curr) => {
-			if (curr.user.id === loginData.id && curr.isAuthor) {
-				return true;
-			}
-			return prev;
-		}, false);
+		const isAuthor = collaborators.some((collaborator) => {
+			const isCurrentProfileCollaborator = collaborator.user.id === userData.id;
+			return isCurrentProfileCollaborator && collaborator.isAuthor;
+		});
 		return isAuthor;
 	});
 	const pubsToRender = mode === 'authored' ? authoredPubs : communityPubs;
@@ -59,10 +58,10 @@ const User = (props: Props) => {
 					</GridWrapper>
 					{!!externalPubs.length && (
 						<GridWrapper containerClassName="narrow nav">
-							<div className="bp3-callout external-pubs-wrapper">
+							<div className={`${Classes.CALLOUT} external-pubs-wrapper`}>
 								<a
 									href={`https://www.pubpub.org/user/${userData.slug}`}
-									className="bp3-button bp3-intent-primary"
+									className={`${Classes.BUTTON} ${Classes.INTENT_PRIMARY}`}
 								>
 									Go to Full Profile
 								</a>
@@ -100,7 +99,7 @@ const User = (props: Props) => {
 								title="No Pubs"
 								action={
 									selfProfile && !locationData.isBasePubPub ? (
-										<a href="/pub/create" className="bp3-button">
+										<a href="/pub/create" className={Classes.BUTTON}>
 											Create New pub
 										</a>
 									) : undefined

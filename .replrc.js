@@ -3,11 +3,12 @@ import chalk from 'chalk';
 import { isProd } from 'utils/environment';
 import { addWorkerTask } from 'server/utils/workers';
 import { sendEmail } from 'server/utils/email';
+import { createPubPubS3Client, assetsClient } from 'server/utils/s3';
 import { getPubDraftDoc, getPubDraftRef, editFirebaseDraftByRef } from 'server/utils/firebaseAdmin';
+import * as facets from 'server/facets';
 import * as featureFlags from 'server/featureFlag/interface';
 import * as tasks from 'workers/tasks';
-import * as models from 'server/models'
-
+import * as models from 'server/models';
 
 const pilcrow = '¶';
 const prompt = isProd() ? chalk.redBright(`[PROD] ${pilcrow} `) : chalk.greenBright(`${pilcrow} `);
@@ -42,11 +43,14 @@ const context = {
 	...tasks,
 	...models,
 	...featureFlags,
+	...facets,
 	...generateFindFunctions(),
 	clear,
 	scope,
 	addWorkerTask,
 	sendEmail,
+	createPubPubS3Client,
+	assetsClient,
 	getPubDraftDoc,
 	getPubDraftRef,
 	editFirebaseDraftByRef,

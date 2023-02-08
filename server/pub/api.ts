@@ -74,14 +74,13 @@ app.post(
 
 const getRequestIds = (req) => {
 	const user = req.user || {};
-	const { communityId, collectionId, pubId, licenseSlug, createPubToken } = req.body;
+	const { communityId, collectionId, pubId, createPubToken } = req.body;
 	return {
 		userId: user.id,
 		communityId,
 		collectionId,
 		createPubToken,
 		pubId,
-		licenseSlug,
 	};
 };
 
@@ -106,11 +105,10 @@ app.post(
 app.put(
 	'/api/pubs',
 	wrap(async (req, res) => {
-		const { userId, pubId, licenseSlug } = getRequestIds(req);
+		const { userId, pubId } = getRequestIds(req);
 		const updatableFields = await getUpdatablePubFields({
 			userId,
 			pubId,
-			licenseSlug,
 		});
 		if (updatableFields) {
 			const updateResult = await updatePub(req.body, updatableFields, userId);

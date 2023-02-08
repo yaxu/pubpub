@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 
 import { usePageContext } from 'utils/hooks';
-import { PubHistoryViewer, ClientOnly } from 'components';
+import { PubHistoryViewer } from 'components';
 import {
 	PubEdgeListing,
 	Filter as PubEdgeFilter,
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
+import { useFacetsQuery } from 'client/utils/useFacets';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
@@ -19,7 +20,6 @@ import PubHistoricalNotice from './PubHistoricalNotice';
 import PubInlineMenu from './PubInlineMenu';
 import PubLinkController from './PubLinkController';
 import PubMaintenanceNotice from './PubMaintenanceNotice';
-import Review from './Review/Review';
 
 require('./pubDocument.scss');
 
@@ -34,8 +34,9 @@ const PubDocument = () => {
 	} = usePubContext();
 	const { isViewingHistory } = historyData;
 	const { communityData, scopeData } = usePageContext();
+	const pubEdgeDisplay = useFacetsQuery((F) => F.PubEdgeDisplay);
 	const { canEdit, canEditDraft } = scopeData.activePermissions;
-	const { isReview } = pubData;
+	const { isReviewingPub } = pubData;
 	const mainContentRef = useRef<null | HTMLDivElement>(null);
 	const sideContentRef = useRef(null);
 	const editorWrapperRef = useRef(null);
@@ -60,12 +61,13 @@ const PubDocument = () => {
 			<div className="pub-grid">
 				<div className="main-content" ref={mainContentRef}>
 					<PubMaintenanceNotice pubData={pubData} />
-					{!isReview && (
+					{!isReviewingPub && (
 						<PubHistoricalNotice pubData={pubData} historyData={historyData} />
 					)}
 					<PubEdgeListing
 						className="top-pub-edges"
 						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDisplay.descriptionIsVisible}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Parent]}
 						isolated
@@ -81,33 +83,24 @@ const PubDocument = () => {
 					<PubEdgeListing
 						className="bottom-pub-edges"
 						pubData={pubData}
+						pubEdgeDescriptionIsVisible={pubEdgeDisplay.descriptionIsVisible}
 						accentColor={communityData.accentColorDark}
 						initialFilters={[PubEdgeFilter.Child, PubEdgeFilter.Sibling]}
 						initialMode={
-							pubData.pubEdgeListingDefaultsToCarousel
+							pubEdgeDisplay.defaultsToCarousel
 								? PubEdgeMode.Carousel
 								: PubEdgeMode.List
 						}
 					/>
 				</div>
 				<div className="side-content" ref={sideContentRef}>
-					{isViewingHistory && !isReview && (
+					{isViewingHistory && !isReviewingPub && (
 						<PubHistoryViewer
 							historyData={historyData}
 							pubData={pubData}
 							onClose={() => historyData.setIsViewingHistory(false)}
 							onSetCurrentHistoryKey={historyData.setCurrentHistoryKey}
 						/>
-					)}
-
-					{isReview && (
-						<ClientOnly>
-							<Review
-								pubData={pubData}
-								updatePubData={updatePubData}
-								communityData={communityData}
-							/>
-						</ClientOnly>
 					)}
 				</div>
 			</div>

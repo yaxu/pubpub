@@ -1,6 +1,6 @@
 {
 	"extends": ["airbnb", "prettier"],
-	"plugins": ["react", "import", "prettier", "react-hooks", "pubpub-rules", "@typescript-eslint"],
+	"plugins": ["react", "import", "prettier", "react-hooks", "pubpub-rules", "@typescript-eslint", "@blueprintjs"],
 	"parser": "@typescript-eslint/parser",
 	"env": {
 		"browser": true,
@@ -21,7 +21,8 @@
 					["data", "./stories/data"],
 					["stubstub", "./stubstub"],
 					["utils", "./utils"],
-					["types", "./types"]
+					["types", "./types"],
+					["facets", "./facets"]
 				],
 				"extensions": [".js", ".ts", ".tsx"]
 			}
@@ -111,7 +112,8 @@
 		"react/static-property-placement": 0,
 		"react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
 		"react/require-default-props": 0,
-		"space-before-function-paren": 0
+		"space-before-function-paren": 0,
+		"@blueprintjs/classes-constants": 2
 	},
 	"overrides": [
 		{
@@ -121,7 +123,7 @@
 			}
 		},
 		{
-			"files": ["**/*.test.ts", "**/*.test.js"],
+			"files": ["**/*.test.ts", "**/*.test.js", "**/*.test.tsx"],
 			"env": {
 				"jest": true
 			}

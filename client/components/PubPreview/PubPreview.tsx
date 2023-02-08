@@ -53,7 +53,7 @@ const PubPreview = (props: Props) => {
 		pubData,
 		size = 'large',
 	} = props;
-	const { communityData: localCommunityData, scopeData } = usePageContext();
+	const { communityData: localCommunityData, scopeData, featureFlags } = usePageContext();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [canExpand, setCanExpand] = useState(false);
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -119,10 +119,16 @@ const PubPreview = (props: Props) => {
 								className="community-banner"
 								style={{ backgroundColor: communityData.accentColorDark }}
 							>
-								<img
-									alt={`in Community ${communityData.title}`}
-									src={resizedHeaderLogo}
-								/>
+								{resizedHeaderLogo ? (
+									<img
+										src={resizedHeaderLogo}
+										alt={`in Community ${communityData.title}`}
+									/>
+								) : (
+									<span style={{ color: communityData.accentColorLight }}>
+										{communityData.title}
+									</span>
+								)}
 							</a>
 						)}
 						<a href={pubLink} title={pubData.title}>
@@ -153,7 +159,21 @@ const PubPreview = (props: Props) => {
 						</div>
 					)}
 
-					{showDescription && <div className="description">{pubData.description}</div>}
+					{showDescription && (
+						<div className="description">
+							{featureFlags.htmlPubHeaderValues ? (
+								<span
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={{
+										__html:
+											pubData.htmlDescription ?? pubData.description ?? '',
+									}}
+								/>
+							) : (
+								pubData.description
+							)}
+						</div>
+					)}
 					{!hideEdges && (
 						<PubPreviewEdges
 							pubData={pubData}

@@ -1,12 +1,18 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .nav-bar-component {
 	height: 40px;
 	overflow: hidden;
 	position: relative;
 	z-index: 1;
+	.dropdown {
+		display: inline-flex;
+	}
 	a,
 	.dropdown {
 		margin-right: 2em;
-		display: inline-flex;
 		align-items: center;
 		height: 40px;
 		user-select: none;
@@ -67,8 +73,9 @@
 		height: 90px;
 		line-height: 40px;
 		white-space: nowrap;
-		a {
+		li {
 			// margin: 0em 0.5em;
+			display: inline-flex;
 			margin: 0em 0em 0em 1em;
 			&:first-of-type {
 				margin-left: 1em;
@@ -76,13 +83,18 @@
 			// &:last-of-type {
 			// 	margin-right: 0em;
 			// }
+			a {
+				display: inline;
+				margin-right: 0;
+			}
 		}
 	}
 	li {
 		text-transform: uppercase;
 		text-decoration: inherit;
+		display: inline-flex;
 		// font-weight: 500;
-		.bp3-icon {
+		.#{$bp}-icon {
 			font-size: 14px;
 			margin-left: 0.25em;
 			position: relative;
@@ -95,13 +107,13 @@
 	}
 }
 .nav-bar-popover {
-	.bp3-icon-lock2 {
+	.#{$bp}-icon-lock2 {
 		font-size: 14px;
 		padding-right: 0.15em;
 		position: relative;
 		top: -1px;
 	}
-	.bp3-icon-share {
+	.#{$bp}-icon-share {
 		padding: 3px;
 		opacity: 0.7;
 	}

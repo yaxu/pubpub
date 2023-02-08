@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-syntax */
-import { ForbiddenError } from 'server/utils/errors';
+/* eslint-disable no-restricted-syntax */ import { ForbiddenError } from 'server/utils/errors';
 import {
+	Commenter,
 	Discussion,
 	DiscussionAnchor,
 	Thread,
@@ -10,9 +10,11 @@ import {
 	Visibility,
 	includeUserModel,
 } from 'server/models';
+import { VisibilityAccess, DocJson } from 'types';
 import { getReadableDateInYear } from 'utils/dates';
 import { createDiscussionAnchor } from 'server/discussionAnchor/queries';
-import { VisibilityAccess } from 'types';
+import { createThreadComment } from 'server/threadComment/queries';
+import { createThread } from 'server/thread/queries';
 
 const findDiscussionWithUser = (id) =>
 	Discussion.findOne({
@@ -21,6 +23,7 @@ const findDiscussionWithUser = (id) =>
 		},
 		include: [
 			includeUserModel({ as: 'author' }),
+			{ model: Commenter, as: 'commenter' },
 			{ model: DiscussionAnchor, as: 'anchors' },
 			{
 				model: Visibility,
@@ -51,7 +54,7 @@ type CreateDiscussionOpts = {
 	discussionId?: string;
 	title?: string;
 	text: string;
-	content: {};
+	content: DocJson;
 	historyKey: number;
 	visibilityAccess: 'members' | 'public';
 	initAnchorData: {
@@ -61,9 +64,11 @@ type CreateDiscussionOpts = {
 		from: number;
 		to: number;
 	};
+	commenterName?: string;
+	userId?: string;
 };
 
-export const createDiscussion = async (options: CreateDiscussionOpts, userId: string) => {
+export const createDiscussion = async (options: CreateDiscussionOpts) => {
 	const {
 		pubId,
 		discussionId,
@@ -73,6 +78,8 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		historyKey,
 		visibilityAccess,
 		initAnchorData,
+		commenterName,
+		userId,
 	} = options;
 
 	const discussions = await Discussion.findAll({
@@ -93,8 +100,11 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 	const dateString = getReadableDateInYear(new Date());
 	const generatedTitle = `New Discussion on ${dateString}`;
 
-	const newThread = await Thread.create({});
-	const newVisibility = await Visibility.create({ access: visibilityAccess });
+	const [newVisibility, newThread] = await Promise.all([
+		Visibility.create({ access: visibilityAccess }),
+		createThread(),
+	]);
+
 	const newDiscussion = await Discussion.create({
 		id: discussionId,
 		title: title || generatedTitle,
@@ -105,12 +115,17 @@ export const createDiscussion = async (options: CreateDiscussionOpts, userId: st
 		pubId,
 	});
 
-	await ThreadComment.create({
+	const { commenterId } = await createThreadComment({
 		text,
 		content,
+		commenterName,
 		userId,
 		threadId: newThread.id,
 	});
+
+	if (commenterId) {
+		await Discussion.update({ commenterId });
+	}
 
 	if (initAnchorData) {
 		const { from, to, exact, prefix, suffix } = initAnchorData;

@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { Scope, MemberPermission } from 'types';
+import { ScopeId, MemberPermission, ScopeData } from 'types';
 import {
 	Collection,
 	CollectionPub,
@@ -15,6 +15,8 @@ import {
 } from 'server/models';
 
 import { isUserSuperAdmin } from 'server/user/queries';
+import { FacetsError } from 'facets';
+import { fetchFacetsForScope } from 'server/facets';
 import { ensureSerialized, stripFalsyIdsFromQuery } from './util';
 import { getCollection } from './collectionGet';
 
@@ -23,7 +25,7 @@ let getPublicPermissionsData;
 let getScopeMemberData;
 let getActivePermissions;
 
-const getScopeIdsObject = ({ pubId, collectionId, communityId }): Scope => {
+const getScopeIdsObject = ({ pubId, collectionId, communityId }): ScopeId => {
 	if (pubId) {
 		return { pubId, communityId };
 	}
@@ -96,6 +98,18 @@ const getActiveCounts = async (isDashboard: boolean, scopeElements) => {
 	return { reviews: 0, submissions: 0 };
 };
 
+const getFacets = async (includeFacets: boolean, scopeElements: ScopeData['elements']) => {
+	if (includeFacets) {
+		const { activeTarget, activeTargetType } = scopeElements;
+		if (activeTargetType === 'organization') {
+			throw new FacetsError('No such thing as an organization');
+		}
+		const facets = await fetchFacetsForScope({ kind: activeTargetType, id: activeTarget.id });
+		return { facets };
+	}
+	return null;
+};
+
 /* getScopeData can be called from either a route (e.g. to authenticate */
 /* whether a user has access to /pub/example), or it can be called from */
 /* an API route to verify a user's permissions. When called from a route */
@@ -111,7 +125,10 @@ export default async (scopeInputs) => {
 			isDashboard,
 		}
 	*/
+
 	const scopeElements = await getScopeElements(scopeInputs);
+	const facets = await getFacets(scopeInputs.includeFacets, scopeElements);
+
 	const publicPermissionsData = await getPublicPermissionsData(scopeElements);
 	const scopeMemberData = await getScopeMemberData(scopeInputs, scopeElements);
 	const [activePermissions, activeCounts] = await Promise.all([
@@ -126,6 +143,7 @@ export default async (scopeInputs) => {
 		activePermissions,
 		activeCounts,
 		scope: getScopeIdsObject(scopeElements.activeIds),
+		...facets,
 	};
 };
 
@@ -301,7 +319,6 @@ getActivePermissions = async (
 	const isSuperAdmin = await isUserSuperAdmin({ userId: scopeInputs.loginId });
 	const permissionLevels: MemberPermission[] = ['view', 'edit', 'manage', 'admin'];
 	let defaultPermissionIndex = -1;
-
 	[activePub, activeCollection, activeCommunity, ...inactiveCollections]
 		.filter((elem) => !!elem)
 		.forEach((elem) => {
@@ -312,6 +329,9 @@ getActivePermissions = async (
 				defaultPermissionIndex = 1;
 			}
 			if (elem.reviewHash && elem.reviewHash === scopeInputs.accessHash) {
+				defaultPermissionIndex = 0;
+			}
+			if (elem.commentHash && elem.commentHash === scopeInputs.accessHash) {
 				defaultPermissionIndex = 0;
 			}
 		});
@@ -383,8 +403,7 @@ getActivePermissions = async (
 		activePublicPermissions.canViewDraft || activePublicPermissions.canEditDraft;
 
 	const canEdit = permissionLevelIndex > 0;
-	const canCreateReviews =
-		!activePub?.submission && (canEdit || activePublicPermissions.canCreateReviews);
+	const canCreateReviews = canEdit || activePublicPermissions.canCreateReviews;
 
 	return {
 		activePermission: permissionLevelIndex > -1 ? permissionLevels[permissionLevelIndex] : null,

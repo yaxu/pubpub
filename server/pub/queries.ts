@@ -1,4 +1,5 @@
 import striptags from 'striptags';
+import unescape from 'lodash.unescape';
 
 import { Collection, Community, Pub, PubAttribution, Member } from 'server/models';
 import { setPubSearchData, deletePubSearchData } from 'server/utils/search';
@@ -29,11 +30,10 @@ export const createPub = async (
 			title: `${titleKind} on ${dateString}`,
 			slug: newPubSlug,
 			communityId,
-			headerBackgroundColor: 'light',
-			headerStyle: 'dark',
 			viewHash: generateHash(8),
 			editHash: generateHash(8),
 			reviewHash: generateHash(8),
+			commentHash: generateHash(8),
 			draftId: draft.id,
 			...restArgs,
 		},
@@ -102,7 +102,14 @@ export const updatePub = (inputValues, updatePermissions, actorId) => {
 		filteredValues.htmlTitle = filteredValues.title;
 	}
 	if (filteredValues.htmlTitle) {
-		filteredValues.title = striptags(filteredValues.htmlTitle);
+		filteredValues.title = unescape(striptags(filteredValues.htmlTitle));
+	}
+
+	if (filteredValues.description && !filteredValues.htmlDescription) {
+		filteredValues.htmlDescription = filteredValues.description;
+	}
+	if (filteredValues.htmlDescription) {
+		filteredValues.description = unescape(striptags(filteredValues.htmlDescription));
 	}
 
 	return Pub.update(filteredValues, {

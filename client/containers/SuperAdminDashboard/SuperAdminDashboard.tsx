@@ -1,32 +1,44 @@
 import React from 'react';
-import { Tabs, Tab } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 import { GridWrapper } from 'components';
-import { LandingPageFeatures } from 'types';
+import { getSuperAdminTabUrl, SuperAdminTabKind } from 'utils/superAdmin';
 
-import LandingPageFeaturesType from './LandingPageFeatures';
-import Spam from './Spam';
+import { superAdminTabs } from './tabs';
 
 require('./superAdminDashboard.scss');
 
 type Props = {
-	landingPageFeatures: LandingPageFeatures<false>;
+	tabKind: SuperAdminTabKind;
+	tabProps: Record<string, any>;
 };
 
 const SuperAdminDashboard = (props: Props) => {
-	const { landingPageFeatures } = props;
+	const { tabKind, tabProps } = props;
+	const { component: TabComponent } = superAdminTabs[tabKind];
+
+	const renderTabLinks = () => {
+		return Object.keys(superAdminTabs).map((key) => {
+			const { title } = superAdminTabs[key];
+			return (
+				<a
+					className={classNames('link', tabKind === key && 'current')}
+					href={getSuperAdminTabUrl(key as any)}
+					key={key}
+				>
+					{title}
+				</a>
+			);
+		});
+	};
+
 	return (
 		<GridWrapper columnClassName="superadmin-dashboard-component">
-			<h1>Superadmin Dashboard</h1>
-			<p>Warning! Danger! etc.</p>
-			<Tabs id="superadmin-dashboard" large>
-				<Tab
-					id="features"
-					title="Landing Page"
-					panel={<LandingPageFeaturesType features={landingPageFeatures} />}
-				/>
-				<Tab id="spam" title="Spam" panel={<Spam />} />
-			</Tabs>
+			<h1>
+				<span className="supreme">Superadmin</span> Dashboard
+			</h1>
+			<div className="superadmin-tab-links">{renderTabLinks()}</div>
+			<TabComponent {...tabProps} />
 		</GridWrapper>
 	);
 };

@@ -6,6 +6,7 @@ import { createCollectionPub } from 'server/collectionPub/queries';
 import {
 	ActivityItem,
 	Community,
+	FacetBinding,
 	Member,
 	Release,
 	SubmissionWorkflow,
@@ -16,6 +17,7 @@ import { createPub } from 'server/pub/queries';
 import { createCollection } from 'server/collection/queries';
 import { createDoc } from 'server/doc/queries';
 import { createPage } from 'server/page/queries';
+import { createCommunity } from 'server/community/queries';
 import { getEmptyDoc } from 'client/components/Editor';
 
 const builders = {};
@@ -61,12 +63,20 @@ builders.User = async (args = {}) => {
 };
 
 builders.Community = async (args = {}) => {
+	const { createFullCommunity, ...restArgs } = args;
 	const unique = uuid.v4();
-	return Community.create({
+	const sharedArgs = {
 		title: 'Community ' + unique,
 		subdomain: unique,
+		...restArgs,
+	};
+	if (createFullCommunity) {
+		const admin = await builders.User();
+		return createCommunity({ ...sharedArgs }, admin, false);
+	}
+	return Community.create({
 		navigation: [],
-		...args,
+		...sharedArgs,
 	});
 };
 
@@ -98,6 +108,25 @@ builders.Member = async ({ pubId, collectionId, communityId, ...restArgs }) => {
 	};
 
 	return Member.create({ ...getTargetArgs(), ...restArgs }, { hooks: false });
+};
+
+builders.FacetBinding = async ({ pubId, collectionId, communityId, ...restArgs }) => {
+	const getTargetArgs = () => {
+		// All of the enclosing scope IDs will be passed in, but we only want to associate a
+		// FacetBinding with one scope -- the lowest or "closest" one.
+		switch (true) {
+			case !!pubId:
+				return { pubId };
+			case !!collectionId:
+				return { collectionId };
+			case !!communityId:
+				return { communityId };
+			default:
+				return {};
+		}
+	};
+
+	return FacetBinding.create({ ...getTargetArgs(), ...restArgs });
 };
 
 builders.Release = async (args) => {

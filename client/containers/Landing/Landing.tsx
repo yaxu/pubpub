@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import { default as React, useMemo, useState } from 'react';
+import { Tab, Tabs } from '@blueprintjs/core';
 
+import { Community, DocJson, LandingPageFeatures, Pub } from 'types';
 import { Icon, PubByline, PubTitle } from 'components';
-import { LandingPageFeatures, Community, Pub, DocJson } from 'types';
-import { getPrimaryCollection } from 'utils/collections/primary';
-import { getPubPublishedDate } from 'utils/pub/pubDates';
-import { formatDate } from 'utils/dates';
-import { collectionUrl, communityUrl, pubUrl } from 'utils/canonicalUrls';
-import { Tab, Tabs, TabId } from '@blueprintjs/core';
 import { getTextFromDoc, jsonToNode } from 'components/Editor';
+import { collectionUrl, communityUrl, pubUrl } from 'utils/canonicalUrls';
+import { getPrimaryCollection } from 'utils/collections/primary';
+import { formatDate } from 'utils/dates';
+import { getPubPublishedDate } from 'utils/pub/pubDates';
 
 require('./landing.scss');
 
@@ -317,7 +317,8 @@ const Landing = (props: Props) => {
 
 	const pubList = flattenedPubs.map((flat) => {
 		const { title, pub, community, primaryCollection, byline, publishedDate } = flat;
-		const { description, headerBackgroundImage } = pub;
+		const { description } = pub;
+		const headerBackgroundImage = '';
 		return (
 			<div className="pub" key={pub.id}>
 				<div className="slab">

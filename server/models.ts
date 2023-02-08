@@ -1,11 +1,8 @@
 /* eslint-disable global-require */
-import path from 'path';
 import Sequelize from 'sequelize';
-import knexJs from 'knex';
+import { knex } from 'knex';
 
-if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-	require(path.join(process.cwd(), 'config.js'));
-}
+import { createSequelizeModelsFromFacetDefinitions } from './facets/create';
 
 // @ts-expect-error (interpreting this file as vanilla JavaScript from test runner)
 const useSSL = process.env.DATABASE_URL.indexOf('localhost') === -1;
@@ -22,7 +19,7 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	},
 });
 
-export const knex = knexJs({ client: 'pg' });
+export const knexInstance = knex({ client: 'pg' });
 
 /* Change to true to update the model in the database. */
 /* NOTE: This being set to true will erase your data. */
@@ -42,6 +39,7 @@ sequelize.idType = {
 export const Collection = sequelize.import('./collection/model');
 export const CollectionAttribution = sequelize.import('./collectionAttribution/model');
 export const CollectionPub = sequelize.import('./collectionPub/model');
+export const Commenter = sequelize.import('./commenter/model');
 export const Community = sequelize.import('./community/model');
 export const CommunityAdmin = sequelize.import('./communityAdmin/model');
 export const CrossrefDepositRecord = sequelize.import('./crossrefDepositRecord/model');
@@ -72,6 +70,7 @@ export const ReviewEvent = sequelize.import('./reviewEvent/model');
 export const ScopeSummary = sequelize.import('./scopeSummary/model');
 export const Submission = sequelize.import('./submission/model');
 export const Signup = sequelize.import('./signup/model');
+export const SpamTag = sequelize.import('./spamTag/model');
 export const SubmissionWorkflow = sequelize.import('./submissionWorkflow/model');
 export const ReviewNew = sequelize.import('./review/model');
 export const Reviewer = sequelize.import('./reviewer/model');
@@ -88,6 +87,8 @@ export const ActivityItem = sequelize.import('./activityItem/model');
 export const Visibility = sequelize.import('./visibility/model');
 export const VisibilityUser = sequelize.import('./visibilityUser/model');
 export const WorkerTask = sequelize.import('./workerTask/model');
+
+export const { facetModels, FacetBinding } = createSequelizeModelsFromFacetDefinitions(sequelize);
 
 export const attributesPublicUser = [
 	'id',

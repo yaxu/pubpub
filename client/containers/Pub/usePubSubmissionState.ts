@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { DefinitelyHas, Submission, PubPageData, DocJson } from 'types';
 import { EditorChangeObject, isEmptyDoc } from 'client/components/Editor';
 
+import { IdlePatchFn, useIdlyUpdatedState } from 'client/utils/useIdlyUpdatedState';
 import { SpubHeaderTab } from './SpubHeader/SpubHeader';
-import { IdlePatchFn, useIdlyUpdatedState } from './useIdlyUpdatedState';
 
 type Options = {
 	pubData: PubPageData;
@@ -40,7 +40,7 @@ const createSubmissionPreview = (doc: DocJson, abstract: DocJson) => {
 
 const getInitialSubmissionState = (pub: PubPageData): null | UpdatablePubSubmissionState => {
 	const { submission } = pub;
-	if (submission && !pub.isRelease) {
+	if (submission && !pub.isRelease && !pub.isReviewingPub) {
 		const { status } = submission;
 		return {
 			selectedTab: status === 'incomplete' ? 'instructions' : 'preview',

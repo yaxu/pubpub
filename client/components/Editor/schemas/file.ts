@@ -1,4 +1,6 @@
+import { Classes } from '@blueprintjs/core';
 import { DOMOutputSpec } from 'prosemirror-model';
+
 import { renderHtmlChildren } from '../utils/renderHtml';
 
 const getExtension = (attrs) => {
@@ -40,7 +42,7 @@ export default {
 			},
 		],
 		// @ts-expect-error ts-migrate(2525) FIXME: Initializer provides no value for this binding ele... Remove this comment to see the full error message
-		toDOM: (node, { isReact } = {}) => {
+		toDOM: (node, { isStaticallyRendered } = {}) => {
 			const attrs = node.attrs;
 			const extension = getExtension(attrs);
 			return [
@@ -56,7 +58,7 @@ export default {
 				},
 				[
 					'div',
-					{ class: 'bp3-card bp3-elevation-2 details' },
+					{ class: `${Classes.CARD} ${Classes.ELEVATION_2} details` },
 					[
 						'div',
 						{
@@ -90,11 +92,15 @@ export default {
 							target: '_blank',
 							rel: 'noopener noreferrer',
 							download: attrs.fileName,
-							class: 'bp3-button bp3-icon-download',
+							class: `${Classes.BUTTON} ${Classes.ICON}-download`,
 						},
 					],
 				],
-				['figcaption', {}, renderHtmlChildren(isReact, node.attrs.caption, 'div')],
+				[
+					'figcaption',
+					{},
+					renderHtmlChildren(isStaticallyRendered, node.attrs.caption, 'div'),
+				],
 			] as DOMOutputSpec;
 		},
 		inline: false,

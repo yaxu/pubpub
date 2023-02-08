@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 @import 'styles/variables.scss';
 @import './themes.scss';
 
@@ -115,6 +119,10 @@ $mobile-bottom-buttons-spacing: 10px;
 		}
 	}
 
+	.review-sticky-component {
+		padding-top: 37px;
+	}
+
 	@include mobile {
 		h1 {
 			font-size: 24px;
@@ -183,7 +191,7 @@ $mobile-bottom-buttons-spacing: 10px;
 					}
 				}
 				.click-to-copy {
-					.bp3-button {
+					.#{$bp}-button {
 						color: inherit;
 					}
 				}

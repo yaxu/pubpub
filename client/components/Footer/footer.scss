@@ -1,3 +1,7 @@
+@use 'styles/vendor.scss';
+
+$bp: vendor.$bp-namespace;
+
 .footer-component {
 	font-family: motiva-sans, sans-serif;
 	font-weight: 400;
@@ -11,7 +15,7 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-	.bp3-input-group {
+	.#{$bp}-input-group {
 		margin-top: 0.25em;
 	}
 	.left {
@@ -28,7 +32,7 @@
 			}
 		}
 		.confirm {
-			.bp3-checkbox {
+			.#{$bp}-checkbox {
 				margin-top: 0.5em;
 			}
 			font-size: 12px;

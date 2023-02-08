@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
-import { getDashUrl } from 'utils/dashboard';
+import { getDashUrl, DashboardMode } from 'utils/dashboard';
 import { usePageContext } from 'utils/hooks';
 import { Avatar, Icon, IconName, MenuItem } from 'components';
 import { getPrimaryCollectionPub } from 'utils/collections/primary';
 import { sortByRank } from 'utils/rank';
 import { Collection, Pub } from 'types';
 import { pubPubIcons } from 'client/utils/icons';
+import { Tooltip } from '@blueprintjs/core';
 
 require('./scopeDropdown.scss');
 
@@ -143,108 +144,97 @@ const ScopeDropdown = (props: Props) => {
 		});
 	}
 
+	const renderDropddownButton = function (scope: Scope, mode: DashboardMode, icon: IconName) {
+		return (
+			<a
+				href={getDashUrl({
+					collectionSlug: scope.slugs && scope.slugs.collectionSlug,
+					pubSlug: scope.slugs && scope.slugs.pubSlug,
+					mode,
+				})}
+			>
+				<Tooltip content={mode.charAt(0).toUpperCase() + mode.slice(1)}>
+					<Icon icon={icon} iconSize={12} />
+				</Tooltip>
+			</a>
+		);
+	};
+
 	return (
 		<div className={classNames('scope-dropdown-component', isDashboard && 'in-dashboard')}>
 			{isDashboard && <div className="intro">Select Scope:</div>}
 			<div className="scopes">
-				{scopes.map((scope, index) => {
-					return (
-						<MenuItem
-							href={scope.href}
-							key={scope.type}
-							text={
-								<div className={`scope-item item-${index}`}>
-									<div className="content">
-										<div className="top">
-											<Icon
-												icon={scope.icon}
-												iconSize={scope.iconSize || 10}
-											/>
-											{scope.type}
-										</div>
-										<div className="bottom">
-											<Avatar
-												avatar={scope.avatar}
-												initials={scope.title[0]}
-												width={18}
-												isBlock={true}
-											/>
-											{scope.title}
-										</div>
+				{scopes.map((scope, index) => (
+					<MenuItem
+						href={scope.href}
+						key={scope.type}
+						text={
+							<div className={`scope-item item-${index}`}>
+								<div className="content">
+									<div className="top">
+										<Icon icon={scope.icon} iconSize={scope.iconSize || 10} />
+										{scope.type}
 									</div>
-									{scope.showSettings && scope.type !== 'Page' && (
-										<div className="settings">
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'settings',
-												})}
-											>
-												<Icon icon={pubPubIcons.settings} iconSize={12} />
-											</a>
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'members',
-												})}
-											>
-												<Icon icon={pubPubIcons.member} iconSize={12} />
-											</a>
-											<a
-												href={getDashUrl({
-													collectionSlug:
-														scope.slugs && scope.slugs.collectionSlug,
-													pubSlug: scope.slugs && scope.slugs.pubSlug,
-													mode: 'impact',
-												})}
-											>
-												<Icon icon={pubPubIcons.impact} iconSize={12} />
-											</a>
-											{scope.type === 'Collection' && (
-												<a
-													href={getDashUrl({
-														collectionSlug:
-															scope.slugs &&
-															scope.slugs.collectionSlug,
-														pubSlug: scope.slugs && scope.slugs.pubSlug,
-														mode: 'layout',
-													})}
-												>
-													<Icon icon={pubPubIcons.layout} iconSize={12} />
-												</a>
-											)}
-											<a
-												href={`/${
-													(scope.slugs &&
-														scope.slugs.pubSlug &&
-														'pub/' + scope.slugs.pubSlug) ||
-													(scope.slugs && scope.slugs.collectionSlug)
-												}`}
-											>
-												<Icon icon="globe" iconSize={12} />
-											</a>
-										</div>
-									)}
-									{scope.showSettings && scope.type === 'Page' && (
-										<div className="settings">
-											<a
-												href={`/${
-													(scope.slugs && scope.slugs.pageSlug) || '/'
-												}`}
-											>
-												<Icon icon="globe" iconSize={12} />
-											</a>
-										</div>
-									)}
+									<div className="bottom">
+										<Avatar
+											avatar={scope.avatar}
+											initials={scope.title[0]}
+											width={18}
+											isBlock={true}
+										/>
+										{scope.title}
+									</div>
 								</div>
-							}
-						/>
-					);
-				})}
+								{scope.showSettings && scope.type !== 'Page' && (
+									<div className="settings">
+										{renderDropddownButton(
+											scope,
+											'settings',
+											pubPubIcons.settings,
+										)}
+										{renderDropddownButton(
+											scope,
+											'members',
+											pubPubIcons.member,
+										)}
+										{renderDropddownButton(scope, 'impact', pubPubIcons.impact)}
+										{scope.type === 'Collection' &&
+											renderDropddownButton(
+												scope,
+												'layout',
+												pubPubIcons.layout,
+											)}
+										<a
+											href={`/${
+												(scope.slugs?.pubSlug &&
+													`pub/${scope.slugs.pubSlug}`) ||
+												scope.slugs?.collectionSlug ||
+												''
+											}`}
+										>
+											<Tooltip content="Home">
+												<Icon icon="globe" iconSize={12} />
+											</Tooltip>
+										</a>
+									</div>
+								)}
+								{scope.showSettings && scope.type === 'Page' && (
+									<div className="settings">
+										<a
+											href={`/${
+												(scope.slugs && scope.slugs.pageSlug) || '/'
+											}`}
+										>
+											<Tooltip content="Home">
+												<Icon icon="globe" iconSize={12} />
+											</Tooltip>
+										</a>
+									</div>
+								)}
+							</div>
+						}
+					/>
+				))}
 			</div>
 		</div>
 	);

@@ -22,6 +22,7 @@ import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { mathBackspaceCmd } from '@benrbray/prosemirror-math';
 
+import { codeBlockArrowHandlers } from './code';
 import { splitBlockPreservingAttrs } from '../commands';
 
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
@@ -127,6 +128,9 @@ export default (schema) => {
 			bind(`Shift-Ctrl-${index}`, setBlockType(schema.nodes.heading, { level: index }));
 			bind(`Alt-Ctrl-${index}`, setBlockType(schema.nodes.heading, { level: index }));
 		}
+	}
+	if (schema.nodes.code_block) {
+		Object.entries(codeBlockArrowHandlers).forEach(([key, cmd]) => bind(key, cmd));
 	}
 	if (schema.nodes.horizontal_rule) {
 		bind('Mod-_', (state, dispatch) => {

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider as RKProvider } from 'reakit';
 import classNames from 'classnames';
-import Color from 'color';
 
 import {
 	Header,
@@ -11,14 +10,15 @@ import {
 	NavBar,
 	SkipLink,
 	MobileAware,
+	FacetsStateProvider,
 } from 'components';
-import { Community } from 'types';
 import { PageContext } from 'utils/hooks';
 import { hydrateWrapper } from 'client/utils/hydrateWrapper';
 
 import SideMenu from './SideMenu';
 import Breadcrumbs from './Breadcrumbs';
 import BottomMenu from './BottomMenu';
+import SpamBanner from './SpamBanner';
 
 import getPaths from './paths';
 import { usePageState } from './usePageState';
@@ -32,23 +32,10 @@ type Props = {
 	viewData: any;
 };
 
-const renderCssVariablesStyle = (community: Community) => {
-	const { accentColorDark } = community;
-	const accentColorDarkFaded = Color(accentColorDark).fade(0.95).rgb().string();
-	return (
-		<style type="text/css">
-			{`:root { 
-				--community-accent-dark: ${accentColorDark};
-				--community-accent-dark-faded: ${accentColorDarkFaded};
-			}`}
-		</style>
-	);
-};
-
 const App = (props: Props) => {
 	const { chunkName, initialData, viewData } = props;
 	const pageContextProps = usePageState(initialData, viewData);
-	const { communityData, locationData } = pageContextProps;
+	const { communityData, locationData, scopeData } = pageContextProps;
 
 	const pathObject = getPaths(viewData, locationData, chunkName);
 	const { ActiveComponent, hideNav, hideFooter, hideHeader, isDashboard } = pathObject;
@@ -64,37 +51,41 @@ const App = (props: Props) => {
 	const showHeader = !hideHeader;
 	return (
 		<PageContext.Provider value={pageContextProps}>
-			<RKProvider>
-				{renderCssVariablesStyle(communityData)}
-				<div id="app" className={classNames({ dashboard: isDashboard })}>
-					<AccentStyle communityData={communityData} isNavHidden={!showNav} />
-					{(locationData.isDuqDuq || locationData.isQubQub) && (
-						<div className="duqduq-warning">Development Environment</div>
-					)}
-					<SkipLink targetId="main-content">Skip to main content</SkipLink>
-					<LegalBanner />
-					{showHeader && <Header />}
-					{showNav && <NavBar />}
-					{isDashboard && (
-						<MobileAware
-							mobile={({ className }) => (
-								<BottomMenu isMobile className={className} />
-							)}
-							desktop={({ className }) => (
-								<>
-									<SideMenu className={className} />
-									<Breadcrumbs className={className} />
-								</>
-							)}
-						/>
-					)}
-					{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message */}
-					<div id="main-content" tabIndex="-1">
-						<ActiveComponent {...viewData} />
+			<FacetsStateProvider
+				options={{ currentScope: scopeData.scope, cascadeResults: scopeData.facets }}
+			>
+				<RKProvider>
+					<div id="app" className={classNames({ dashboard: isDashboard })}>
+						{communityData.spamTag?.status === 'confirmed-spam' && <SpamBanner />}
+						<AccentStyle communityData={communityData} isNavHidden={!showNav} />
+						{(locationData.isDuqDuq || locationData.isQubQub) && (
+							<div className="duqduq-warning">Development Environment</div>
+						)}
+						<SkipLink targetId="main-content">Skip to main content</SkipLink>
+						<LegalBanner />
+						{showHeader && <Header />}
+						{showNav && <NavBar />}
+						{isDashboard && (
+							<MobileAware
+								mobile={({ className }) => (
+									<BottomMenu isMobile className={className} />
+								)}
+								desktop={({ className }) => (
+									<>
+										<SideMenu className={className} />
+										<Breadcrumbs className={className} />
+									</>
+								)}
+							/>
+						)}
+						{/* @ts-expect-error ts-migrate(2322) FIXME: Type 'string' is not assignable to type 'number | ... Remove this comment to see the full error message */}
+						<div id="main-content" tabIndex="-1">
+							<ActiveComponent {...viewData} />
+						</div>
+						{showFooter && <Footer />}
 					</div>
-					{showFooter && <Footer />}
-				</div>
-			</RKProvider>
+				</RKProvider>
+			</FacetsStateProvider>
 		</PageContext.Provider>
 	);
 };

@@ -1,5 +1,5 @@
 import * as types from 'types';
-import { Discussion, Pub, ReviewNew, Visibility } from 'server/models';
+import { Discussion, Pub, ReviewNew, Visibility, Thread } from 'server/models';
 import { filterUsersAcceptedByVisibility } from 'server/visibility/queries';
 
 type FilterUsersOptions = {
@@ -62,4 +62,8 @@ export const canUserSeeThread = async (options: CanUserSeeThreadOptions): Promis
 	const { userId, threadId } = options;
 	const [maybeUserId] = await filterUsersWhoCanSeeThread({ threadId, userIds: [userId] });
 	return maybeUserId === userId;
+};
+
+export const createThread = async (): Promise<types.Thread> => {
+	return Thread.create({});
 };

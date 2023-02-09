@@ -318,7 +318,8 @@ const Landing = (props: Props) => {
 	const pubList = flattenedPubs.map((flat) => {
 		const { title, pub, community, primaryCollection, byline, publishedDate } = flat;
 		const { description } = pub;
-		const headerBackgroundImage = '';
+		const headerBackgroundImage =
+			featuredItems.facets.pub[pub.id].PubHeaderTheme.props.backgroundImage.value;
 		return (
 			<div className="pub" key={pub.id}>
 				<div className="slab">

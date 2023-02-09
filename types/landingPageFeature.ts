@@ -1,3 +1,4 @@
+import { CascadedFacetsForScopes } from 'facets';
 import { Community, DefinitelyHas, DocJson, Pub } from 'types';
 
 export type LandingPageFeature = {
@@ -38,4 +39,5 @@ export type LandingPageFeatures<Validated extends boolean = true> = {
 	community: (Validated extends true
 		? ValidLandingPageCommunityFeature
 		: LandingPageCommunityFeature)[];
+	facets: CascadedFacetsForScopes<'PubHeaderTheme'>;
 };

@@ -3,6 +3,7 @@ import { Community, LandingPageFeature, Pub } from 'server/models';
 import { splitArrayOn } from 'utils/arrays';
 import { buildPubOptions } from 'server/utils/queryHelpers';
 import { validateCommunityLandingPageFeature } from 'utils/landingPage/validate';
+import { fetchFacetsForScopeIds } from 'server/facets';
 
 const landingPageFeatureIncludes = [
 	{ model: Pub, as: 'pub', ...buildPubOptions({ getCommunity: true, getCollections: true }) },
@@ -33,6 +34,9 @@ export const getLandingPageFeatures = async <Validated extends boolean = true>(
 		community: validatedCommunityFeatures as (Validated extends true
 			? types.ValidLandingPageCommunityFeature
 			: types.LandingPageCommunityFeature)[],
+		facets: await fetchFacetsForScopeIds({ pub: sanitizedPubFeatures.map((f) => f.pubId!) }, [
+			'PubHeaderTheme',
+		]),
 	};
 };
 

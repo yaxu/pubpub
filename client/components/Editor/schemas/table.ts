@@ -57,6 +57,9 @@ table.attrs = {
 	...table.attrs,
 	id: { default: null },
 	hideLabel: { default: false },
+	align: { default: null },
+	size: { default: null },
+	smallerFont: { default: false },
 };
 table.reactive = true;
 table.reactiveAttrs = {
@@ -71,14 +74,24 @@ table.parseDOM![0].getAttrs = (node) => {
 };
 
 table.toDOM = (node: ProsemirrorNode) => {
-	const { id } = node.attrs;
+	const { id, align, size, smallerFont } = node.attrs;
 	const spec = tableToDOM!(node);
 	const tableSpec = pruneFalsyValues([
 		spec[0],
 		withValue(buildLabel(node), (builtLabel) => ['caption', builtLabel]),
 		spec[1],
 	]);
-	return ['div', { class: 'tableWrapper', id }, tableSpec];
+	return [
+		'div',
+		{
+			class: 'tableWrapper',
+			id,
+			'data-align': align,
+			'data-size': size,
+			'data-smaller-font': smallerFont,
+		},
+		tableSpec,
+	];
 };
 
 export default pmTableNodes;

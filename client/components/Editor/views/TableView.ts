@@ -41,6 +41,9 @@ export class TableView extends BaseTableView {
 			suggestionTimestamp,
 			suggestionDiscussionId,
 			suggestionOriginalAttrs,
+			align,
+			size,
+			smallerFont,
 		} = node.attrs;
 		const { dom } = this as any as { dom: HTMLElement };
 		dom.setAttribute('id', id);
@@ -50,6 +53,10 @@ export class TableView extends BaseTableView {
 		dom.setAttribute('data-suggestion-timestamp', suggestionTimestamp);
 		dom.setAttribute('data-suggestion-discussion-id', suggestionDiscussionId);
 		dom.setAttribute('data-suggestion-original-attrs', suggestionOriginalAttrs);
+		dom.setAttribute('id', id);
+		dom.setAttribute('data-align', align);
+		dom.setAttribute('data-size', size);
+		dom.setAttribute('data-smaller-font', smallerFont);
 	}
 
 	sync(node) {

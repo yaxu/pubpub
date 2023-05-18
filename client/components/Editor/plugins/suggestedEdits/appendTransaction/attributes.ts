@@ -1,13 +1,26 @@
-import { Node } from 'prosemirror-model';
+import { Node, ResolvedPos } from 'prosemirror-model';
 import { AttrStep, ReplaceAroundStep, ReplaceStep, Step } from 'prosemirror-transform';
 
 import { SuggestedEditsTransactionContext } from '../types';
 import { addSuggestionToNode, getSuggestionKindForNode } from '../operations';
 
+const isMathNode = (node: Node) => ['math_display', 'math_inline'].includes(node.type.name);
+
+const getParentMathNode = (pos: ResolvedPos) => {
+	for (let i = pos.depth; i > 0; i--) {
+		const node = pos.node(i);
+		if (isMathNode(node)) {
+			return node;
+		}
+	}
+	return false;
+};
+
 const getModifiedNodeInfo = (
 	step: Step,
 	docBeforeStep: Node,
-): null | { pos: number; nodeBeforeStep: Node } => {
+): null | { pos: number; modifiedNode: Node } => {
+	let nodeInfo: null | { pos: number; modifiedNode: Node } = null;
 	// In practice, there are a few different ways Prosemirror will set a node's attributes.
 	// This function tries to abstract over these to provide information about which node
 	// was changed by an arbitrary step.
@@ -16,7 +29,7 @@ const getModifiedNodeInfo = (
 		const { pos } = step;
 		const nodeBeforeStep = docBeforeStep.nodeAt(pos);
 		if (nodeBeforeStep) {
-			return { pos, nodeBeforeStep };
+			nodeInfo = { pos, modifiedNode: nodeBeforeStep };
 		}
 	}
 	if (step instanceof ReplaceStep) {
@@ -37,7 +50,13 @@ const getModifiedNodeInfo = (
 			firstAndOnlyNodeInContent &&
 			nodeBeforeStep.type === firstAndOnlyNodeInContent.type
 		) {
-			return { pos: from, nodeBeforeStep };
+			nodeInfo = { pos: from, modifiedNode: nodeBeforeStep };
+		}
+
+		const mathNode = getParentMathNode(docBeforeStep.resolve(from));
+		if (mathNode) {
+			debugger;
+			nodeInfo = { pos: from, modifiedNode: mathNode };
 		}
 	}
 	if (step instanceof ReplaceAroundStep) {
@@ -48,11 +67,13 @@ const getModifiedNodeInfo = (
 		if (nodeBeforeStep) {
 			// The tell is that the "gap" that the step keeps is the entirety of the node content
 			if (gapFrom === from + 1 && gapTo === to - 1) {
-				return { pos: from, nodeBeforeStep };
+				debugger;
+				nodeInfo = { pos: from, modifiedNode: nodeBeforeStep };
 			}
 		}
 	}
-	return null;
+
+	return nodeInfo;
 };
 
 export const indicateAttributeChanges = (context: SuggestedEditsTransactionContext) => {
@@ -65,7 +86,7 @@ export const indicateAttributeChanges = (context: SuggestedEditsTransactionConte
 			const docBeforeStep = txn.docs[index];
 			const modifiedNodeInfo = getModifiedNodeInfo(step, docBeforeStep);
 			if (modifiedNodeInfo) {
-				const { nodeBeforeStep, pos } = modifiedNodeInfo;
+				const { modifiedNode: nodeBeforeStep, pos } = modifiedNodeInfo;
 				const posInCurrentDoc = newTransaction.mapping.map(pos);
 				const nodeInCurrentDoc = newTransaction.doc.nodeAt(posInCurrentDoc);
 				if (nodeInCurrentDoc && !getSuggestionKindForNode(nodeInCurrentDoc)) {

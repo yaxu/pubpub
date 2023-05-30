@@ -9,6 +9,7 @@ import { usePubContext } from '../pubHooks';
 import PubHeaderCollaborators from './PubHeaderCollaborators';
 import PubConnectionStatusIndicator from './PubConnectionStatusIndicator';
 import PubWordCountButton from './PubWordCountButton';
+import PubSuggestedEditsTooltip from './PubSuggestedEditsTooltip';
 
 require('./pubHeaderFormatting.scss');
 
@@ -52,14 +53,18 @@ const PubHeaderFormatting = (props: Props) => {
 			/>
 			<div className="right-content">
 				{featureFlags.suggestedEdits && (
-					<FormattingBar
-						buttons={buttons.suggestedEditsButtonSet}
-						editorChangeObject={editorChangeObject || ({} as any)}
-						showBlockTypes={false}
-						controlsConfiguration={{
-							container: editorWrapperRef.current!,
-							isAbsolutelyPositioned: true,
-						}}
+					<PubSuggestedEditsTooltip
+						children={
+							<FormattingBar
+								buttons={buttons.suggestedEditsButtonSet}
+								editorChangeObject={editorChangeObject || ({} as any)}
+								showBlockTypes={false}
+								controlsConfiguration={{
+									container: editorWrapperRef.current!,
+									isAbsolutelyPositioned: true,
+								}}
+							/>
+						}
 					/>
 				)}
 				{state && <PubWordCountButton doc={state.doc} />}

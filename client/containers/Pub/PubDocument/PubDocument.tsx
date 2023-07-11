@@ -8,6 +8,7 @@ import {
 	Mode as PubEdgeMode,
 } from 'components/PubEdgeListing';
 import { useFacetsQuery } from 'client/utils/useFacets';
+import { hasMathNode } from 'client/utils/suggestedEdits';
 
 import { usePubContext } from '../pubHooks';
 import { usePermalinkOnMount } from '../usePermalinkOnMount';
@@ -50,7 +51,7 @@ const PubDocument = () => {
 	if (hidePubBody) {
 		return null;
 	}
-
+	hasMathNode(collabData.editorChangeObject);
 	return (
 		<div className="pub-document-component">
 			{(!isReadOnly || isViewingHistory) && (

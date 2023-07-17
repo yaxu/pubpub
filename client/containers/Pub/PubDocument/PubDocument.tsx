@@ -51,7 +51,7 @@ const PubDocument = () => {
 	if (hidePubBody) {
 		return null;
 	}
-	hasMathNode(collabData.editorChangeObject);
+	console.log(hasMathNode(collabData.editorChangeObject));
 	return (
 		<div className="pub-document-component">
 			{(!isReadOnly || isViewingHistory) && (
